@@ -1,0 +1,3 @@
+[build]
+  command = "cd taskwise && npm install react-scripts && npm run build"
+  publish = "taskwise/build"  # Adjust this if the publish directory is different
