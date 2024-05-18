@@ -12,20 +12,46 @@ function LandingPage() {
   return (
     <>
       <Box sx={{ flexGrow: 1 }}>
-        <AppBar position="static">
+        <AppBar position="static" style={{ backgroundColor: "#ffffff" }}>
           <Toolbar>
-            <IconButton
-              size="large"
-              edge="start"
-              color="inherit"
-              aria-label="menu"
-              sx={{ mr: 2 }}
-            ></IconButton>
             <Box sx={{ flexGrow: 1, display: "flex", alignItems: "center" }}>
-              <img src={Logo} alt="Taskwise Logo" />
+              <img
+                src={Logo}
+                alt="Taskwise Logo"
+                style={{ width: "68px", height: "65px" }}
+              />
             </Box>
-            <Button color="inherit">Login</Button>
-            <Button color="inherit">Sign Up</Button>
+            <Button
+              sx={{
+                color: "#000000",
+                backgroundColor: "#ffffff",
+                border: "1px solid #e0e0e0",
+                borderRadius: "20px",
+                textTransform: "none",
+                padding: "6px 16px",
+                "&:hover": {
+                  backgroundColor: "#f5f5f5",
+                  borderColor: "#e0e0e0",
+                },
+              }}
+            >
+              Log In
+            </Button>
+            <Button
+              sx={{
+                color: "#ffffff",
+                backgroundColor: "#4285F4",
+                borderRadius: "20px",
+                textTransform: "none",
+                padding: "6px 16px",
+                ml: 2,
+                "&:hover": {
+                  backgroundColor: "#357ae8",
+                },
+              }}
+            >
+              Sign Up
+            </Button>
           </Toolbar>
         </AppBar>
       </Box>
