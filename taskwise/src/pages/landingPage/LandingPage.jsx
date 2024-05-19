@@ -5,9 +5,15 @@ import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 import Grid from "@mui/material/Grid";
+import useMediaQuery from "@mui/material/useMediaQuery";
+import { useTheme } from "@mui/material/styles";
 import Logo from "../../assets/Logo.png";
-import board from "../../assets/board.png"
+import board from "../../assets/board.png";
+
 function LandingPage() {
+    const theme = useTheme();
+    const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
+
     return (
         <div>
             <Box sx={{ flexGrow: 1 }}>
@@ -17,7 +23,7 @@ function LandingPage() {
                             <img
                                 src={Logo}
                                 alt="Taskwise Logo"
-                                style={{ width: "68px", height: "65px" }}
+                                style={{ width: isSmallScreen ? "48px" : "68px", height: isSmallScreen ? "45px" : "65px" }}
                             />
                         </Box>
                         <Button
@@ -54,20 +60,20 @@ function LandingPage() {
                     </Toolbar>
                 </AppBar>
             </Box>
-            <Box sx={{ p: 4 }}>
-                <Grid container spacing={0} alignItems="center">
+            <Box sx={{ p: isSmallScreen ? 2 : 4 }}>
+                <Grid container spacing={2} alignItems="center">
                     <Grid item xs={12} md={6}>
-                        <Typography variant="h4" gutterBottom sx={{ fontWeight: 'bold' }}>
+                        <Typography variant={isSmallScreen ? "h5" : "h4"} gutterBottom sx={{ fontWeight: 'bold' }}>
                             AI Task management
                         </Typography>
-                        <Typography variant="h4" gutterBottom sx={{ fontWeight: 'bold' }}>
+                        <Typography variant={isSmallScreen ? "h5" : "h4"} gutterBottom sx={{ fontWeight: 'bold' }}>
                             software loved by..
                         </Typography>
                         <Typography variant="h5" gutterBottom sx={{ color: '#3f51b5', fontWeight: 'bold' }}>
                             Teams
                         </Typography>
-                        <Box sx={{ pl: 2 }}>
-                            <ul style={{ margin: 0, paddingLeft: 16 }}>
+                        <Box sx={{ pl: isSmallScreen ? 0 : 2 }}>
+                            <ul style={{ margin: 0, paddingLeft: isSmallScreen ? 16 : 16 }}>
                                 <li>Simple to use, powerful when you need it</li>
                                 <li>Manage multiple complex projects</li>
                                 <li>Scales into a full platform</li>
