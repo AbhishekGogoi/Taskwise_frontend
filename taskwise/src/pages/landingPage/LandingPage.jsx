@@ -13,12 +13,72 @@ import ListItemText from "@mui/material/ListItemText";
 import TaskAltIcon from "@mui/icons-material/TaskAlt";
 import Logo from "../../assets/Logo.png";
 import board from "../../assets/board.png";
-import { Container } from "@mui/material";
+import { Container, Grid, Link } from '@mui/material';
+import DragDropIcon from '@mui/icons-material/DragIndicator';
+import NotificationsIcon from '@mui/icons-material/Notifications';
+import ClarityIcon from '@mui/icons-material/Visibility';
+import AiAutomationIcon from '@mui/icons-material/AutoAwesome';
+import Accordion from '@mui/material/Accordion';
+import AccordionSummary from '@mui/material/AccordionSummary';
+import AccordionDetails from '@mui/material/AccordionDetails';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import { useState } from "react";
+import InstagramIcon from '@mui/icons-material/Instagram';
+import TwitterIcon from '@mui/icons-material/Twitter';
 
 function LandingPage() {
   const theme = useTheme();
   const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
   const isLargeScreen = useMediaQuery(theme.breakpoints.up("lg"));
+  const [expanded, setExpanded] = useState(null);
+
+  const handleChange = (panel) => (event, isExpanded) => {
+    setExpanded(isExpanded ? panel : null);
+  };
+  const features = [
+    {
+      icon: <DragDropIcon sx={{ fontSize: '2rem' }} />,
+      title: 'Drag & drop',
+      description: 'Keep all related project files in one workspace.'
+    },
+    {
+      icon: <NotificationsIcon sx={{ fontSize: '2rem' }} />,
+      title: 'Notifications',
+      description: 'Notify the right people about the updates they need.'
+    },
+    {
+      icon: <ClarityIcon sx={{ fontSize: '2rem' }} />,
+      title: 'Find clarity',
+      description: 'Everyone can have a "bird\'s eye view" of tasks and deadlines.'
+    },
+    {
+      icon: <AiAutomationIcon sx={{ fontSize: '2rem' }} />,
+      title: 'AI automation',
+      description: 'Automate your tasks and optimize workflow with TaskWise AI.'
+    }
+  ];
+  const accordionItems = [
+    {
+      title: "How can TaskWise simplify my task management process?",
+      content: "TaskWise streamlines task organization through four key sections: Workspaces, where Projects are housed, Tasks are managed, and a dedicated Calendar section facilitates scheduling and planning."
+    },
+    {
+      title: "How can TaskWise simplify my task management process?",
+      content: "TaskWise streamlines task organization through four key sections: Workspaces, where Projects are housed, Tasks are managed, and a dedicated Calendar section facilitates scheduling and planning."
+    },
+    {
+      title: "How can TaskWise simplify my task management process?",
+      content: "TaskWise streamlines task organization through four key sections: Workspaces, where Projects are housed, Tasks are managed, and a dedicated Calendar section facilitates scheduling and planning."
+    },
+    {
+      title: "How can TaskWise simplify my task management process?",
+      content: "TaskWise streamlines task organization through four key sections: Workspaces, where Projects are housed, Tasks are managed, and a dedicated Calendar section facilitates scheduling and planning."
+    },
+    {
+      title: "How can TaskWise simplify my task management process?",
+      content: "TaskWise streamlines task organization through four key sections: Workspaces, where Projects are housed, Tasks are managed, and a dedicated Calendar section facilitates scheduling and planning."
+    }
+  ];
 
   return (
     <div>
@@ -132,7 +192,7 @@ function LandingPage() {
           </Box>
           <Box
             sx={{
-              px: isSmallScreen ? 0.5 : 1,
+              px: isSmallScreen ? 0.5 : 2,
               textAlign: isSmallScreen ? "center" : "left",
             }}
           >
@@ -147,6 +207,142 @@ function LandingPage() {
               }}
             />
           </Box>
+        </Container>
+      </Box>
+      <Box
+        sx={{
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center',
+          alignItems: 'center',
+          py: 4,
+          px: isSmallScreen ? 2 : 8,
+          backgroundColor: '#e0f7fa'
+        }}
+      >
+        {features.reduce((rows, feature, index) => {
+          if (index % 2 === 0) {
+            rows.push([]);
+          }
+          rows[rows.length - 1].push(feature);
+          return rows;
+        }, []).map((row, rowIndex) => (
+          <Box
+            key={rowIndex}
+            sx={{
+              display: 'flex',
+              flexDirection: isSmallScreen ? 'column' : 'row',
+              justifyContent: 'space-around',
+              alignItems: 'center',
+              width: '100%',
+              mb: 4
+            }}
+          >
+            {row.map((feature, index) => (
+              <Box
+                key={index}
+                sx={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  maxWidth: '350px',
+                  mb: isSmallScreen ? 4 : 0,
+                }}
+              >
+                <Box
+                  sx={{
+                    display: 'flex',
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                  }}
+                >
+                  {feature.icon}
+                  <Typography variant="h6" sx={{ fontWeight: 'bold', ml: 2 }}>
+                    {feature.title}
+                  </Typography>
+                </Box>
+                <Typography variant="body2" sx={{ mt: 1 }}>
+                  {feature.description}
+                </Typography>
+              </Box>
+            ))}
+          </Box>
+        ))}
+      </Box>
+      {/* Accordion Section */}
+      <Box
+        sx={{
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center',
+          alignItems: 'center',
+          py: 4,
+          px: isSmallScreen ? 2 : 8,
+          backgroundColor: '#ffffff',
+        }}
+      >
+        <Typography variant="h5" gutterBottom sx={{ fontWeight: 'bold', textAlign: 'center', mb: 4 }}>
+          Frequently Asked Questions
+        </Typography>
+        {accordionItems.map((item, index) => (
+          <Accordion
+            key={index}
+            expanded={expanded === `panel${index}`}
+            onChange={handleChange(`panel${index}`)}
+            sx={{ width: '100%', maxWidth: '800px', mb: 3, p: 2 }}
+          >
+            <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+              <Typography
+                variant="body1"
+                sx={{ fontWeight: 'bold', color: expanded === `panel${index}` ? 'blue' : 'inherit !important' }}
+              >
+                {item.title}
+              </Typography>
+            </AccordionSummary>
+            <AccordionDetails>
+              <Typography variant="body2">{item.content}</Typography>
+            </AccordionDetails>
+          </Accordion>
+        ))}
+
+      </Box>
+      <Box sx={{ backgroundColor: 'black', color: 'white', py: 3 }}>
+        <Container maxWidth="lg">
+          <Box display="flex" flexDirection={{ xs: 'column', sm: 'row' }} justifyContent="space-between" alignItems="center">
+            <Box display="flex" flexDirection="column" alignItems="center" mb={{ xs: 2, sm: 0 }}>
+              <img src={Logo} alt="Task Wise Logo" style={{ width: 100, height: 'auto' }} /> {/* Increased logo size */}
+              <Typography variant="body2" align="center" sx={{ fontSize: '0.8rem' }}> {/* Reduced font size */}
+                AI-Powered Task Management Board
+              </Typography>
+            </Box>
+            <Box display="flex" flexDirection="column" alignItems={{ xs: 'center', sm: 'flex-start' }}>
+              <Typography variant="h6" gutterBottom sx={{ fontSize: '1rem' }}>Products</Typography> {/* Reduced font size */}
+              <Link href="#" color="inherit" underline="hover" sx={{ fontSize: '0.9rem' }}> {/* Reduced font size */}
+                About
+              </Link>
+              <Link href="#" color="inherit" underline="hover" sx={{ fontSize: '0.9rem' }}> {/* Reduced font size */}
+                Support
+              </Link>
+            </Box>
+            <Box display="flex" flexDirection="column" alignItems={{ xs: 'center', sm: 'flex-start' }}>
+              <Typography variant="h6" gutterBottom sx={{ fontSize: '1rem' }}>Useful Links</Typography> {/* Reduced font size */}
+              <Link href="#" color="inherit" underline="hover" sx={{ fontSize: '0.9rem' }}> {/* Reduced font size */}
+                Privacy Policy
+              </Link>
+              <Link href="#" color="inherit" underline="hover" sx={{ fontSize: '0.9rem' }}> {/* Reduced font size */}
+                Terms of Use
+              </Link>
+            </Box>
+            <Box mt={2} display="flex" justifyContent="center">
+            <Link href="https://instagram.com" color="inherit" sx={{ mx: 1 }}>
+              <InstagramIcon fontSize="small" /> {/* Reduced icon size */}
+            </Link>
+            <Link href="https://twitter.com" color="inherit" sx={{ mx: 1 }}>
+              <TwitterIcon fontSize="small" /> {/* Reduced icon size */}
+            </Link>
+          </Box>
+          </Box>
+          
         </Container>
       </Box>
     </div>
