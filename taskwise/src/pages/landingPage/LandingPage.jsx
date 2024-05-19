@@ -73,12 +73,13 @@ function LandingPage() {
         </AppBar>
       </Box>
       <Box sx={{ p: isSmallScreen ? 1 : isLargeScreen ? 2 : 2 }}>
-        <Grid container spacing={0} alignItems="center">
-          <Grid item xs={12} md={6} sx={{ px: isSmallScreen ? 0.5 : 1 }}>
+        <Grid container spacing={0} alignItems="center" textAlign={"center"}>
+          <Grid item xs={12} md={6} sx={{ px: isSmallScreen ? 0.5 : 1 }} >
             <Typography
               variant={isSmallScreen ? "h5" : isLargeScreen ? "h3" : "h4"}
               gutterBottom
               sx={{ fontWeight: "bold" }}
+              
             >
               AI Task management
             </Typography>
@@ -96,8 +97,8 @@ function LandingPage() {
             >
               Teams
             </Typography>
-            <Box sx={{ pl: isSmallScreen ? 0 : 1 }}>
-              <ul style={{ margin: 0, paddingLeft: isSmallScreen ? 16 : 16 }}>
+            <Box sx={{ pl: isSmallScreen ? 0 : 1 }} textAlign={"Left"}>
+              <ul style={{ margin: 0, paddingLeft: isSmallScreen ? 16 : 16,  listStyleType: 'none' }}>
                 <li>Simple to use, powerful when you need it</li>
                 <li>Manage multiple complex projects</li>
                 <li>Scales into a full platform</li>
