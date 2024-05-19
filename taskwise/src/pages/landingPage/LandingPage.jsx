@@ -4,7 +4,6 @@ import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
-import Grid from "@mui/material/Grid";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { useTheme } from "@mui/material/styles";
 import List from "@mui/material/List";
@@ -14,6 +13,7 @@ import ListItemText from "@mui/material/ListItemText";
 import TaskAltIcon from "@mui/icons-material/TaskAlt";
 import Logo from "../../assets/Logo.png";
 import board from "../../assets/board.png";
+import { Container } from "@mui/material";
 
 function LandingPage() {
   const theme = useTheme();
@@ -30,16 +30,8 @@ function LandingPage() {
                 src={Logo}
                 alt="Taskwise Logo"
                 style={{
-                  width: isSmallScreen
-                    ? "48px"
-                    : isLargeScreen
-                    ? "88px"
-                    : "68px",
-                  height: isSmallScreen
-                    ? "45px"
-                    : isLargeScreen
-                    ? "85px"
-                    : "65px",
+                  width: isSmallScreen ? "48px" : isLargeScreen ? "88px" : "68px",
+                  height: isSmallScreen ? "45px" : isLargeScreen ? "85px" : "65px",
                 }}
               />
             </Box>
@@ -77,10 +69,28 @@ function LandingPage() {
           </Toolbar>
         </AppBar>
       </Box>
-      <Box sx={{ p: isSmallScreen ? 1 : isLargeScreen ? 2 : 2 }}>
-        <Grid container spacing={0} alignItems="center" sx={{ pl: 12, pt: isSmallScreen ? 1 : isLargeScreen ? 3 : 2}}>
-          <grid xs={0} md={2}></grid> 
-          <Grid item xs={12} md={4} sx={{ px: isSmallScreen ? 1 : 1.5 }}>
+      <Box
+        sx={{
+          pt: isSmallScreen ? 1 : isLargeScreen ? 2 : 2,
+          pb: 2,
+          px: isSmallScreen ? 1 : isLargeScreen ? 4 : 2,
+        }}
+      >
+        <Container
+          sx={{
+            display: "flex",
+            flexDirection: isSmallScreen ? "column" : "row",
+            alignItems: "center",
+            pl: isLargeScreen ? 12 : 0,
+            pt: isSmallScreen ? 1 : isLargeScreen ? 3 : 2,
+          }}
+        >
+          <Box
+            sx={{
+              px: isSmallScreen ? 1 : 1.5,
+              textAlign: isSmallScreen ? "center" : "left",
+            }}
+          >
             <Typography
               variant={isSmallScreen ? "h6" : isLargeScreen ? "h4" : "h5"}
               gutterBottom
@@ -114,13 +124,18 @@ function LandingPage() {
                     <ListItemIcon sx={{ minWidth: "30px" }}>
                       <TaskAltIcon />
                     </ListItemIcon>
-                    <ListItemText primary={text} sx={{ fontWeight: "bold" }}/>
+                    <ListItemText primary={text} sx={{ fontWeight: "bold" }} />
                   </ListItem>
                 ))}
               </List>
             </Box>
-          </Grid>
-          <Grid item xs={12} md={6} sx={{ px: isSmallScreen ? 0.5 : 1 }}>
+          </Box>
+          <Box
+            sx={{
+              px: isSmallScreen ? 0.5 : 1,
+              textAlign: isSmallScreen ? "center" : "left",
+            }}
+          >
             <img
               src={board}
               alt="board"
@@ -131,9 +146,8 @@ function LandingPage() {
                 marginTop: 0,
               }}
             />
-          </Grid>
-          
-        </Grid>
+          </Box>
+        </Container>
       </Box>
     </div>
   );
