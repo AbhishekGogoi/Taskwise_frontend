@@ -78,17 +78,17 @@ function LandingPage() {
         </AppBar>
       </Box>
       <Box sx={{ p: isSmallScreen ? 1 : isLargeScreen ? 2 : 2 }}>
-        <Grid container spacing={0} alignItems="center" sx={{ pl: 12 }}>
-          <Grid item xs={12} md={6} sx={{ px: isSmallScreen ? 0.5 : 1 }}>
+        <Grid container spacing={0} alignItems="center" sx={{ pl: 12, pt: isSmallScreen ? 1 : isLargeScreen ? 3 : 2}}>
+          <Grid item xs={12} md={6} sx={{ px: isSmallScreen ? 1 : 1.5 }}>
             <Typography
-              variant={isSmallScreen ? "h5" : isLargeScreen ? "h3" : "h4"}
+              variant={isSmallScreen ? "h6" : isLargeScreen ? "h4" : "h5"}
               gutterBottom
               sx={{ fontWeight: "bold" }}
             >
               AI Task management
             </Typography>
             <Typography
-              variant={isSmallScreen ? "h5" : isLargeScreen ? "h3" : "h4"}
+              variant={isSmallScreen ? "h6" : isLargeScreen ? "h4" : "h5"}
               gutterBottom
               sx={{ fontWeight: "bold" }}
             >
@@ -109,11 +109,11 @@ function LandingPage() {
                   "Scales into a full platform",
                   "Generate your Tasks with TaskWise AI",
                 ].map((text, index) => (
-                  <ListItem key={index} sx={{ padding: 0, marginBottom: "20px" }}>
-                    <ListItemIcon>
+                  <ListItem key={index} sx={{ padding: 0, marginBottom: "10px" }}>
+                    <ListItemIcon sx={{ minWidth: "30px" }}>
                       <TaskAltIcon />
                     </ListItemIcon>
-                    <ListItemText primary={text} />
+                    <ListItemText primary={text} sx={{ fontWeight: "bold" }}/>
                   </ListItem>
                 ))}
               </List>
