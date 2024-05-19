@@ -7,9 +7,13 @@ import Button from "@mui/material/Button";
 import Grid from "@mui/material/Grid";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { useTheme } from "@mui/material/styles";
+import List from "@mui/material/List";
+import ListItem from "@mui/material/ListItem";
+import ListItemIcon from "@mui/material/ListItemIcon";
+import ListItemText from "@mui/material/ListItemText";
+import TaskAltIcon from "@mui/icons-material/TaskAlt";
 import Logo from "../../assets/Logo.png";
 import board from "../../assets/board.png";
-import TaskAltIcon from "@mui/icons-material/TaskAlt";
 
 function LandingPage() {
   const theme = useTheme();
@@ -74,7 +78,7 @@ function LandingPage() {
         </AppBar>
       </Box>
       <Box sx={{ p: isSmallScreen ? 1 : isLargeScreen ? 2 : 2 }}>
-        <Grid container spacing={0} alignItems="center" sx={{ p: 12 }}>
+        <Grid container spacing={0} alignItems="center" sx={{ pl: 12 }}>
           <Grid item xs={12} md={6} sx={{ px: isSmallScreen ? 0.5 : 1 }}>
             <Typography
               variant={isSmallScreen ? "h5" : isLargeScreen ? "h3" : "h4"}
@@ -98,26 +102,21 @@ function LandingPage() {
               Teams
             </Typography>
             <Box sx={{ pl: 0, pt: 2 }}>
-              <ul
-                style={{
-                  margin: 0,
-                  paddingLeft: isSmallScreen ? 16 : 16,
-                  listStyleType: "none",
-                }}
-              >
-                <li style={{ marginBottom: "20px" }}>
-                  Simple to use, powerful when you need it
-                </li>
-                <li style={{ marginBottom: "20px" }}>
-                  Manage multiple complex projects
-                </li>
-                <li style={{ marginBottom: "20px" }}>
-                  Scales into a full platform
-                </li>
-                <li style={{ marginBottom: "20px" }}>
-                  Generate your Tasks with TaskWise AI
-                </li>
-              </ul>
+              <List sx={{ margin: 0, paddingLeft: isSmallScreen ? 1 : 1 }}>
+                {[
+                  "Simple to use, powerful when you need it",
+                  "Manage multiple complex projects",
+                  "Scales into a full platform",
+                  "Generate your Tasks with TaskWise AI",
+                ].map((text, index) => (
+                  <ListItem key={index} sx={{ padding: 0, marginBottom: "20px" }}>
+                    <ListItemIcon>
+                      <TaskAltIcon />
+                    </ListItemIcon>
+                    <ListItemText primary={text} />
+                  </ListItem>
+                ))}
+              </List>
             </Box>
           </Grid>
           <Grid item xs={12} md={6} sx={{ px: isSmallScreen ? 0.5 : 1 }}>
