@@ -79,7 +79,8 @@ function LandingPage() {
       </Box>
       <Box sx={{ p: isSmallScreen ? 1 : isLargeScreen ? 2 : 2 }}>
         <Grid container spacing={0} alignItems="center" sx={{ pl: 12, pt: isSmallScreen ? 1 : isLargeScreen ? 3 : 2}}>
-          <Grid item xs={12} md={6} sx={{ px: isSmallScreen ? 1 : 1.5 }}>
+          <grid xs={0} md={2}></grid> 
+          <Grid item xs={12} md={4} sx={{ px: isSmallScreen ? 1 : 1.5 }}>
             <Typography
               variant={isSmallScreen ? "h6" : isLargeScreen ? "h4" : "h5"}
               gutterBottom
@@ -131,6 +132,7 @@ function LandingPage() {
               }}
             />
           </Grid>
+          
         </Grid>
       </Box>
     </div>
