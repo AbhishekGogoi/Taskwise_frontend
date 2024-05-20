@@ -36,10 +36,16 @@ function Header() {
   };
 
   return (
-    <AppBar position="static">
+    <AppBar position="static" sx={{ height: 56 }}>
       <Container maxWidth="xl">
-        <Toolbar disableGutters>
-          <AdbIcon sx={{ display: { xs: "none", md: "flex" }, mr: 1 }} />
+        <Toolbar disableGutters sx={{ minHeight: 56 }}>
+          <AdbIcon
+            sx={{
+              display: { xs: "none", md: "flex" },
+              mr: 1,
+              alignSelf: "center",
+            }}
+          />
           <Typography
             variant="h6"
             noWrap
@@ -53,12 +59,19 @@ function Header() {
               letterSpacing: ".3rem",
               color: "inherit",
               textDecoration: "none",
+              alignSelf: "center",
             }}
           >
             LOGO
           </Typography>
 
-          <Box sx={{ flexGrow: 1, display: { xs: "flex", md: "none" } }}>
+          <Box
+            sx={{
+              flexGrow: 1,
+              display: { xs: "flex", md: "none" },
+              alignItems: "center",
+            }}
+          >
             <IconButton
               size="large"
               aria-label="account of current user"
@@ -94,7 +107,13 @@ function Header() {
               ))}
             </Menu>
           </Box>
-          <AdbIcon sx={{ display: { xs: "flex", md: "none" }, mr: 1 }} />
+          <AdbIcon
+            sx={{
+              display: { xs: "flex", md: "none" },
+              mr: 1,
+              alignSelf: "center",
+            }}
+          />
           <Typography
             variant="h5"
             noWrap
@@ -109,23 +128,35 @@ function Header() {
               letterSpacing: ".3rem",
               color: "inherit",
               textDecoration: "none",
+              alignSelf: "center",
             }}
           >
             LOGO
           </Typography>
-          <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
+          <Box
+            sx={{
+              flexGrow: 1,
+              display: { xs: "none", md: "flex" },
+              alignItems: "center",
+            }}
+          >
             {pages.map((page) => (
               <Button
                 key={page}
                 onClick={handleCloseNavMenu}
-                sx={{ my: 2, color: "white", display: "block" }}
+                sx={{
+                  my: 2,
+                  color: "white",
+                  display: "block",
+                  alignSelf: "center",
+                }}
               >
                 {page}
               </Button>
             ))}
           </Box>
 
-          <Box sx={{ flexGrow: 0 }}>
+          <Box sx={{ flexGrow: 0, display: "flex", alignItems: "center" }}>
             <Tooltip title="Open settings">
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
                 <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg" />
