@@ -1,7 +1,7 @@
 // Login.js
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Button, Container, Typography } from '@mui/material';
+import { Button, Container } from '@mui/material';
 
 const Login = () => {
   const navigate = useNavigate();
@@ -22,16 +22,13 @@ const Login = () => {
         marginTop: 8,
       }}
     >
-      <Typography component="h1" variant="h5">
-        Login
-      </Typography>
       <Button
         variant="contained"
         color="primary"
         onClick={handleLogin}
         sx={{ mt: 3 }}
       >
-        Login
+        Test The Workspace
       </Button>
     </Container>
   );
