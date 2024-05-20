@@ -1,0 +1,99 @@
+
+/* Header.css */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 20px; /* Consistent padding */
+  background-color: #ffffff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  height: 80px;
+  position: fixed;
+  width: 100%;
+  top: 0; /* Ensure the header is fixed at the top */
+  left: 0;
+  z-index: 1; /* Ensure the header is above other elements */
+}
+
+.left-side {
+  display: flex;
+  align-items: center;
+}
+
+.logo-icon {
+  width: 200px;
+  height: auto; /* Maintain aspect ratio */
+}
+
+.right-side {
+  display: flex;
+  align-items: center;
+}
+
+.notification-icon {
+  width: 40px;
+  height: 40px;
+  margin-right: 20px;
+  font-size: 50px;
+}
+
+.account-container {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  padding-right: 60px;
+}
+
+.account-image {
+  width: 40px;
+  height: 40px;
+}
+
+.dropdown-arrow {
+  width: 10px;
+  height: 5.5px;
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+  .header {
+      flex-wrap: wrap;
+      padding: 10px;
+  }
+
+  .left-side, .right-side {
+      flex: 1;
+  }
+
+  .logo-icon {
+      width: 150px;
+  }
+
+  .right-side {
+      margin-top: 10px;
+  }
+
+  .notification-icon {
+      margin-right: 10px;
+      margin-left: auto;
+  }
+
+  .account-container {
+      padding-right: 10px;
+  }
+}
+
+@media (max-width: 480px) {
+  .logo-icon {
+      width: 100px;
+  }
+
+  .notification-icon, .dropdown-arrow {
+      font-size: 10px;
+  }
+
+  .account-image {
+      width: 25px;
+      height: 25px;
+  }
+}
