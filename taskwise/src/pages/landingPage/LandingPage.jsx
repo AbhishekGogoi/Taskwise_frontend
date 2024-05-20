@@ -235,7 +235,7 @@ function LandingPage() {
       </Box>
       <Box
         sx={{
-          pt: isSmallScreen ? 1 : isLargeScreen ? 2 : 2,
+          pt: isSmallScreen ? 1 : isLargeScreen ? 20 : 20,
           pb: 2,
           px: isSmallScreen ? 1 : isLargeScreen ? 4 : 2,
         }}
@@ -353,7 +353,7 @@ function LandingPage() {
       </Box>
       <Box
         sx={{
-          pt: isSmallScreen ? 1 : isLargeScreen ? 2 : 2,
+          pt: isSmallScreen ? 1 : isLargeScreen ? 20 : 20,
           pb: 2,
           px: isSmallScreen ? 1 : isLargeScreen ? 4 : 2,
         }}
@@ -445,7 +445,7 @@ function LandingPage() {
       </Box>
       <Box
         sx={{
-          pt: isSmallScreen ? 1 : isLargeScreen ? 2 : 2,
+          pt: isSmallScreen ? 1 : isLargeScreen ? 20 : 20,
           pb: 2,
           px: isSmallScreen ? 1 : isLargeScreen ? 4 : 2,
         }}
@@ -547,6 +547,7 @@ function LandingPage() {
           py: 4,
           px: isSmallScreen ? 2 : 8,
           backgroundColor: "#e0f7fa",
+          mt: 10,
         }}
       >
         {features
@@ -567,6 +568,7 @@ function LandingPage() {
                 alignItems: "center",
                 width: "100%",
                 mb: 4,
+                pt: 4,
               }}
             >
               {row.map((feature, index) => (
@@ -611,7 +613,7 @@ function LandingPage() {
           gap: isSmallScreen ? 2 : 4, // Adjust gap based on screen size
         }}
       >
-        <Box sx={{ paddingTop: 30 }}>
+        <Box sx={{ paddingTop: 20 }}>
           <Typography
             variant={isSmallScreen ? "h4" : isLargeScreen ? "h2" : "h3"}
             gutterBottom
