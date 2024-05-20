@@ -235,7 +235,7 @@ function LandingPage() {
       </Box>
       <Box
         sx={{
-          pt: isSmallScreen ? 1 : isLargeScreen ? 20 : 20,
+          pt: isSmallScreen ? 1 : isLargeScreen ? 10 : 10,
           pb: 2,
           px: isSmallScreen ? 1 : isLargeScreen ? 4 : 2,
         }}
@@ -255,12 +255,12 @@ function LandingPage() {
             sx={{
               fontWeight: "bold",
               fontSize: isSmallScreen
-                ? "1.25rem"
+                ? "1.50rem"
                 : isLargeScreen
-                ? "1.75rem"
-                : "1.25rem",
-              color: "#110D59",
+                ? "2.0rem"
+                : "1.50rem",
               textAlign: "center",
+              pb: 5,
             }}
           >
             Features for accurate tracking and process optimization
@@ -292,7 +292,7 @@ function LandingPage() {
                   color: "#110D59",
                 }}
               >
-                Track Workflows with
+                Track Workflows
               </Typography>
               <Typography
                 variant={isSmallScreen ? "h6" : isLargeScreen ? "h4" : "h5"}
@@ -307,7 +307,7 @@ function LandingPage() {
                   color: "#110D59",
                 }}
               >
-                Projects
+                with Projects
               </Typography>
               <Typography
                 variant={
@@ -324,11 +324,8 @@ function LandingPage() {
                   color: "#110D59",
                 }}
               >
-                Kanban style board lets you visualize the
-                <br />
-                status of all issues quickly and stop
-                <br />
-                bottlenecks in their tracks.
+                Kanban style board lets you visualize the status of all issues
+                quickly and stop bottlenecks in their tracks.
               </Typography>
             </Box>
             <Box
@@ -434,11 +431,8 @@ function LandingPage() {
                 color: "#110D59",
               }}
             >
-              Plan tasks and milestones with Gantt
-              <br />
-              charts, and see if you're on target with
-              <br />
-              burndown charts.
+              Plan tasks and milestones with Gantt charts, and see if you're on
+              target with burndown charts.
             </Typography>
           </Box>
         </Container>
@@ -509,13 +503,8 @@ function LandingPage() {
                 color: "#110D59",
               }}
             >
-              Empower your team with
-              <br />
-              TaskWise's dynamic workspace,
-              <br />
-              enabling seamless collaboration
-              <br />
-              and organization
+              Empower your team with TaskWise's dynamic workspace, enabling
+              seamless collaboration and organization
             </Typography>
           </Box>
           <Box
@@ -699,7 +688,7 @@ function LandingPage() {
         <Typography
           variant="h5"
           gutterBottom
-          sx={{ fontWeight: "bold", textAlign: "center", mb: 4 }}
+          sx={{ fontWeight: "bold", textAlign: "center", mb: 4, pt: 10, pb: 4 }}
         >
           Frequently Asked Questions
         </Typography>
