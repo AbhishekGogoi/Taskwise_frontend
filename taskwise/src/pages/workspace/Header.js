@@ -38,13 +38,13 @@ const ProfileImg = styled('img')(({ theme }) => ({
   borderRadius: '50%',
   width: '40px',
   height: '40px',
-  marginLeft: theme.spacing(1),
+  marginLeft: theme.spacing(2),
 }));
 
 const Header = () => {
   return (
     <Root>
-      <AppBar position="static" sx={{ backgroundColor: 'white', color: 'black' }}>
+      <AppBar position="fixed" sx={{ backgroundColor: 'white', color: 'black' }}>
         <Toolbar>
           <Logo src={LogoImage} alt="Logo" />
           <SectionRight>

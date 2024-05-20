@@ -1,13 +1,18 @@
+// App.js
 import React from 'react';
-import './App.css';
-import Header from './pages/workspace/Header';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import Login from './pages/workspace/Login';
+import Workspace from './pages/workspace/Workspace';
 
-function App() {
+const App = () => {
   return (
-    <div className="App">
-      <Header />
-    </div>
+    <Router>
+      <Routes>
+        <Route path="/" element={<Login />} />
+        <Route path="/workspace" element={<Workspace />} />
+      </Routes>
+    </Router>
   );
-}
+};
 
 export default App;
