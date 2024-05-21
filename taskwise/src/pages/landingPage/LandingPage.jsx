@@ -19,7 +19,7 @@ import WorkspaceView from "../../assets/WorkspaceView.png";
 import AIImage1 from "../../assets/AIImage1.png";
 import AIImage2 from "../../assets/AIImage2.png";
 import AIImage3 from "../../assets/AIImage3.png";
-import { Container, Grid, Link } from "@mui/material";
+import { Container, Link } from "@mui/material";
 import DragDropIcon from "@mui/icons-material/DragIndicator";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import ClarityIcon from "@mui/icons-material/Visibility";

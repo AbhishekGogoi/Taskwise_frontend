@@ -11,7 +11,9 @@ import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
-import AdbIcon from "@mui/icons-material/Adb";
+import NotificationsIcon from "@mui/icons-material/Notifications";
+import LogoImage from "../assets/TaskWiseLogo.png";
+import ProfileImage from "../assets/sample-pi.png";
 
 const pages = ["Products", "Pricing", "Blog"];
 const settings = ["Settings", "Logout"];
@@ -36,27 +38,15 @@ function Header() {
   };
 
   return (
-    <AppBar position="static">
+    <AppBar position="static" sx={{ backgroundColor: 'white' }}>
       <Container maxWidth="xl">
         <Toolbar disableGutters>
-          <AdbIcon sx={{ display: { xs: "none", md: "flex" }, mr: 1 }} />
-          <Typography
-            variant="h6"
-            noWrap
-            component="a"
-            href="#app-bar-with-responsive-menu"
-            sx={{
-              mr: 2,
-              display: { xs: "none", md: "flex" },
-              fontFamily: "monospace",
-              fontWeight: 700,
-              letterSpacing: ".3rem",
-              color: "inherit",
-              textDecoration: "none",
-            }}
-          >
-            LOGO
-          </Typography>
+          <Box
+            component="img"
+            sx={{ display: { xs: "none", md: "flex" }, mr: 1, height: 80, width: 250 }} // Adjust height and width as needed
+            alt="Logo"
+            src={LogoImage}
+          />
 
           <Box sx={{ flexGrow: 1, display: { xs: "flex", md: "none" } }}>
             <IconButton
@@ -94,41 +84,34 @@ function Header() {
               ))}
             </Menu>
           </Box>
-          <AdbIcon sx={{ display: { xs: "flex", md: "none" }, mr: 1 }} />
-          <Typography
-            variant="h5"
-            noWrap
-            component="a"
-            href="#app-bar-with-responsive-menu"
-            sx={{
-              mr: 2,
-              display: { xs: "flex", md: "none" },
-              flexGrow: 1,
-              fontFamily: "monospace",
-              fontWeight: 700,
-              letterSpacing: ".3rem",
-              color: "inherit",
-              textDecoration: "none",
-            }}
-          >
-            LOGO
-          </Typography>
+          <Box
+            component="img"
+            sx={{ display: { xs: "flex", md: "none" }, mr: 1, height: 40, width: 40 }} // Adjust height and width as needed
+            alt="Logo"
+            src={LogoImage}
+          />
+
           <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
             {pages.map((page) => (
               <Button
                 key={page}
                 onClick={handleCloseNavMenu}
-                sx={{ my: 2, color: "white", display: "block" }}
+                sx={{ my: 2, color: "black", display: "block" }}
               >
                 {page}
               </Button>
             ))}
           </Box>
 
-          <Box sx={{ flexGrow: 0 }}>
+          <Box sx={{ flexGrow: 0, display: "flex", alignItems: "center" }}>
+            <Tooltip title="Notifications">
+              <IconButton sx={{ p: 1, mr: 3 }}>
+                <NotificationsIcon sx={{ fontSize: 30, color: "black" }} /> {/* Increase icon size */}
+              </IconButton>
+            </Tooltip>
             <Tooltip title="Open settings">
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg" />
+                <Avatar alt="Profile Image" src={ProfileImage} />
               </IconButton>
             </Tooltip>
             <Menu
