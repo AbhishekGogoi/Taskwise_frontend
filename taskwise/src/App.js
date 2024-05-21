@@ -19,14 +19,11 @@ const theme = createTheme({
 
 function AppLayout() {
   const location = useLocation();
-
-  // Check if the current path is the landing page
-  const isLandingPage = location.pathname === "/";
-
+  const isLandingPage = ["/", "/login", "/signup"].includes(location.pathname);
   return (
     <>
       {!isLandingPage && <Header />}
-      <div>
+      <div style={isLandingPage ? {} : { display: "flex" }}>
         {!isLandingPage && <Sidebar />}
         <main>
           <Routes>
