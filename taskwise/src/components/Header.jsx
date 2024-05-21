@@ -13,7 +13,6 @@ import NotificationsIcon from "@mui/icons-material/Notifications";
 import LogoImage from "../assets/TaskWiseLogo.png";
 import ProfileImage from "../assets/sample-pi.png";
 
-
 const settings = ["Settings", "Logout"];
 
 function Header() {
@@ -23,41 +22,67 @@ function Header() {
     setAnchorElUser(event.currentTarget);
   };
 
-
   const handleCloseUserMenu = () => {
     setAnchorElUser(null);
   };
 
   return (
-    <AppBar position="static" sx={{ backgroundColor: 'white' }}>
-      <Container maxWidth="xl">
-        <Toolbar disableGutters>
+    <AppBar position="static" sx={{ backgroundColor: "white" }}>
+      <Toolbar
+        disableGutters
+        sx={{ display: "flex", justifyContent: "space-between" }}
+      >
+        <Box sx={{ display: "flex", alignItems: "center" }}>
           <Box
             component="img"
-            sx={{ display: { xs: "none", md: "flex" }, mr: 1, height: 80, width: 250 }} // Adjust height and width as needed
+            sx={{
+              display: { xs: "none", md: "flex" },
+              mr: 1,
+              height: { xs: 40, md: 50, lg: 60, xl: 70 },
+            }}
             alt="Logo"
             src={LogoImage}
           />
-
-         
-          <Box
-            component="img"
-            sx={{ display: { xs: "flex", md: "none" }, mr: 1, height: 40, width: 40 }} // Adjust height and width as needed
-            alt="Logo"
-            src={LogoImage}
-          />
-
-    
-
+          <Typography
+            variant="h6"
+            noWrap
+            component="div"
+            sx={{
+              display: { xs: "flex", md: "none" },
+              flexGrow: 1,
+              fontSize: {
+                xs: "1.25rem",
+                md: "1.5rem",
+                lg: "1.75rem",
+                xl: "2rem",
+              },
+            }}
+          >
+            TaskWise
+          </Typography>
+        </Box>
+        <Box sx={{ display: "flex", alignItems: "center" }}>
           <Box sx={{ flexGrow: 0, display: "flex", alignItems: "center" }}>
             <Tooltip title="Notifications">
-              <IconButton sx={{ p: 1, mr: 3 }}>
-                <NotificationsIcon sx={{ fontSize: 30, color: "black" }} /> {/* Increase icon size */}
+              <IconButton sx={{ p: 1, mr: { xs: 1, md: 3, lg: 4, xl: 5 } }}>
+                <NotificationsIcon
+                  sx={{
+                    fontSize: { xs: 25, md: 30, lg: 35, xl: 40 },
+                    color: "black",
+                  }}
+                />
               </IconButton>
             </Tooltip>
             <Tooltip title="Open settings">
-              <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                <Avatar alt="Profile Image" src={ProfileImage} />
+              <IconButton onClick={handleOpenUserMenu} sx={{ pr: 5 }}>
+                <Avatar
+                  alt="Profile Image"
+                  src={ProfileImage}
+                  sx={{
+                    width: { xs: 30, md: 40, lg: 50, xl: 60 },
+                    height: { xs: 30, md: 40, lg: 50, xl: 60 },
+                  }}
+                />
               </IconButton>
             </Tooltip>
             <Menu
@@ -83,8 +108,8 @@ function Header() {
               ))}
             </Menu>
           </Box>
-        </Toolbar>
-      </Container>
+        </Box>
+      </Toolbar>
     </AppBar>
   );
 }
