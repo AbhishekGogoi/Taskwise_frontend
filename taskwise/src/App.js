@@ -2,8 +2,14 @@ import "./App.css";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import Header from "./components/Header";
 import Sidebar from "./components/Sidebar";
-import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  useLocation,
+} from "react-router-dom";
 import ProjectPage from "./pages/Project/ProjectPage";
+import LandingPage from "./pages/landingPage/LandingPage";
 
 const theme = createTheme({
   typography: {
@@ -15,12 +21,12 @@ function AppLayout() {
   const location = useLocation();
 
   // Check if the current path is the landing page
-  const isLandingPage = location.pathname === '/';
+  const isLandingPage = location.pathname === "/";
 
   return (
     <>
       {!isLandingPage && <Header />}
-      <div style={{ display: 'flex' }}>
+      <div>
         {!isLandingPage && <Sidebar />}
         <main>
           <Routes>
