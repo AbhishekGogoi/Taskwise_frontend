@@ -1,6 +1,5 @@
 import "./App.css";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
-import LandingPage from "./pages/landingPage/LandingPage";
 import Header from "./components/Header";
 import Sidebar from "./components/Sidebar";
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
