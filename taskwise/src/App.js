@@ -10,6 +10,9 @@ import {
 } from "react-router-dom";
 import ProjectPage from "./pages/Project/ProjectPage";
 import LandingPage from "./pages/landingPage/LandingPage";
+import WorkspacesPage from "./pages/Workspaces/Workspaces";
+import MyTaskPage from "./pages/MyTaskPage/MyTaskPage";
+import CalendarPage from "./pages/CalendarPage/CalendarPage";
 
 const theme = createTheme({
   typography: {
@@ -29,6 +32,9 @@ function AppLayout() {
           <Routes>
             <Route path="/" element={<LandingPage />} />
             <Route path="/projects" element={<ProjectPage />} />
+            <Route path="/workspaces" element={<WorkspacesPage />} />
+            <Route path="/my-tasks" element={<MyTaskPage />} />
+            <Route path="/calendar" element={<CalendarPage />} />
           </Routes>
         </main>
       </div>
