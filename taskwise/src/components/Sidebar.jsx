@@ -1,6 +1,9 @@
 import React from 'react';
 import { Box, List, ListItem, ListItemButton, ListItemIcon, ListItemText } from '@mui/material';
 import Projects_white from "../assets/Projects_white.png";
+import WorkspaceIconWhite from "../assets/WorkspaceIconWhite.png";
+import MyTaskIconWhite from "../assets/MyTaskIconWhite.png";
+import CalendarWhite from "../assets/CalendarWhite.png";
 import "./Sidebar.css"
 
 function Sidebar() {
@@ -21,7 +24,7 @@ function Sidebar() {
                 <ListItem>
                     <ListItemButton className="list-item-button">
                         <ListItemIcon>
-                            <img src={Projects_white} alt="Projects" className="list-item-img" />
+                            <img src={WorkspaceIconWhite} alt="Workspaces" className="list-item-img" />
                         </ListItemIcon>
                         <ListItemText
                             primary="Workspaces"
@@ -32,7 +35,7 @@ function Sidebar() {
                 <ListItem>
                     <ListItemButton className="list-item-button">
                         <ListItemIcon>
-                            <img src={Projects_white} alt="Projects" className="list-item-img" />
+                            <img src={MyTaskIconWhite} alt="My_Tasks" className="list-item-img" />
                         </ListItemIcon>
                         <ListItemText
                             primary="My Tasks"
@@ -43,7 +46,7 @@ function Sidebar() {
                 <ListItem>
                     <ListItemButton className="list-item-button">
                         <ListItemIcon>
-                            <img src={Projects_white} alt="Projects" className="list-item-img" />
+                            <img src={CalendarWhite} alt="Calendar" className="list-item-img" />
                         </ListItemIcon>
                         <ListItemText
                             primary="Calendar"

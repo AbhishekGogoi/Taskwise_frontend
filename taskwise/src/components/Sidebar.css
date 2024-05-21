@@ -6,6 +6,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
+    padding-top: 25px;
 }
 
 .sidebar .list-item-button:hover {
@@ -29,9 +30,9 @@
 
 
 .list-item-img {
-    width: 30px;
+    width: 25px;
 }
 
 .list-item-text {
-    font-size: 1.2rem;
+    font-size: 1rem;
 }

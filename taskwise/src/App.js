@@ -26,7 +26,7 @@ function AppLayout() {
   return (
     <>
       {!isLandingPage && <Header />}
-      <div>
+      <div style={{ display: "flex" }}>
         {!isLandingPage && <Sidebar />}
         <main>
           <Routes>
