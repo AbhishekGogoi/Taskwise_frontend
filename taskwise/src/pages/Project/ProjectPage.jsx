@@ -45,6 +45,17 @@ const Search = styled('div')(({ theme }) => ({
     width: '300px', // Expanded width on focus
   },
 }));
+const CustomBox = styled(Box)(({ theme }) => ({
+  width: '100%',
+  height: 'calc(100vh - 160px)',
+  overflowY: 'auto',
+  padding: theme.spacing(2),
+  '&::-webkit-scrollbar': {
+    display: 'none',
+  },
+  '-ms-overflow-style': 'none',  // IE and Edge
+  'scrollbar-width': 'none',     // Firefox
+}));
 const projectsData = [
   {
     id: 1,
@@ -157,17 +168,15 @@ function ProjectPage() {
           </Search>
         </Box>
       </Paper>
-      
-        <Grid container spacing={3} marginTop={2}>
-          {
-            projectsData.map((project) => (
-              <Grid item key={project.id} xs={12} sm={6} md={3} lg={3}>
-                <ProjectCard project={project} />
-              </Grid>
-            ))}
+      <CustomBox>
+        <Grid container spacing={3}>
+          {projectsData.map((project) => (
+            <Grid item key={project.id} xs={12} sm={6} md={3} lg={3}>
+              <ProjectCard project={project} />
+            </Grid>
+          ))}
         </Grid>
-     
-
+      </CustomBox>
     </Box>
 
   );
