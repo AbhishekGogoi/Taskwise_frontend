@@ -25,10 +25,10 @@ function AppLayout() {
   const isLandingPage = ["/", "/login", "/signup"].includes(location.pathname);
   return (
     <>
-      {!isLandingPage && <Header />}
+      {!isLandingPage && <Header/>}
       <div style={isLandingPage ? {} : { display: "flex" }}>
-        {!isLandingPage && <Sidebar />}
-        <main>
+        {!isLandingPage && <Sidebar/>}
+        <main style={isLandingPage ? {} : { backgroundColor: "#f0f0f0", padding: "20px", flexGrow: 1 }}>
           <Routes>
             <Route path="/" element={<LandingPage />} />
             <Route path="/projects" element={<ProjectPage />} />
