@@ -13,6 +13,7 @@ import LandingPage from "./pages/landingPage/LandingPage";
 import WorkspacesPage from "./pages/Workspaces/Workspaces";
 import MyTaskPage from "./pages/MyTaskPage/MyTaskPage";
 import CalendarPage from "./pages/CalendarPage/CalendarPage";
+import LoginPage from "./pages/LoginPage/LoginPage";
 
 const theme = createTheme({
   typography: {
@@ -31,6 +32,7 @@ function AppLayout() {
         <main>
           <Routes>
             <Route path="/" element={<LandingPage />} />
+            <Route path="/login" element={<LoginPage />} />
             <Route path="/projects" element={<ProjectPage />} />
             <Route path="/workspaces" element={<WorkspacesPage />} />
             <Route path="/my-tasks" element={<MyTaskPage />} />
