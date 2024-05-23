@@ -217,15 +217,6 @@ const SignupPage = () => {
           Sign Up
         </StyledButton>
 
-        <StyledLink
-          href="#"
-          variant="body2"
-          sx={{ display: "block", textAlign: "center", marginTop: "1.5rem" }}
-        >
-          {/* Added styles to make the link block and centered */}
-          Forgot password?
-        </StyledLink>
-
         <StyledDivider sx={{ margin: "1rem 0" }}>or</StyledDivider>
 
         <StyledGoogleButton
