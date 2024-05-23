@@ -1,4 +1,5 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import {
   Container,
   Box,
@@ -71,7 +72,8 @@ const StyledLink = styled(Link)({
   fontWeight: 650,
   textDecoration: "none", // Remove default underline
   "&:hover": {
-    textDecoration: "underline", // Add underline on hover
+    textDecoration: "underline",
+    cursor: "pointer", // Add underline on hover
   }, // Example link color
 });
 
@@ -103,7 +105,8 @@ const StyledSignUpLink = styled(Link)({
   fontSize: "18px", // Semi-bold font weight
   textDecoration: "none", // Remove default underline
   "&:hover": {
-    textDecoration: "underline", // Add underline on hover
+    textDecoration: "underline",
+    cursor: "pointer", // Add underline on hover
   },
 });
 
@@ -114,6 +117,16 @@ const StyledButton = styled(Button)({
 
 // Component
 const LoginPage = () => {
+  const navigate = useNavigate();
+
+  const handleForgotPasswordClick = () => {
+    navigate("/forgotpassword"); // Navigate to forgot password page
+  };
+
+  const handleSignUpClick = () => {
+    navigate("/signup"); // Navigate to signup page
+  };
+
   return (
     <StyledContainer>
       <img
@@ -183,11 +196,10 @@ const LoginPage = () => {
         </StyledButton>
 
         <StyledLink
-          href="#"
+          onClick={handleForgotPasswordClick}
           variant="body2"
           sx={{ display: "block", textAlign: "center", marginTop: "1.5rem" }}
         >
-          {/* Added styles to make the link block and centered */}
           Forgot password?
         </StyledLink>
 
@@ -221,7 +233,11 @@ const LoginPage = () => {
         >
           Don't have an account?
         </Typography>
-        <StyledSignUpLink href="#" variant="body2" sx={{ marginTop: "0.3rem" }}>
+        <StyledSignUpLink
+          onClick={handleSignUpClick}
+          variant="body2"
+          sx={{ marginTop: "0.3rem" }}
+        >
           Sign Up
         </StyledSignUpLink>
       </Box>

@@ -1,4 +1,5 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
@@ -47,6 +48,12 @@ const CopyrightText = styled(Typography)(({ theme }) => ({
 }));
 
 const ConfirmationPage = () => {
+  const navigate = useNavigate();
+
+  const handleSubmit = () => {
+    navigate("/login");
+  };
+
   return (
     <ThemeProvider theme={theme}>
       <Container>
@@ -85,7 +92,11 @@ const ConfirmationPage = () => {
         >
           PASSWORD UPDATED
         </Typography>
-        <SubmitButton variant="contained" color="primary">
+        <SubmitButton
+          onClick={handleSubmit}
+          variant="contained"
+          color="primary"
+        >
           Login
         </SubmitButton>
       </Container>

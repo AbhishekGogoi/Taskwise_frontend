@@ -1,4 +1,5 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import {
   Container,
   Box,
@@ -65,16 +66,6 @@ const StyledTypography = styled(Typography)({
   fontSize: "30px", // Slightly bolder font
 });
 
-const StyledLink = styled(Link)({
-  color: "#0062ff",
-  fontSize: "15px",
-  fontWeight: 650,
-  textDecoration: "none", // Remove default underline
-  "&:hover": {
-    textDecoration: "underline", // Add underline on hover
-  }, // Example link color
-});
-
 const StyledTitleContainer = styled(Box)({
   // New container for title
   marginBottom: "1rem", // Add some space below the title
@@ -103,7 +94,8 @@ const StyledSignUpLink = styled(Link)({
   fontSize: "18px", // Semi-bold font weight
   textDecoration: "none", // Remove default underline
   "&:hover": {
-    textDecoration: "underline", // Add underline on hover
+    textDecoration: "underline",
+    cursor: "pointer", // Add underline on hover
   },
 });
 
@@ -114,6 +106,12 @@ const StyledButton = styled(Button)({
 
 // Component
 const SignupPage = () => {
+  const navigate = useNavigate();
+
+  const handleLoginClick = () => {
+    navigate("/login");
+  };
+
   return (
     <StyledContainer>
       <img
@@ -247,7 +245,11 @@ const SignupPage = () => {
         >
           Already have an account?
         </Typography>
-        <StyledSignUpLink href="#" variant="body2" sx={{ marginTop: "0.3rem" }}>
+        <StyledSignUpLink
+          onClick={handleLoginClick}
+          variant="body2"
+          sx={{ marginTop: "0.3rem" }}
+        >
           Log In
         </StyledSignUpLink>
       </Box>

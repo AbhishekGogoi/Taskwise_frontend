@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
@@ -91,6 +92,28 @@ const CopyrightText = styled(Typography)(({ theme }) => ({
 // }));
 
 const ForgotPasswordPage = () => {
+  const navigate = useNavigate();
+  const [email, setEmail] = useState(""); // State for email
+  const [error, setError] = useState(""); // State for error message
+
+  const handleSubmit = (e) => {
+    e.preventDefault(); // Prevent default form submission
+
+    if (!email.trim()) {
+      setError("Please enter your Email ID");
+      return;
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      setError("Please enter a correct email");
+      return;
+    }
+
+    // If valid, proceed to VerificationPage (replace with actual logic)
+    navigate("/forgotpassword/verification");
+  };
+
   return (
     <ThemeProvider theme={theme}>
       <Container>
@@ -132,7 +155,7 @@ const ForgotPasswordPage = () => {
           <Title variant="h5">Forgot Password?</Title>
         </Box>
 
-        <Form>
+        <Form onSubmit={handleSubmit}>
           <Typography variant="body2" sx={{ color: "#5b5858" }}>
             Don't worry! It happens. Please enter your email id, we will send
             the OTP
@@ -142,9 +165,18 @@ const ForgotPasswordPage = () => {
             label="Enter your Email ID"
             variant="outlined"
             margin="normal"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)} // Handle changes
+            error={!!error} // Show error border if there's an error
+            helperText={error} // Display error message
           />
 
-          <SubmitButton variant="contained" color="primary" fullWidth>
+          <SubmitButton
+            type="submit"
+            variant="contained"
+            color="primary"
+            fullWidth
+          >
             Continue
           </SubmitButton>
         </Form>

@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
@@ -73,6 +74,28 @@ const CopyrightText = styled(Typography)(({ theme }) => ({
 }));
 
 const ResetPasswordPage = () => {
+  const navigate = useNavigate();
+
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [error, setError] = useState(""); // State for error message
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    if (!newPassword.trim() || !confirmPassword.trim()) {
+      setError("Please fill out both password fields.");
+      return;
+    }
+    if (newPassword !== confirmPassword) {
+      setError("Passwords do not match.");
+      return;
+    }
+
+    // If valid, proceed to ConfirmationPage
+    navigate("/forgotpassword/confirmation");
+  };
+
   return (
     <ThemeProvider theme={theme}>
       <Container>
@@ -106,20 +129,33 @@ const ResetPasswordPage = () => {
         >
           Reset Password...
         </Typography>
-        <Form>
+        <Form onSubmit={handleSubmit}>
           <StyledTextField
             label="New Password"
             type="password"
             variant="outlined"
             margin="normal"
+            value={newPassword}
+            onChange={(e) => setNewPassword(e.target.value)}
+            error={!!error} // Show error border if there's an error
+            helperText={error} // Display error message
           />
           <StyledTextField
             label="Confirm Password"
             type="password"
             variant="outlined"
             margin="normal"
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+            error={!!error} // Show error border if there's an error
+            helperText={error} // Display error message
           />
-          <SubmitButton variant="contained" color="primary" fullWidth>
+          <SubmitButton
+            type="submit"
+            variant="contained"
+            color="primary"
+            fullWidth
+          >
             Update
           </SubmitButton>
         </Form>

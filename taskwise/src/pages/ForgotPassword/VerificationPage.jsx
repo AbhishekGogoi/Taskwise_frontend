@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
@@ -96,6 +97,14 @@ const CopyrightText = styled(Typography)(({ theme }) => ({
 }));
 
 const VerificationPage = () => {
+  const navigate = useNavigate();
+
+  const handleSubmit = () => {
+    // Add your OTP verification logic here
+    // If OTP is correct, then navigate:
+    navigate("/forgotpassword/resetpassword");
+  };
+
   const [otp, setOtp] = useState(["", "", "", ""]);
   const [email, setEmail] = useState("example@gmail.com");
 
@@ -186,7 +195,11 @@ const VerificationPage = () => {
           <ResendLink variant="body2">Re-send</ResendLink>
         </Box>
 
-        <SubmitButton variant="contained" color="primary">
+        <SubmitButton
+          variant="contained"
+          color="primary"
+          onClick={handleSubmit}
+        >
           Submit
         </SubmitButton>
 
