@@ -152,9 +152,9 @@ function ProjectPage() {
           <Typography variant="body1" component="div" sx={{ p: 2, fontWeight: 'bold' }}>
             Projects
           </Typography>
-          <Stack spacing={2} direction="row" sx={{ pr: 5 }}>
-            <Button variant="contained" size="small" sx={{ fontSize: '0.75rem', padding: '4px 8px' }}>Create with AI</Button>
-            <Button variant="contained" size="small" sx={{ fontSize: '0.75rem', padding: '4px 8px' }}>New Project</Button>
+          <Stack spacing={2} direction="row" sx={{ pr: 2}}>
+            <Button variant="contained" size="small" sx={{ fontSize: '0.70rem', padding: '4px 8px' }}>Create with AI</Button>
+            <Button variant="contained" size="small" sx={{ fontSize: '0.70rem', padding: '4px 8px' }}>New Project</Button>
           </Stack>
         </Box>
         <Box sx={{ width: '300px', height: '30px', paddingLeft: "15px" }}>
