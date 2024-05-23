@@ -8,7 +8,7 @@ import {
   Typography,
   Link,
 } from "@mui/material";
-import { Google as GoogleIcon, Email, Lock } from "@mui/icons-material";
+import { Google as GoogleIcon, Email, Lock, Person } from "@mui/icons-material"; // Import Person icon for username
 import { styled } from "@mui/system";
 import googleiconnew from "../../assets/googleiconnew.png";
 import TaskWiseLogo from "../../assets/TaskWiseLogo.png";
@@ -113,7 +113,7 @@ const StyledButton = styled(Button)({
 });
 
 // Component
-const LoginPage = () => {
+const SignupPage = () => {
   return (
     <StyledContainer>
       <img
@@ -131,9 +131,26 @@ const LoginPage = () => {
       <StyledForm sx={{ boxShadow: 3 }}>
         <StyledTitleContainer>
           <StyledTypography component="h1" variant="h5" align="center">
-            Log In
+            Sign Up
           </StyledTypography>
         </StyledTitleContainer>
+        <TextField // Username field with icon
+          variant="outlined"
+          margin="normal"
+          required
+          fullWidth
+          id="username"
+          placeholder="Username" // Adjusted label
+          name="username"
+          autoComplete="username"
+          InputProps={{
+            startAdornment: (
+              <InputAdornment position="start">
+                <Person />
+              </InputAdornment>
+            ),
+          }}
+        />
         <TextField // Email field with icon
           variant="outlined"
           margin="normal"
@@ -169,7 +186,25 @@ const LoginPage = () => {
             ),
           }}
         />
-        <StyledButton // Login button style adjustments
+        <TextField // Confirm Password field with icon
+          variant="outlined"
+          margin="normal"
+          required
+          fullWidth
+          name="confirmPassword"
+          placeholder="Confirm Password"
+          type="password"
+          id="confirmPassword"
+          autoComplete="new-password"
+          InputProps={{
+            startAdornment: (
+              <InputAdornment position="start">
+                <Lock />
+              </InputAdornment>
+            ),
+          }}
+        />
+        <StyledButton // Sign Up button style adjustments
           type="submit"
           fullWidth
           variant="contained"
@@ -179,7 +214,7 @@ const LoginPage = () => {
             "&:hover": { backgroundColor: "#303f9f" }, // Darker hover
           }}
         >
-          Log In
+          Sign Up
         </StyledButton>
 
         <StyledLink
@@ -219,14 +254,14 @@ const LoginPage = () => {
           sx={{ fontSize: "18px", color: "#969AB8", fontWeight: 650 }}
           variant="body2"
         >
-          Don't have an account?
+          Already have an account?
         </Typography>
         <StyledSignUpLink href="#" variant="body2" sx={{ marginTop: "0.3rem" }}>
-          Sign Up
+          Log In
         </StyledSignUpLink>
       </Box>
     </StyledContainer>
   );
 };
 
-export default LoginPage;
+export default SignupPage;
