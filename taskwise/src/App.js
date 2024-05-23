@@ -16,6 +16,9 @@ import CalendarPage from "./pages/CalendarPage/CalendarPage";
 import LoginPage from "./pages/LoginPage/LoginPage";
 import SignupPage from "./pages/SignupPage/SignupPage";
 import ForgotPasswordPage from "./pages/ForgotPassword/ForgotPasswordPage";
+import VerificationPage from "./pages/ForgotPassword/VerificationPage";
+import ResetPasswordPage from "./pages/ForgotPassword/ResetPasswordPage";
+import ConfirmationPage from "./pages/ForgotPassword/ConfirmationPage";
 
 const theme = createTheme({
   typography: {
@@ -25,9 +28,15 @@ const theme = createTheme({
 
 function AppLayout() {
   const location = useLocation();
-  const isLandingPage = ["/", "/login", "/signup", "/forgotpassword"].includes(
-    location.pathname
-  );
+  const isLandingPage = [
+    "/",
+    "/login",
+    "/signup",
+    "/forgotpassword",
+    "/forgotpassword/verification",
+    "/forgotpassword/resetpassword",
+    "/forgotpassword/confirmation",
+  ].includes(location.pathname);
   return (
     <>
       {!isLandingPage && <Header />}
@@ -39,6 +48,18 @@ function AppLayout() {
             <Route path="/login" element={<LoginPage />} />
             <Route path="/signup" element={<SignupPage />} />
             <Route path="/forgotpassword" element={<ForgotPasswordPage />} />
+            <Route
+              path="/forgotpassword/verification"
+              element={<VerificationPage />}
+            />
+            <Route
+              path="/forgotpassword/resetpassword"
+              element={<ResetPasswordPage />}
+            />
+            <Route
+              path="/forgotpassword/confirmation"
+              element={<ConfirmationPage />}
+            />
             <Route path="/projects" element={<ProjectPage />} />
             <Route path="/workspaces" element={<WorkspacesPage />} />
             <Route path="/my-tasks" element={<MyTaskPage />} />
