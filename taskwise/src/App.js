@@ -15,6 +15,7 @@ import MyTaskPage from "./pages/MyTaskPage/MyTaskPage";
 import CalendarPage from "./pages/CalendarPage/CalendarPage";
 import LoginPage from "./pages/LoginPage/LoginPage";
 import SignupPage from "./pages/SignupPage/SignupPage";
+import ForgotPasswordPage from "./pages/ForgotPassword/ForgotPasswordPage";
 
 const theme = createTheme({
   typography: {
@@ -24,7 +25,9 @@ const theme = createTheme({
 
 function AppLayout() {
   const location = useLocation();
-  const isLandingPage = ["/", "/login", "/signup"].includes(location.pathname);
+  const isLandingPage = ["/", "/login", "/signup", "/forgotpassword"].includes(
+    location.pathname
+  );
   return (
     <>
       {!isLandingPage && <Header />}
@@ -35,6 +38,7 @@ function AppLayout() {
             <Route path="/" element={<LandingPage />} />
             <Route path="/login" element={<LoginPage />} />
             <Route path="/signup" element={<SignupPage />} />
+            <Route path="/forgotpassword" element={<ForgotPasswordPage />} />
             <Route path="/projects" element={<ProjectPage />} />
             <Route path="/workspaces" element={<WorkspacesPage />} />
             <Route path="/my-tasks" element={<MyTaskPage />} />
