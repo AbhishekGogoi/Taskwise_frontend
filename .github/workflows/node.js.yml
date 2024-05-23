@@ -22,7 +22,9 @@ jobs:
           node-version: "20.x"
 
       - name: Install dependencies
-        run: npm install -g bats
+        run: |
+          cd taskwise
+          npm install -g bats
 
       # - name: Run tests
       #   run: npm test
@@ -42,15 +44,19 @@ jobs:
           node-version: "20.x"
 
       - name: Install dependencies
-        run: npm install
+        run: |
+          cd taskwise
+          npm install
 
       - name: Build project
-        run: npm run build
+        run: |
+          cd taskwise
+          npm run build
 
       - name: Deploy to Netlify
         env:
           NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
           NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
-        # Deploy to Netlify dev environment
-        run: npx netlify-cli deploy --dir=build --alias=dev --prod
-
+        run: |
+          cd taskwise
+          npx netlify-cli deploy --dir=build --alias=dev
