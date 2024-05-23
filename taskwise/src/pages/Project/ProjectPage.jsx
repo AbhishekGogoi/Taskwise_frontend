@@ -10,6 +10,7 @@ import Button from '@mui/material/Button';
 import Container from '@mui/material/Card';
 import { Grid } from '@mui/material';
 import ProjectCard from './ProjectCard';
+
 const SearchIconWrapper = styled('div')(({ theme }) => ({
   padding: theme.spacing(0, 2),
   height: '100%',
@@ -169,9 +170,9 @@ function ProjectPage() {
         </Box>
       </Paper>
       <CustomBox>
-        <Grid container spacing={3}>
+        <Grid container spacing={3} alignItems="center">
           {projectsData.map((project) => (
-            <Grid item key={project.id} xs={12} sm={6} md={3} lg={3}>
+            <Grid item key={project.id} xs={12} sm={6} md={3} lg={3} xl={2}>
               <ProjectCard project={project} />
             </Grid>
           ))}
