@@ -45,6 +45,9 @@ function AppLayout() {
                 anchor="left"
                 open={drawerOpen}
                 onClose={toggleDrawer}
+                PaperProps={{
+                  sx: { overflow: 'hidden' },
+                }}
               >
                 <Sidebar />
               </Drawer>
