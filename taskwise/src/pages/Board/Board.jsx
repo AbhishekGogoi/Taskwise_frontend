@@ -1,6 +1,7 @@
 import React from 'react';
 import { useParams } from 'react-router-dom';
-import { Box, Paper } from '@mui/material';
+import { Box, Container, Paper } from '@mui/material';
+import Column from "./Column"
 function Board() {
     const { id } = useParams();
     const initialData = {
@@ -41,7 +42,8 @@ function Board() {
             }
         }
     };
-    
+    const columnsArray = Object.values(initialData.columns); // Extract values from columns object
+
     return (
         <Box
             sx={{
@@ -63,8 +65,13 @@ function Board() {
             >
 
             </Paper>
-
+            <Container style={{display:"flex" , justifyContent: 'space-between'}}>
+                {columnsArray.map((colData) => (
+                    <Column key={colData.id} colData={colData} />
+                ))}
+            </Container>
         </Box>
+
     )
 }
 
