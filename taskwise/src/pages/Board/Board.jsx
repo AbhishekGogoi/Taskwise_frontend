@@ -4,7 +4,7 @@ import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import Column from "./Column";
 import { useState } from 'react';
-import { Box, Paper, CardMedia, Typography, CardActions,Container} from '@mui/material';
+import { Box, Paper, CardMedia, Typography, CardActions, Container } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import { styled, alpha } from '@mui/material/styles';
 import InputBase from '@mui/material/InputBase';
@@ -38,6 +38,7 @@ const Search = styled('div')(({ theme }) => ({
     borderRadius: theme.shape.borderRadius,
     backgroundColor: "#f0f0f0",
     marginLeft: 0,
+    paddingRight: theme.spacing(2), // Add right-side padding
     width: '200px', // Default width
     height: '30px', // Fixed height
     display: 'flex',
@@ -99,39 +100,28 @@ function Board() {
                 <Paper
                     elevation={3}
                     sx={{
-                        width: '100%',
-                        height: 150,
+                        height: 120,
                     }}
                 >
-                    <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                        <Box sx={{ display: "flex", gap: 2 }}>
-                            <Box sx={{ width: "10%", pl: 4, pt: 1 }}>
-                                <CardMedia
-                                    component="img"
-                                    alt="project image"
-                                    height="55"
-                                    sx={{ borderRadius: 2 }}
-                                    image={project.img}
-                                />
-                            </Box>
+                    <Box sx={{ display: "flex", flexDirection: "row", justifyContent: 'space-between', alignItems: 'center' }}>
+                        <Box sx={{ display: "flex", alignItems: "center", flex: 1 }}>
+                            <img
+                                src={project.img}
+                                alt="project image"
+                                style={{ borderRadius: '8px', width: '44px', height: "44px", padding: "12px" }}
+                            />
                             <Box sx={{ display: "flex", flexDirection: "column" }}>
                                 <Typography gutterBottom variant="h6" component="div" sx={{ fontSize: '0.8rem', pt: 1 }}>
                                     Board / Details
                                 </Typography>
-
-                                <Box sx={{ display: "flex", gap: 3 }}>
-                                    <Typography gutterBottom variant="h6" component="div" sx={{ fontSize: '1.2rem', pt: 0.5 }}>
+                                <Box>
+                                    <Typography gutterBottom variant="h6" component="div" sx={{ fontSize: '1rem', pt: 0.5 }}>
                                         Book App
-                                    </Typography>
-                                    <Typography gutterBottom variant="h6" component="div" sx={{ fontSize: '1.2rem', pt: 0.5 }}>
-                                        Group A
                                     </Typography>
                                 </Box>
                             </Box>
-
-
                         </Box>
-                        <Box sx={{ width: '250px', height: '30px', paddingLeft: "15px" }}>
+                        <Box padding={"10px"}>
                             <Search>
                                 <SearchIconWrapper>
                                     <SearchIcon />
@@ -143,14 +133,20 @@ function Board() {
                             </Search>
                         </Box>
                     </Box>
-                    <Divider component="div" role="presentation">
-                    </Divider>
-                    <CardActions sx={{ pt: 2, pr: 6, float: "right" }}>
-                        <Button variant="contained" startIcon={<AddIcon />}>
-                            New Task
+                    <Divider component="div" role="presentation" />
+                    <Box sx={{ display: "flex", alignItems: "center", justifyContent: "flex-end", padding: "8px" }}>
+                        <Button
+                            variant="contained"
+                            size="small"
+                            sx={{ fontSize: '0.70rem', padding: '4px 8px' }}
+                            startIcon={<AddIcon />} // AddIcon will be displayed before the button label
+                        >
+                            New task
                         </Button>
-                    </CardActions>
+                    </Box>
                 </Paper>
+
+
                 <Container className='droppable-container' style={{ display: "flex", alignItems: 'flex-start' }}>
                     {initialData.order.map((columnId) => {
                         // const column = initialData.columns[columnId];
