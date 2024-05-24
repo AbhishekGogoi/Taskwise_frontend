@@ -65,10 +65,12 @@ function Board() {
             >
 
             </Paper>
-            <Container style={{display:"flex" , justifyContent: 'space-between'}}>
-                {columnsArray.map((colData) => (
-                    <Column key={colData.id} colData={colData} />
-                ))}
+            <Container style={{ display: "flex", justifyContent: 'space-between' }}>
+                {initialData.order.map((columnId) => {
+                    const column = initialData.columns[columnId];
+                    const tasks = column.taskIds.map((taskId) => initialData.tasks[taskId]);
+                    return <Column key={column.id} column={column} tasks={tasks} />;
+                })}
             </Container>
         </Box>
 

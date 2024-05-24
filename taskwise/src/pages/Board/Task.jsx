@@ -1,28 +1,12 @@
 import React from 'react'
+import { Paper,Typography } from '@mui/material'
+function Task({ task }) {
 
-function Task({tid}) {
-    
-    const taskData = {
-        "1": {
-            "id": 1,
-            "content": "Take out the garbage"
-        },
-        "2": {
-            "id": 2,
-            "content": "Watch my favorite show"
-        },
-        "3": {
-            "id": 3,
-            "content": "Charge my phone"
-        },
-        "4": {
-            "id": 4,
-            "content": "Cook dinner"
-        }
-    };
-  return (
-    <div>{tid}</div>
-  )
+    return (
+        <Paper elevation={2} sx={{ padding: 2, margin: 1, width: '100%' }}>
+            <Typography>{task.content}</Typography>
+        </Paper>
+    )
 }
 
 export default Task
