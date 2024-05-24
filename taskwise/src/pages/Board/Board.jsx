@@ -1,9 +1,8 @@
 import React from 'react';
-import { useParams } from 'react-router-dom';
 import { Box, Container, Paper } from '@mui/material';
 import Column from "./Column"
 function Board() {
-    const { id } = useParams();
+    //const { id } = useParams();
     const initialData = {
         "order": [1, 2, 3],
         "columns": {
@@ -42,7 +41,7 @@ function Board() {
             }
         }
     };
-    const columnsArray = Object.values(initialData.columns); // Extract values from columns object
+    //const columnsArray = Object.values(initialData.columns); // Extract values from columns object
 
     return (
         <Box
