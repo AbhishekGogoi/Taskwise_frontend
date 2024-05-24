@@ -57,7 +57,7 @@ function Board() {
                 >
 
                 </Paper>
-                <Container className='droppable-container' style={{ display: "flex", justifyContent: 'space-between' }}>
+                <Container className='droppable-container' style={{ display: "flex",alignItems: 'flex-start' }}>
                 {initialData.order.map((columnId) => {
                         // const column = initialData.columns[columnId];
                         const column = columns[columnId];

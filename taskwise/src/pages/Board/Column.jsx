@@ -15,7 +15,7 @@ function Column({ column, tasks, onDrop }) {
     //console.log(tasks)
     return (
         <Container>
-            <Container sx={{ display: 'flex', alignItems: 'center' }}>
+            <Container sx={{ display: 'flex', alignItems: 'center' ,cursor:"pointer"}}>
                 <Typography variant='h6' sx={{ flexGrow: 1 }}>
                     {column.title}
                 </Typography>
@@ -23,7 +23,7 @@ function Column({ column, tasks, onDrop }) {
                     <AddIcon />
                 </IconButton>
             </Container>
-            <Container ref={drop} className="droppable-area" style={{ display: "flex", flexDirection: "column" }}>
+            <Container ref={drop} className="droppable-area" style={{ display: "flex", flexDirection: "column" ,gap:"5px"}}>
                 {tasks.map((task) => (
                     <Task key={task.id} task={task} />
                 ))}
