@@ -12,7 +12,7 @@ function Column({ column, tasks, onDrop }) {
           isOver: !!monitor.isOver(),
         }),
     });
-    console.log(tasks)
+    //console.log(tasks)
     return (
         <Container>
             <Container sx={{ display: 'flex', alignItems: 'center' }}>

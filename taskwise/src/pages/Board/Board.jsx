@@ -24,6 +24,7 @@ function Board() {
     const [columns, setColumns] = useState(initialData.columns);
 
     const handleDrop = (taskId, newColumnId) => {
+        console.log("handleDrop",taskId,newColumnId)
         const updatedColumns = { ...columns };
         // Remove task from current column
         Object.keys(updatedColumns).forEach(columnId => {
@@ -32,6 +33,7 @@ function Board() {
         // Add task to the target column
         updatedColumns[newColumnId].taskIds.push(taskId);
         setColumns(updatedColumns);
+        console.log("updatedcolumns",updatedColumns)
     };
     return (
         <DndProvider backend={HTML5Backend}>
@@ -57,7 +59,8 @@ function Board() {
                 </Paper>
                 <Container className='droppable-container' style={{ display: "flex", justifyContent: 'space-between' }}>
                 {initialData.order.map((columnId) => {
-                        const column = initialData.columns[columnId];
+                        // const column = initialData.columns[columnId];
+                        const column = columns[columnId];
                         const tasks = column.taskIds.map((taskId) => initialData.tasks[taskId]);
                         return <Column key={column.id} column={column} tasks={tasks} onDrop={handleDrop} />;
                     })}

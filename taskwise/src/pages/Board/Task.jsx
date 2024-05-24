@@ -4,8 +4,8 @@ import { useDrag } from 'react-dnd';
 
 function Task({ task }) {
     const [{ isDragging }, drag] = useDrag({
-        type: 'item',
-        item: { id: task.id, content: task.content },
+        type: 'task',
+        item: { id: task.id },
         collect: (monitor) => ({
             isDragging: !!monitor.isDragging(),
         }),
