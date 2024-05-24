@@ -23,7 +23,7 @@ function Column({ column, tasks, onDrop }) {
                     <AddIcon />
                 </IconButton>
             </Container>
-            <Container ref={drop} className="droppable-area" style={{ display: "flex", flexDirection: "column" ,gap:"5px"}}>
+            <Container ref={drop} className="droppable-area" style={{ display: "flex", flexDirection: "column" ,gap:"5px",minWidth: '300px',minHeight: '600px'}}>
                 {tasks.map((task) => (
                     <Task key={task.id} task={task} />
                 ))}
