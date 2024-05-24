@@ -2,8 +2,16 @@ import { Container, Typography, IconButton } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import React from 'react'
 import Task from './Task';
+import { useDrop } from 'react-dnd';
 
-function Column({ column, tasks }) {
+function Column({ column, tasks, onDrop }) {
+    const [{ isOver }, drop] = useDrop({
+        accept: 'task', // Specify the accepted item type here
+        drop: (item) => onDrop(item.id, column.id),
+        collect: (monitor) => ({
+          isOver: !!monitor.isOver(),
+        }),
+    });
     console.log(tasks)
     return (
         <Container>
@@ -15,7 +23,7 @@ function Column({ column, tasks }) {
                     <AddIcon />
                 </IconButton>
             </Container>
-            <Container style={{ display: "flex", flexDirection: "column" }}>
+            <Container ref={drop} className="droppable-area" style={{ display: "flex", flexDirection: "column" }}>
                 {tasks.map((task) => (
                     <Task key={task.id} task={task} />
                 ))}

@@ -1,9 +1,22 @@
 import React from 'react'
-import { Paper,Typography } from '@mui/material'
-function Task({ task }) {
+import { Paper, Typography } from '@mui/material';
+import { useDrag } from 'react-dnd';
 
+function Task({ task }) {
+    const [{ isDragging }, drag] = useDrag({
+        type: 'item',
+        item: { id: task.id, content: task.content },
+        collect: (monitor) => ({
+            isDragging: !!monitor.isDragging(),
+        }),
+    });
     return (
-        <Paper elevation={2} sx={{ padding: 2, margin: 1, width: '100%' }}>
+        <Paper
+            ref={drag} // Attach the drag source ref to the Paper component
+            className="draggable-item"
+            elevation={2}
+            sx={{ padding: 2, margin: 1, width: '100%', opacity: isDragging ? 0.5 : 1 }} // Adjust opacity while dragging
+        >
             <Typography>{task.content}</Typography>
         </Paper>
     )
