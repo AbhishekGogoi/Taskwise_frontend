@@ -1,9 +1,13 @@
 import React from 'react'
 import { Card, CardContent, CardMedia, Typography,CardActions,Button } from "@mui/material";
-
+import { useNavigate } from 'react-router-dom';
 function ProjectCard({project}) {
+    const navigate=useNavigate();
     return (
-        <Card sx={{ maxWidth: 240 }}>
+        <Card 
+            sx={{ maxWidth: 240 }}
+            onClick={()=>navigate(`/projects/${project.id}`)}
+        >
             <CardMedia
                 component="img"
                 alt="project image"

@@ -15,6 +15,7 @@ import MyTaskPage from "./pages/MyTaskPage/MyTaskPage";
 import CalendarPage from "./pages/CalendarPage/CalendarPage";
 import useMediaQuery from '@mui/material/useMediaQuery';
 import Drawer from '@mui/material/Drawer';
+import Board from './pages/Board/Board';
 
 const theme = createTheme({
   typography: {
@@ -60,6 +61,7 @@ function AppLayout() {
           <Routes>
             <Route path="/" element={<LandingPage />} />
             <Route path="/projects" element={<ProjectPage />} />
+            <Route path='/projects/:id' element={<Board/>}/>
             <Route path="/workspaces" element={<WorkspacesPage />} />
             <Route path="/my-tasks" element={<MyTaskPage />} />
             <Route path="/calendar" element={<CalendarPage />} />
