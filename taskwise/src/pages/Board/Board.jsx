@@ -4,7 +4,7 @@ import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import Column from "./Column";
 import { useState } from 'react';
-import { Box, Paper, CardMedia, Typography, CardActions, Container,Grid } from '@mui/material';
+import { Box, Paper, CardMedia, Typography, CardActions, Container, Grid } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import { styled, alpha } from '@mui/material/styles';
 import InputBase from '@mui/material/InputBase';
@@ -138,7 +138,11 @@ function Board() {
                         <Button
                             variant="contained"
                             size="small"
-                            sx={{ fontSize: '0.70rem', padding: '4px 8px' }}
+                            sx={{
+                                fontSize: '0.70rem', padding: '4px 8px', textAlign: "center", display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center'
+                            }}
                             startIcon={<AddIcon />} // AddIcon will be displayed before the button label
                         >
                             New task
@@ -150,7 +154,7 @@ function Board() {
                         const column = columns[columnId];
                         const tasks = column.taskIds.map((taskId) => initialData.tasks[taskId]);
                         return (
-                            <Grid  key={column.id}>
+                            <Grid key={column.id}>
                                 <Column column={column} tasks={tasks} onDrop={handleDrop} />
                             </Grid>
                         );
