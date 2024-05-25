@@ -1,16 +1,227 @@
-import React from 'react'
+import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
+import { Grid, TextField, Button, Box, Typography, IconButton, Paper, MenuItem, Select } from '@mui/material';
+import AttachFileIcon from '@mui/icons-material/AttachFile';
+import FlagIcon from '@mui/icons-material/Flag';
 
 function NewTaskPage() {
     const { id } = useParams();
+    const [priority, setPriority] = useState('');
+    const [status, setStatus] = useState('');
+
+    const handleStatusChange = (event) => {
+        setStatus(event.target.value);
+        console.log(event.target.value);
+    };
+
+    const handlePriorityChange = (event) => {
+        setPriority(event.target.value);
+        console.log(event.target.value);
+    };
 
     return (
-        <div>
-            <h1>New Task Page for Project ID: {id}</h1>
-            {/* Other content of the new task page */}
-        </div>
-    );
+        <Box
+            sx={{
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                justifyContent: 'center',
+                minHeight: '100vh',
+                p: 2,
+            }}
+        >
+            <Paper
+                elevation={3}
+                sx={{
+                    p: 3,
+                    width: '100%',
+                    maxWidth: '1200px',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'space-between',
+                }}
+            >
+                <Grid container spacing={5}>
+                    {/* Left side - Form Fields */}
+                    <Grid item xs={12} md={6}>
+                        <Typography variant="h6" gutterBottom sx={{ fontWeight: 'bold', mb: 3 }}>
+                            Add a title <span style={{ color: 'red' }}>*</span>
+                        </Typography>
+                        <TextField
+                            variant="outlined"
+                            fullWidth
+                            placeholder="Title"
+                            sx={{
+                                mb: 4,
+                                '& input': {
+                                    backgroundColor: '#ededed',
+                                },
+                            }}
+                        />
 
+                        <Typography variant="h6" gutterBottom sx={{ fontWeight: 'bold', mb: 3 }}>
+                            Add a description <span style={{ color: 'red' }}>*</span>
+                        </Typography>
+                        <TextField
+                            variant="filled"
+                            fullWidth
+                            multiline
+                            rows={4}
+                            placeholder="Add your description here"
+                            sx={{ mb: 4 }}
+                        />
+
+                        <Typography variant="h6" gutterBottom sx={{ fontWeight: 'bold', mb: 3 }}>
+                            Ask a question or add a comment
+                        </Typography>
+                        <TextField
+                            variant="outlined"
+                            fullWidth
+                            placeholder="Ask a question or add a comment"
+                            sx={{
+                                mb: 4,
+                                '& input': {
+                                    backgroundColor: '#ededed',
+                                },
+                            }}
+                        />
+
+                        <Box sx={{ mt: 3, mb: 4 }}>
+                            <TextField
+                                label="Select due date"
+                                type="date"
+                                InputLabelProps={{ shrink: true }}
+                                sx={{
+                                    height: 32,
+                                    width: '100%',
+                                    maxWidth: 200,
+                                }}
+                                onChange={(event) => console.log(event.target.value)}
+                            />
+                        </Box>
+                    </Grid>
+
+                    {/* Right side - Task Details */}
+                    <Grid item xs={12} md={6}>
+                        <Grid container spacing={4}>
+                            <Grid item xs={12} sx={{ display: 'flex', alignItems: 'center' }}>
+                                <Typography variant="h6" gutterBottom sx={{ fontWeight: 'bold', mb: 3 }}>
+                                    Assign to
+                                </Typography>
+                                <Box sx={{ display: 'flex', alignItems: 'center', flexGrow: 1, ml: 2 }}>
+                                    <Select
+                                        multiple
+                                        value={['Option 1']}
+                                        onChange={(event) => console.log(event.target.value)}
+                                        renderValue={(selected) => (
+                                            <div>
+                                                {selected.join(', ')}
+                                            </div>
+                                        )}
+                                        sx={{
+                                            height: 32,
+                                            width: '100%',
+                                            maxWidth: 200,
+                                        }}
+                                    >
+                                        <MenuItem value="Option 1">Option 1</MenuItem>
+                                        <MenuItem value="Option 2">Option 2</MenuItem>
+                                        <MenuItem value="Option 3">Option 3</MenuItem>
+                                    </Select>
+                                </Box>
+                            </Grid>
+
+                            <Grid item xs={12} sx={{ display: 'flex', alignItems: 'center',justifyContent:"center" }}>
+                                <Typography variant="h6" gutterBottom sx={{ fontWeight: 'bold', mb: 3 ,mr:2.5}}>
+                                    Priority
+                                </Typography>
+                                <Box sx={{ display: 'flex', alignItems: 'center', flexGrow: 1, ml: 2 }}>
+                                    <Select
+                                        value={priority}
+                                        onChange={handlePriorityChange}
+                                        displayEmpty
+                                        inputProps={{ 'aria-label': 'Priority Level' }}
+                                        sx={{
+                                            height: 32,
+                                            width: '100%',
+                                            maxWidth: 200,
+                                        }}
+                                    >
+                                        <MenuItem value="" disabled>
+                                            Level
+                                        </MenuItem>
+                                        <MenuItem value="Low">Low</MenuItem>
+                                        <MenuItem value="Medium">Medium</MenuItem>
+                                        <MenuItem value="High">High</MenuItem>
+                                    </Select>
+                                </Box>
+                            </Grid>
+
+                            <Grid item xs={12} sx={{ display: 'flex', alignItems: 'center' }}>
+                                <Typography variant="h6" gutterBottom sx={{ fontWeight: 'bold', mb: 3,mr:3.5 }}>
+                                    Status
+                                </Typography>
+                                <Box sx={{ display: 'flex', alignItems: 'center', flexGrow: 1, ml: 2 }}>
+                                    <Select
+                                        value={status}
+                                        onChange={handleStatusChange}
+                                        displayEmpty
+                                        inputProps={{ 'aria-label': 'Set Status' }}
+                                        sx={{
+                                            height: 32,
+                                            width: '100%',
+                                            maxWidth: 200,
+                                        }}
+                                    >
+                                        <MenuItem value="" disabled>
+                                            Set Status
+                                        </MenuItem>
+                                        <MenuItem value="Not Started">Not Started</MenuItem>
+                                        <MenuItem value="In Progress">In Progress</MenuItem>
+                                        <MenuItem value="Completed">Completed</MenuItem>
+                                    </Select>
+                                </Box>
+                            </Grid>
+
+                            <Grid item xs={12} sx={{ display: 'flex', alignItems: 'center' }}>
+                                <Typography variant="h6" gutterBottom sx={{ fontWeight: 'bold', mb: 3 }}>
+                                    Attachments
+                                </Typography>
+                                <IconButton>
+                                    <AttachFileIcon />
+                                </IconButton>
+                            </Grid>
+                        </Grid>
+                    </Grid>
+                </Grid>
+
+                <Box sx={{ mt: 5, width: '100%' }}>
+                    <Grid container spacing={2}>
+                        <Grid item xs={12} sm={6}>
+                            <Button
+                                variant="outlined"
+                                color="primary"
+                                fullWidth
+                                sx={{
+                                    backgroundColor: '#f0f0f0',
+                                    '&:hover': {
+                                        backgroundColor: '#d0d0d0',
+                                    },
+                                }}
+                            >
+                                Cancel
+                            </Button>
+                        </Grid>
+                        <Grid item xs={12} sm={6}>
+                            <Button variant="contained" color="primary" fullWidth>
+                                Create Task
+                            </Button>
+                        </Grid>
+                    </Grid>
+                </Box>
+            </Paper>
+        </Box>
+    );
 }
 
-export default NewTaskPage
+export default NewTaskPage;
