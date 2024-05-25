@@ -22,7 +22,7 @@ function Task({ task }) {
                 minHeight: '100px'  // Set min height
             }}
             ref={drag} // Attach the drag source ref to the Paper component
-            style={{cursor:"pointer"}}
+            style={{cursor:"pointer", opacity:isDragging ? 0 : 2}}
             className="draggable-item">
             <CardContent sx={{p:"0.5rem" }}>
                 <Box display="flex" justifyContent="space-between" alignItems="center">
