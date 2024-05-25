@@ -1,5 +1,5 @@
 import React from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams,useNavigate } from 'react-router-dom';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import Column from "./Column";
@@ -53,6 +53,10 @@ const Search = styled('div')(({ theme }) => ({
 
 function Board() {
     const { id } = useParams();
+    const navigate=useNavigate();
+    const handleClick=()=>{
+        navigate(`/projects/${id}/new-task`)
+    }
     const project = {
         img: 'https://img.freepik.com/free-vector/hand-drawn-minimal-background_23-2149001650.jpg?t=st=1716280160~exp=1716280760~hmac=f254cfeda21a263638253b9f6f0c0c9028bac218840dea34d6de5739054a4a96'
     };
@@ -151,6 +155,7 @@ function Board() {
                                 justifyContent: 'center'
                             }}
                             startIcon={<AddIcon />} // AddIcon will be displayed before the button label
+                            onClick={handleClick}
                         >
                             New task
                         </Button>

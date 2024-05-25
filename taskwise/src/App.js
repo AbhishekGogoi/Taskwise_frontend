@@ -65,7 +65,7 @@ function AppLayout() {
             <Route path="/projects" element={<ProjectPage />} />
             <Route path='/projects/:id' element={<Board/>}/>
             <Route path="/projects/:id/new-task" element={<NewTaskPage/>} />
-            <Route path='/projects/:id/tasks/:taskID' element={<TaskDetailsPage/>}/>
+            <Route path='/tasks/:taskID' element={<TaskDetailsPage/>}/>
             <Route path="/workspaces" element={<WorkspacesPage />} />
             <Route path="/my-tasks" element={<MyTaskPage />} />
             <Route path="/calendar" element={<CalendarPage />} />

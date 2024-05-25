@@ -3,8 +3,9 @@ import { Paper, Typography } from '@mui/material';
 import { useDrag } from 'react-dnd';
 import { Card, CardContent, Chip, Box, IconButton } from '@mui/material';
 import { DateRange, AttachFile, Comment, MoreVert } from '@mui/icons-material';
-
+import { useNavigate } from 'react-router-dom';
 function Task({ task }) {
+    const navigate=useNavigate();
     const [{ isDragging }, drag] = useDrag({
         type: 'task',
         item: { id: task.id },
@@ -23,7 +24,9 @@ function Task({ task }) {
             }}
             ref={drag} // Attach the drag source ref to the Paper component
             style={{cursor:"pointer", opacity:isDragging ? 0 : 2}}
-            className="draggable-item">
+            className="draggable-item"
+            onClick={()=>navigate(`/tasks/${task.id}`)}
+            >
             <CardContent sx={{p:"0.5rem" }}>
                 <Box display="flex" justifyContent="space-between" alignItems="center">
                     <Chip

@@ -1,9 +1,16 @@
 import React from 'react'
+import { useParams } from 'react-router-dom';
 
 function NewTaskPage() {
-  return (
-    <div>NewTaskPage</div>
-  )
+    const { id } = useParams();
+
+    return (
+        <div>
+            <h1>New Task Page for Project ID: {id}</h1>
+            {/* Other content of the new task page */}
+        </div>
+    );
+
 }
 
 export default NewTaskPage
