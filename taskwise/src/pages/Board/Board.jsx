@@ -4,7 +4,7 @@ import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import Column from "./Column";
 import { useState } from 'react';
-import { Box, Paper, CardMedia, Typography, CardActions, Container } from '@mui/material';
+import { Box, Paper, CardMedia, Typography, CardActions, Container,Grid } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import { styled, alpha } from '@mui/material/styles';
 import InputBase from '@mui/material/InputBase';
@@ -145,16 +145,18 @@ function Board() {
                         </Button>
                     </Box>
                 </Paper>
-
-
-                <Container className='droppable-container' style={{ display: "flex", alignItems: 'flex-start' }}>
+                <Grid container spacing={2} alignItems="flex-start">
                     {initialData.order.map((columnId) => {
-                        // const column = initialData.columns[columnId];
                         const column = columns[columnId];
                         const tasks = column.taskIds.map((taskId) => initialData.tasks[taskId]);
-                        return <Column key={column.id} column={column} tasks={tasks} onDrop={handleDrop} />;
+                        return (
+                            <Grid  key={column.id}>
+                                <Column column={column} tasks={tasks} onDrop={handleDrop} />
+                            </Grid>
+                        );
                     })}
-                </Container>
+                </Grid>
+
             </Box>
         </DndProvider>
     )
