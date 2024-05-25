@@ -1,5 +1,15 @@
 import React, { useState, useMemo } from "react";
-import { Box } from "@mui/material";
+import {
+  Box,
+  Typography,
+  TextField,
+  MenuItem,
+  InputAdornment,
+} from "@mui/material";
+import InputLabel from "@mui/material/InputLabel";
+import FormControl from "@mui/material/FormControl";
+import Select from "@mui/material/Select";
+import SearchIcon from "@mui/icons-material/Search";
 import { AgGridReact } from "@ag-grid-community/react"; // React Grid Logic
 import "@ag-grid-community/styles/ag-grid.css"; // Core CSS
 import "@ag-grid-community/styles/ag-theme-quartz.css"; // Theme
@@ -9,19 +19,31 @@ import { styled } from "@mui/material/styles";
 
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
-const gridDiv = document.querySelector("#myGrid");
+// const gridDiv = document.querySelector("#myGrid");
 
 const StyledAgGridContainer = styled("div")({
   display: "flex",
+  flexDirection: "column",
   justifyContent: "center",
   alignItems: "center",
-  // Height: "100vh",
-  // width: "100vh",
-  // paddingLeft: "0.5rem",
-  paddingTop: "5rem", // Ensure container takes at least the viewport height
+  paddingTop: "2rem", // Ensure container takes at least the viewport height
+});
+
+const Toolbar = styled(Box)({
+  display: "flex",
+  justifyContent: "space-between",
+  alignItems: "center",
+  width: "100%",
+  paddingBottom: "3rem",
 });
 
 const MyTaskPage = () => {
+  const [selectedProject, setSelectedProject] = useState("");
+
+  const handleProjectChange = (event) => {
+    setSelectedProject(event.target.value);
+  };
+
   const [rowData, setRowData] = useState([
     {
       Task: "Design feedback on wireframe",
@@ -203,18 +225,40 @@ const MyTaskPage = () => {
   }, []);
 
   return (
-    // <Box
-    //   sx={{
-    //     display: "flex",
-    //     flexDirection: "column",
-    //     alignItems: "center",
-    //     "& > :not(style)": {
-    //       m: 1,
-    //       width: "100%",
-    //     },
-    //   }}
-    // >
     <StyledAgGridContainer>
+      <Toolbar>
+        <Typography variant="h6">My Tasks</Typography>
+        <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+          <FormControl sx={{ m: 1, minWidth: 150 }} size="small">
+            <InputLabel id="demo-simple-select-label">
+              Select Project
+            </InputLabel>
+            <Select
+              labelId="demo-simple-select-label"
+              id="demo-simple-select"
+              value={selectedProject}
+              label="Select Project"
+              onChange={handleProjectChange}
+            >
+              <MenuItem value="Project 1">Project 1</MenuItem>
+              <MenuItem value="Project 2">Project 2</MenuItem>
+            </Select>
+          </FormControl>
+          <TextField
+            variant="outlined"
+            size="small"
+            placeholder="Search"
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <SearchIcon />
+                </InputAdornment>
+              ),
+            }}
+            sx={{ backgroundColor: "white" }}
+          />
+        </Box>
+      </Toolbar>
       <div className={"ag-theme-quartz"} style={{ width: "100%", height: 500 }}>
         <AgGridReact
           rowData={rowData}
@@ -225,7 +269,6 @@ const MyTaskPage = () => {
         />
       </div>
     </StyledAgGridContainer>
-    // </Box>
   );
 };
 
