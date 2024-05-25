@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams,useNavigate } from 'react-router-dom';
 import { Grid, TextField, Button, Box, Typography, IconButton, Paper, MenuItem, Select } from '@mui/material';
 import AttachFileIcon from '@mui/icons-material/AttachFile';
 import FlagIcon from '@mui/icons-material/Flag';
@@ -8,7 +8,7 @@ function NewTaskPage() {
     const { id } = useParams();
     const [priority, setPriority] = useState('');
     const [status, setStatus] = useState('');
-
+    const navigate=useNavigate();
     const handleStatusChange = (event) => {
         setStatus(event.target.value);
         console.log(event.target.value);
@@ -17,6 +17,10 @@ function NewTaskPage() {
     const handlePriorityChange = (event) => {
         setPriority(event.target.value);
         console.log(event.target.value);
+    };
+
+    const handleCreateTask = () => {
+        navigate(-1);
     };
 
     return (
@@ -208,12 +212,13 @@ function NewTaskPage() {
                                         backgroundColor: '#d0d0d0',
                                     },
                                 }}
+                                onClick={handleCreateTask}
                             >
                                 Cancel
                             </Button>
                         </Grid>
                         <Grid item xs={12} sm={6}>
-                            <Button variant="contained" color="primary" fullWidth>
+                            <Button variant="contained" color="primary" fullWidth onClick={handleCreateTask}>
                                 Create Task
                             </Button>
                         </Grid>
