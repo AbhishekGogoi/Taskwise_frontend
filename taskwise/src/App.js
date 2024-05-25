@@ -10,12 +10,13 @@ import {
 } from "react-router-dom";
 import ProjectPage from "./pages/Project/ProjectPage";
 import LandingPage from "./pages/landingPage/LandingPage";
-import WorkspacesPage from "./pages/Workspace/WorkspaceDetails";
+import WorkspacesPage from "./pages/Workspace/WorkspacePage";
 import MyTaskPage from "./pages/MyTaskPage/MyTaskPage";
 import CalendarPage from "./pages/CalendarPage/CalendarPage";
 import useMediaQuery from '@mui/material/useMediaQuery';
 import Drawer from '@mui/material/Drawer';
 import Board from './pages/Board/Board';
+import WorkspaceDetails from './pages/Workspace/WorkspaceDetails';
 
 const theme = createTheme({
   typography: {
@@ -63,6 +64,7 @@ function AppLayout() {
             <Route path="/projects" element={<ProjectPage />} />
             <Route path='/projects/:id' element={<Board/>}/>
             <Route path="/workspaces" element={<WorkspacesPage />} />
+            <Route path='/workspaces/:id' element={<WorkspaceDetails/>}/>
             <Route path="/my-tasks" element={<MyTaskPage />} />
             <Route path="/calendar" element={<CalendarPage />} />
           </Routes>

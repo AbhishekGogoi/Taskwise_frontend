@@ -1,0 +1,44 @@
+import React from 'react'
+import { Card, CardContent, CardMedia, Typography } from "@mui/material";
+import { Grid } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
+import ProjectIconBlack from '../../assets/Projects.png';
+
+function WorkspaceProjectCard({project}) {
+    const navigate=useNavigate();
+    return (
+        <Card 
+            sx={{
+            width: '100%',
+            maxWidth: 240,
+            borderRadius: 2,
+            }}
+            onClick={()=>navigate(`/projects/${project.id}`)}
+        >
+            <CardMedia
+                component="img"
+                alt="project thumbnail"
+                height="100"
+                image={project.img}                
+            />
+            <CardContent sx={{ textAlign:"center"}}>          
+                <Grid container alignItems="center" spacing={0.2}>
+                    <Grid item>
+                    <img 
+                        src={ProjectIconBlack} 
+                        alt="Projects" 
+                        style={{ padding: "10px", width: "24px", height: "24px" }} 
+                    />
+                    </Grid>
+                    <Grid item sx={{paddingTop: 2}}>
+                        <Typography gutterBottom variant="h6" component="div" sx={{ fontSize: '1rem' }}>
+                            {project.name}
+                        </Typography>
+                    </Grid>
+                </Grid>
+            </CardContent>
+        </Card>
+    )
+}
+
+export default WorkspaceProjectCard
