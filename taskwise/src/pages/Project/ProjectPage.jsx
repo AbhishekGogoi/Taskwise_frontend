@@ -3,7 +3,7 @@ import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
 import SearchIcon from '@mui/icons-material/Search';
-import { styled } from '@mui/material/styles';
+import { styled} from '@mui/material/styles';
 import InputBase from '@mui/material/InputBase';
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
@@ -147,7 +147,7 @@ function ProjectPage() {
         }}
       >
 
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center',textAlign:"center" }}>
           <Typography variant="body1" component="div" sx={{ p: 2, fontWeight: 'bold' }}>
             Projects
           </Typography>
