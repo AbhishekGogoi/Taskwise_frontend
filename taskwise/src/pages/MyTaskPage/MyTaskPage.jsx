@@ -38,7 +38,7 @@ const MyTaskPage = () => {
     setSelectedProject(event.target.value);
   };
 
-  const containerStyle = useMemo(() => ({ width: "100%", height: "100%" }), []);
+  // const containerStyle = useMemo(() => ({ width: "100%", height: "100%" }), []);
   const gridStyle = useMemo(() => ({ height: "100%", width: "100%" }), []);
 
   const [rowData, setRowData] = useState([
@@ -206,11 +206,11 @@ const MyTaskPage = () => {
   ]);
 
   const [colDefs, setColDefs] = useState([
-    { field: "Task", flex: 2 },
-    { field: "DueDate", flex: 0.5 },
-    { field: "Priority", flex: 0.5 },
-    { field: "Status", flex: 0.5 },
-    { field: "Workspace", flex: 0.5 },
+    { field: "Task", width: 350 },
+    { field: "DueDate", width: 100 },
+    { field: "Priority", width: 100 },
+    { field: "Status", width: 100 },
+    { field: "Workspace", width: 100 },
   ]);
 
   const defaultColDef = useMemo(() => {
@@ -247,18 +247,18 @@ const MyTaskPage = () => {
           </Select>
         </FormControl>
       </Toolbar>
-      <div style={containerStyle}>
-        <div className={"ag-theme-quartz"} style={gridStyle}>
-          <AgGridReact
-            rowData={rowData}
-            columnDefs={colDefs}
-            defaultColDef={defaultColDef}
-            rowSelection="multiple"
-            suppressRowClickSelection={true}
-            autoSizeStrategy={autoSizeStrategy}
-          />
-        </div>
+      {/* <div style={containerStyle}> */}
+      <div className={"ag-theme-quartz"} style={gridStyle}>
+        <AgGridReact
+          rowData={rowData}
+          columnDefs={colDefs}
+          defaultColDef={defaultColDef}
+          rowSelection="multiple"
+          suppressRowClickSelection={true}
+          autoSizeStrategy={autoSizeStrategy}
+        />
       </div>
+      {/* </div> */}
     </StyledAgGridContainer>
   );
 };
