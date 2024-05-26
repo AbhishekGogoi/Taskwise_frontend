@@ -106,6 +106,7 @@ const VerificationPage = () => {
   };
 
   const [otp, setOtp] = useState(["", "", "", ""]);
+  // eslint-disable-next-line
   const [email, setEmail] = useState("example@gmail.com");
 
   // Function to mask email

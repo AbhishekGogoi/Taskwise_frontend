@@ -9,7 +9,7 @@ import {
   Typography,
   Link,
 } from "@mui/material";
-import { Google as GoogleIcon, Email, Lock } from "@mui/icons-material";
+import { Email, Lock } from "@mui/icons-material";
 import { styled } from "@mui/system";
 import googleiconnew from "../../assets/googleiconnew.png";
 import TaskWiseLogo from "../../assets/TaskWiseLogo.png";
