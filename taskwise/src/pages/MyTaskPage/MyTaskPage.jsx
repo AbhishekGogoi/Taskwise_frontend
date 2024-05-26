@@ -41,6 +41,7 @@ const MyTaskPage = () => {
   // const containerStyle = useMemo(() => ({ width: "100%", height: "100%" }), []);
   const gridStyle = useMemo(() => ({ height: "100%", width: "100%" }), []);
 
+  // eslint-disable-next-line
   const [rowData, setRowData] = useState([
     {
       Task: "Design feedback on wireframe",
@@ -205,6 +206,7 @@ const MyTaskPage = () => {
     },
   ]);
 
+  // eslint-disable-next-line
   const [colDefs, setColDefs] = useState([
     { field: "Task", width: 350 },
     { field: "DueDate", width: 100 },
