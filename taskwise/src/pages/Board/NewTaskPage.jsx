@@ -1,14 +1,13 @@
 import React, { useState } from 'react';
-import { useParams,useNavigate } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { Grid, TextField, Button, Box, Typography, IconButton, Paper, MenuItem, Select } from '@mui/material';
-import AttachFileIcon from '@mui/icons-material/AttachFile';
-import FlagIcon from '@mui/icons-material/Flag';
+import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
 
 function NewTaskPage() {
     const { id } = useParams();
     const [priority, setPriority] = useState('');
     const [status, setStatus] = useState('');
-    const navigate=useNavigate();
+    const navigate = useNavigate();
     const handleStatusChange = (event) => {
         setStatus(event.target.value);
         console.log(event.target.value);
@@ -135,8 +134,8 @@ function NewTaskPage() {
                                 </Box>
                             </Grid>
 
-                            <Grid item xs={12} sx={{ display: 'flex', alignItems: 'center',justifyContent:"center" }}>
-                                <Typography variant="h6" gutterBottom sx={{ fontWeight: 'bold', mb: 3 ,mr:2.5}}>
+                            <Grid item xs={12} sx={{ display: 'flex', alignItems: 'center', justifyContent: "center" }}>
+                                <Typography variant="h6" gutterBottom sx={{ fontWeight: 'bold', mb: 3, mr: 2.5 }}>
                                     Priority
                                 </Typography>
                                 <Box sx={{ display: 'flex', alignItems: 'center', flexGrow: 1, ml: 2 }}>
@@ -162,10 +161,20 @@ function NewTaskPage() {
                             </Grid>
 
                             <Grid item xs={12} sx={{ display: 'flex', alignItems: 'center' }}>
-                                <Typography variant="h6" gutterBottom sx={{ fontWeight: 'bold', mb: 3,mr:3.5 }}>
-                                    Status
-                                </Typography>
-                                <Box sx={{ display: 'flex', alignItems: 'center', flexGrow: 1, ml: 2 }}>
+                                <Box sx={{ display: 'flex', alignItems: 'center', flexGrow: 1 }}>
+                                    <Typography
+                                        variant="h6"
+                                        gutterBottom
+                                        sx={{
+                                            fontWeight: 'bold',
+                                            mb: 3,
+                                            mr: 2, // Add some right margin to the Typography component to space it from the Select component
+                                            textAlign: "center",
+                                            alignItems: "center"
+                                        }}
+                                    >
+                                        Status
+                                    </Typography>
                                     <Select
                                         value={status}
                                         onChange={handleStatusChange}
@@ -187,12 +196,14 @@ function NewTaskPage() {
                                 </Box>
                             </Grid>
 
-                            <Grid item xs={12} sx={{ display: 'flex', alignItems: 'center' }}>
-                                <Typography variant="h6" gutterBottom sx={{ fontWeight: 'bold', mb: 3 }}>
+
+
+                            <Grid item xs={12} sx={{ display: 'flex', alignItems: 'center', justifyContent: "space-around" }}>
+                                <Typography variant="h6" gutterBottom sx={{ fontWeight: 'bold' }}>
                                     Attachments
                                 </Typography>
                                 <IconButton>
-                                    <AttachFileIcon />
+                                    <AddOutlinedIcon />
                                 </IconButton>
                             </Grid>
                         </Grid>

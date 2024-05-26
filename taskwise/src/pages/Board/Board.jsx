@@ -145,7 +145,7 @@ function Board() {
                         </Box>
                     </Box>
                     <Divider component="div" role="presentation" />
-                    <Box sx={{ display: "flex", alignItems: "center", justifyContent: "flex-end", padding: "8px" }}>
+                    <Box sx={{ display: "flex", alignItems: "center", justifyContent: "flex-end", padding: "8px",textAlign:"center" }}>
                         <Button
                             variant="contained"
                             size="small"
@@ -154,10 +154,10 @@ function Board() {
                                 alignItems: 'center',
                                 justifyContent: 'center'
                             }}
-                            startIcon={<AddIcon />} // AddIcon will be displayed before the button label
+                            //startIcon={<AddIcon />} // AddIcon will be displayed before the button label
                             onClick={handleClick}
                         >
-                            New task
+                            Add new task
                         </Button>
                     </Box>
                 </Paper>

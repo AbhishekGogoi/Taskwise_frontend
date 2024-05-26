@@ -148,7 +148,7 @@ function ProjectPage() {
         }}
       >
 
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center',textAlign:"center" }}>
           <Typography variant="body1" component="div" sx={{ p: 2, fontWeight: 'bold' }}>
             Projects
           </Typography>
