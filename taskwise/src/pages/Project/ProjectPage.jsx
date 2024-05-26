@@ -3,10 +3,11 @@ import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
 import SearchIcon from '@mui/icons-material/Search';
-import { styled } from '@mui/material/styles';
+import { styled, alpha } from '@mui/material/styles';
 import InputBase from '@mui/material/InputBase';
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
+import Container from '@mui/material/Card';
 import { Grid } from '@mui/material';
 import ProjectCard from './ProjectCard';
 
