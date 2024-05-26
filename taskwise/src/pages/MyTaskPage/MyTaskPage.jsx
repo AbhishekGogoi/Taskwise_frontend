@@ -1,15 +1,8 @@
-import React, { useState, useMemo } from "react";
-import {
-  Box,
-  Typography,
-  TextField,
-  MenuItem,
-  InputAdornment,
-} from "@mui/material";
+import React, { useCallback, useMemo, useRef, useState } from "react";
+import { Box, Typography, MenuItem } from "@mui/material";
 import InputLabel from "@mui/material/InputLabel";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
-import SearchIcon from "@mui/icons-material/Search";
 import { AgGridReact } from "@ag-grid-community/react"; // React Grid Logic
 import "@ag-grid-community/styles/ag-grid.css"; // Core CSS
 import "@ag-grid-community/styles/ag-theme-quartz.css"; // Theme
@@ -26,7 +19,7 @@ const StyledAgGridContainer = styled("div")({
   flexDirection: "column",
   justifyContent: "center",
   alignItems: "center",
-  paddingTop: "2rem", // Ensure container takes at least the viewport height
+  height: "100vh",
 });
 
 const Toolbar = styled(Box)({
@@ -34,7 +27,8 @@ const Toolbar = styled(Box)({
   justifyContent: "space-between",
   alignItems: "center",
   width: "100%",
-  paddingBottom: "3rem",
+  paddingBottom: "1rem",
+  paddingLeft: "8px",
 });
 
 const MyTaskPage = () => {
@@ -43,6 +37,9 @@ const MyTaskPage = () => {
   const handleProjectChange = (event) => {
     setSelectedProject(event.target.value);
   };
+
+  const containerStyle = useMemo(() => ({ width: "100%", height: "100%" }), []);
+  const gridStyle = useMemo(() => ({ height: "100%", width: "100%" }), []);
 
   const [rowData, setRowData] = useState([
     {
@@ -220,7 +217,12 @@ const MyTaskPage = () => {
     return {
       filter: "agTextColumnFilter",
       floatingFilter: true,
-      // flex: 2,
+    };
+  }, []);
+
+  const autoSizeStrategy = useMemo(() => {
+    return {
+      type: "fitGridWidth",
     };
   }, []);
 
@@ -228,45 +230,34 @@ const MyTaskPage = () => {
     <StyledAgGridContainer>
       <Toolbar>
         <Typography variant="h6">My Tasks</Typography>
-        <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-          <FormControl sx={{ m: 1, minWidth: 150 }} size="small">
-            <InputLabel id="demo-simple-select-label">
-              Select Project
-            </InputLabel>
-            <Select
-              labelId="demo-simple-select-label"
-              id="demo-simple-select"
-              value={selectedProject}
-              label="Select Project"
-              onChange={handleProjectChange}
-            >
-              <MenuItem value="Project 1">Project 1</MenuItem>
-              <MenuItem value="Project 2">Project 2</MenuItem>
-            </Select>
-          </FormControl>
-          <TextField
-            variant="outlined"
-            size="small"
-            placeholder="Search"
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">
-                  <SearchIcon />
-                </InputAdornment>
-              ),
-            }}
-            sx={{ backgroundColor: "white" }}
-          />
-        </Box>
+        <FormControl
+          sx={{ m: 1, minWidth: 150, backgroundColor: "white" }}
+          size="small"
+        >
+          <InputLabel id="demo-simple-select-label">Select Project</InputLabel>
+          <Select
+            labelId="demo-simple-select-label"
+            id="demo-simple-select"
+            value={selectedProject}
+            label="Select Project"
+            onChange={handleProjectChange}
+          >
+            <MenuItem value="Project 1">Project 1</MenuItem>
+            <MenuItem value="Project 2">Project 2</MenuItem>
+          </Select>
+        </FormControl>
       </Toolbar>
-      <div className={"ag-theme-quartz"} style={{ width: "100%", height: 500 }}>
-        <AgGridReact
-          rowData={rowData}
-          columnDefs={colDefs}
-          defaultColDef={defaultColDef}
-          rowSelection="multiple"
-          suppressRowClickSelection={true}
-        />
+      <div style={containerStyle}>
+        <div className={"ag-theme-quartz"} style={gridStyle}>
+          <AgGridReact
+            rowData={rowData}
+            columnDefs={colDefs}
+            defaultColDef={defaultColDef}
+            rowSelection="multiple"
+            suppressRowClickSelection={true}
+            autoSizeStrategy={autoSizeStrategy}
+          />
+        </div>
       </div>
     </StyledAgGridContainer>
   );
