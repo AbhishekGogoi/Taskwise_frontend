@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { Grid, TextField, Button, Box, Typography, IconButton, Paper, MenuItem, Select } from '@mui/material';
 import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
 
 function NewTaskPage() {
-    const { id } = useParams();
+    //const { id } = useParams();
     const [priority, setPriority] = useState('');
     const [status, setStatus] = useState('');
     const navigate = useNavigate();

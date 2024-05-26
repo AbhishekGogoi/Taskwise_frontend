@@ -10,7 +10,7 @@ import { styled } from '@mui/material/styles';
 import InputBase from '@mui/material/InputBase';
 import Divider from '@mui/material/Divider';
 import { Button } from '@mui/material';
-import AddIcon from '@mui/icons-material/Add';
+
 
 const SearchIconWrapper = styled('div')(({ theme }) => ({
     padding: theme.spacing(0, 2),

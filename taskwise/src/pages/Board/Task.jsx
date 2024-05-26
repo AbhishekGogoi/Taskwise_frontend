@@ -1,8 +1,8 @@
 import React from 'react'
-import { Paper, Typography } from '@mui/material';
+import { Typography } from '@mui/material';
 import { useDrag } from 'react-dnd';
 import { Card, CardContent, Chip, Box, IconButton } from '@mui/material';
-import { DateRange, AttachFile, Comment, MoreVert } from '@mui/icons-material';
+import { DateRange, AttachFile,MoreVert } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 function Task({ task }) {
     const navigate=useNavigate();
