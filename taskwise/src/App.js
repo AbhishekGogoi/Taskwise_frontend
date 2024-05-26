@@ -1,4 +1,4 @@
-import "./App.css";
+import React, { useState } from "react";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import Header from "./components/Header";
 import Sidebar from "./components/Sidebar";
@@ -13,6 +13,11 @@ import LandingPage from "./pages/landingPage/LandingPage";
 import WorkspacesPage from "./pages/Workspaces/Workspaces";
 import MyTaskPage from "./pages/MyTaskPage/MyTaskPage";
 import CalendarPage from "./pages/CalendarPage/CalendarPage";
+import useMediaQuery from "@mui/material/useMediaQuery";
+import Drawer from "@mui/material/Drawer";
+import Board from "./pages/Board/Board";
+import NewTaskPage from "./pages/Board/NewTaskPage";
+import TaskDetailsPage from "./pages/Board/TaskDetailsPage";
 import LoginPage from "./pages/LoginPage/LoginPage";
 import SignupPage from "./pages/SignupPage/SignupPage";
 import ForgotPasswordPage from "./pages/ForgotPassword/ForgotPasswordPage";
@@ -37,12 +42,44 @@ function AppLayout() {
     "/forgotpassword/resetpassword",
     "/forgotpassword/confirmation",
   ].includes(location.pathname);
+  const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
+  const [drawerOpen, setDrawerOpen] = useState(false);
+
+  const toggleDrawer = () => {
+    setDrawerOpen(!drawerOpen);
+  };
+
   return (
     <>
-      {!isLandingPage && <Header />}
+      {!isLandingPage && (
+        <Header isSmallScreen={isSmallScreen} toggleDrawer={toggleDrawer} />
+      )}
       <div style={isLandingPage ? {} : { display: "flex" }}>
-        {!isLandingPage && <Sidebar />}
-        <main>
+        {!isLandingPage && (
+          <>
+            {isSmallScreen ? (
+              <Drawer
+                anchor="left"
+                open={drawerOpen}
+                onClose={toggleDrawer}
+                PaperProps={{
+                  sx: { overflow: "hidden" },
+                }}
+              >
+                <Sidebar />
+              </Drawer>
+            ) : (
+              <Sidebar />
+            )}
+          </>
+        )}
+        <main
+          style={
+            isLandingPage
+              ? {}
+              : { backgroundColor: "#f0f0f0", padding: "20px", flexGrow: 1 }
+          }
+        >
           <Routes>
             <Route path="/" element={<LandingPage />} />
             <Route path="/login" element={<LoginPage />} />
@@ -61,6 +98,9 @@ function AppLayout() {
               element={<ConfirmationPage />}
             />
             <Route path="/projects" element={<ProjectPage />} />
+            <Route path="/projects/:id" element={<Board />} />
+            <Route path="/projects/:id/new-task" element={<NewTaskPage />} />
+            <Route path="/tasks/:taskID" element={<TaskDetailsPage />} />
             <Route path="/workspaces" element={<WorkspacesPage />} />
             <Route path="/my-tasks" element={<MyTaskPage />} />
             <Route path="/calendar" element={<CalendarPage />} />

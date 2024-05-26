@@ -12,10 +12,11 @@ import NotificationsIcon from "@mui/icons-material/Notifications";
 import LogoImage from "../assets/TaskWiseLogo.png";
 import ProfileImage from "../assets/sample-pi.png";
 import { Link } from "react-router-dom";
+import MenuIcon from '@mui/icons-material/Menu';
 
 const settings = ["Settings", "Logout"];
 
-function Header() {
+function Header({ isSmallScreen, toggleDrawer }) {
     const [anchorElUser, setAnchorElUser] = React.useState(null);
 
     const handleOpenUserMenu = (event) => {
@@ -32,6 +33,17 @@ function Header() {
                 disableGutters
                 sx={{ display: "flex", justifyContent: "space-between" }}
             >
+                {isSmallScreen && (
+                    <IconButton
+                        edge="start"
+                        color="blue"
+                        aria-label="menu"
+                        onClick={toggleDrawer}
+                        sx={{ ml:2 }}
+                    >
+                        <MenuIcon />
+                    </IconButton>
+                )}
                 <Box sx={{ display: "flex", alignItems: "center" }}>
                     <Link to="/projects">
                         <Box
