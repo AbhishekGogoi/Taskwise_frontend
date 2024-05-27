@@ -9,7 +9,7 @@ import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
 import { Grid } from '@mui/material';
 import WorkspaceCard from './WorkspaceCard';
-import WorkspaceData from '../../data/workspace.json';
+import WorkspaceData from '../../data/workspaces.json';
 import AddIcon from '@mui/icons-material/Add';
 import NewWorkspaceModel from './NewWorkspaceModel';
 import Modal from '@mui/material/Modal';
