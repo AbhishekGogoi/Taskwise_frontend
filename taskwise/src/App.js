@@ -17,6 +17,8 @@ import useMediaQuery from '@mui/material/useMediaQuery';
 import Drawer from '@mui/material/Drawer';
 import Board from './pages/Board/Board';
 import WorkspaceDetails from './pages/Workspace/WorkspaceDetails';
+import NewTaskPage from './pages/Board/NewTaskPage';
+import TaskDetailsPage from './pages/Board/TaskDetailsPage';
 
 const theme = createTheme({
   typography: {
@@ -63,6 +65,8 @@ function AppLayout() {
             <Route path="/" element={<LandingPage />} />
             <Route path="/projects" element={<ProjectPage />} />
             <Route path='/projects/:id' element={<Board/>}/>
+            <Route path="/projects/:id/new-task" element={<NewTaskPage/>} />
+            <Route path='/tasks/:taskID' element={<TaskDetailsPage/>}/>
             <Route path="/workspaces" element={<WorkspacesPage />} />
             <Route path='/workspaces/:id' element={<WorkspaceDetails/>}/>
             <Route path="/my-tasks" element={<MyTaskPage />} />
