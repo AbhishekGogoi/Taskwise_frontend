@@ -13,7 +13,7 @@ function WorkspaceCard({workspace}) {
             maxWidth: 240,
             borderRadius: 2,
             }}
-            onClick={()=>navigate(`/workspaces/${workspace.id}`)}
+            onClick={()=>navigate(`/workspaces/${workspace.name}`)}
         >
             <CardMedia
                 component="img"
