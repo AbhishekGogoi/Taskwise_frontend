@@ -19,7 +19,6 @@ import WorkspaceDetails from './pages/Workspace/WorkspaceDetails';
 import NewTaskPage from './pages/Board/NewTaskPage';
 import TaskDetailsPage from './pages/Board/TaskDetailsPage';
 import useMediaQuery from "@mui/material/useMediaQuery";
-import Drawer from "@mui/material/Drawer";
 import Board from "./pages/Board/Board";
 import NewTaskPage from "./pages/Board/NewTaskPage";
 import TaskDetailsPage from "./pages/Board/TaskDetailsPage";
