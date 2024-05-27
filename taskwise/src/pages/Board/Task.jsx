@@ -57,7 +57,7 @@ function Task({ task }) {
         >
           <img
             src="https://img.freepik.com/free-vector/hand-drawn-minimal-background_23-2149001650.jpg?t=st=1716280160~exp=1716280760~hmac=f254cfeda21a263638253b9f6f0c0c9028bac218840dea34d6de5739054a4a96" // Image URL or path"
-            alt="Moodboard 1"
+            alt="Moodboard"
             style={{ width: "45%", marginBottom: "8px" }}
           />
           <img
