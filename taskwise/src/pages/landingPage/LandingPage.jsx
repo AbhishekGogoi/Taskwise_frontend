@@ -1,4 +1,5 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
@@ -33,6 +34,16 @@ import InstagramIcon from "@mui/icons-material/Instagram";
 import TwitterIcon from "@mui/icons-material/Twitter";
 
 function LandingPage() {
+  const navigate = useNavigate();
+
+  const handleClickLogin = () => {
+    navigate("/login");
+  };
+
+  const handleClickSignup = () => {
+    navigate("/signup");
+  };
+
   const theme = useTheme();
   const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
   const isLargeScreen = useMediaQuery(theme.breakpoints.up("lg"));
@@ -129,6 +140,7 @@ function LandingPage() {
                   borderColor: "#e0e0e0",
                 },
               }}
+              onClick={handleClickLogin}
             >
               Log In
             </Button>
@@ -144,6 +156,7 @@ function LandingPage() {
                   backgroundColor: "#357ae8",
                 },
               }}
+              onClick={handleClickSignup}
             >
               Sign Up
             </Button>
