@@ -52,17 +52,26 @@ function WorkspaceSettings({ workspace }) {
     'https://img.freepik.com/free-vector/hand-drawn-minimal-background_23-2149001650.jpg',
   ]);
 
-  const [links, setLinks] = useState([
+  // const [links, setLinks] = useState([
+  //   'https://example.com/link1',
+  //   'https://example.com/link2',
+  //   'https://example.com/link3',
+  // ]);
+ const links = [
     'https://example.com/link1',
     'https://example.com/link2',
     'https://example.com/link3',
-  ]);
-
-  const [docs, setDocs] = useState([
+  ];
+  // const [docs, setDocs] = useState([
+  //   'https://example.com/doc1.pdf',
+  //   'https://example.com/doc2.pdf',
+  //   'https://example.com/doc3.pdf',
+  // ]);
+  const docs= [
     'https://example.com/doc1.pdf',
     'https://example.com/doc2.pdf',
     'https://example.com/doc3.pdf',
-  ]);
+  ];
 
   const fileInputRef = useRef(null);
 
