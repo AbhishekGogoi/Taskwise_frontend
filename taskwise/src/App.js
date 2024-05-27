@@ -10,14 +10,15 @@ import {
 } from "react-router-dom";
 import ProjectPage from "./pages/Project/ProjectPage";
 import LandingPage from "./pages/landingPage/LandingPage";
-import WorkspacesPage from "./pages/Workspaces/Workspaces";
+import WorkspacesPage from "./pages/Workspace/WorkspacePage";
 import MyTaskPage from "./pages/MyTaskPage/MyTaskPage";
 import CalendarPage from "./pages/CalendarPage/CalendarPage";
+import Drawer from '@mui/material/Drawer';
+import WorkspaceDetails from './pages/Workspace/WorkspaceDetails';
+import NewTaskPage from './pages/Board/NewTaskPage';
+import TaskDetailsPage from './pages/Board/TaskDetailsPage';
 import useMediaQuery from "@mui/material/useMediaQuery";
-import Drawer from "@mui/material/Drawer";
 import Board from "./pages/Board/Board";
-import NewTaskPage from "./pages/Board/NewTaskPage";
-import TaskDetailsPage from "./pages/Board/TaskDetailsPage";
 import LoginPage from "./pages/LoginPage/LoginPage";
 import SignupPage from "./pages/SignupPage/SignupPage";
 import ForgotPasswordPage from "./pages/ForgotPassword/ForgotPasswordPage";
@@ -102,6 +103,7 @@ function AppLayout() {
             <Route path="/projects/:id/new-task" element={<NewTaskPage />} />
             <Route path="/tasks/:taskID" element={<TaskDetailsPage />} />
             <Route path="/workspaces" element={<WorkspacesPage />} />
+            <Route path='/workspaces/:id' element={<WorkspaceDetails/>}/>
             <Route path="/my-tasks" element={<MyTaskPage />} />
             <Route path="/calendar" element={<CalendarPage />} />
           </Routes>
