@@ -9,7 +9,9 @@ import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
 import { Grid } from '@mui/material';
 import ProjectCard from './ProjectCard';
-
+import { useDispatch, useSelector } from 'react-redux';
+import appStore from '../../utils/appStore';
+import { addProject } from '../../utils/projectSlice';
 const SearchIconWrapper = styled('div')(({ theme }) => ({
   padding: theme.spacing(0, 2),
   height: '100%',
@@ -127,6 +129,12 @@ const projectsData = [
 
 
 function ProjectPage() {
+  const projectData=useSelector((store)=>store.project.projects);
+  console.log(projectData);
+  const dispatch=useDispatch();
+  const handleNewProject=()=>{
+    dispatch(addProject("projuct 1"))
+  }
   return (
     <Box
       sx={{
@@ -153,7 +161,7 @@ function ProjectPage() {
           </Typography>
           <Stack spacing={2} direction="row" sx={{ pr: 2}}>
             <Button variant="contained" size="small" sx={{ fontSize: '0.70rem', padding: '4px 8px' }}>Create with AI</Button>
-            <Button variant="contained" size="small" sx={{ fontSize: '0.70rem', padding: '4px 8px' }}>New Project</Button>
+            <Button variant="contained" size="small" sx={{ fontSize: '0.70rem', padding: '4px 8px' }} onClick={handleNewProject}>New Project</Button>
           </Stack>
         </Box>
         <Box sx={{ width: '300px', height: '30px', paddingLeft: "15px" }}>
