@@ -44,6 +44,7 @@ const projectSlice=createSlice({
                 state.projectFetchStatus="rejected"
                 state.errors=action.error
             })
+            
     }
 })
 

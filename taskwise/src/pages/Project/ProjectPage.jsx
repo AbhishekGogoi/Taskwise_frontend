@@ -10,7 +10,6 @@ import Button from '@mui/material/Button';
 import { Grid } from '@mui/material';
 import ProjectCard from './ProjectCard';
 import { useDispatch, useSelector } from 'react-redux';
-import appStore from '../../utils/appStore';
 import { addProject } from '../../utils/projectSlice';
 import { fetchProjectAsync } from '../../utils/project/projectSlice';
 import { useEffect } from 'react';
