@@ -28,6 +28,11 @@ const ProfileHeader = styled(Grid)(({ theme }) => ({
   [theme.breakpoints.down("sm")]: {
     flexDirection: "column",
   },
+  [theme.breakpoints.up("md")]: {
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
 }));
 
 const ProfileInfo = styled(Grid)({
@@ -66,6 +71,14 @@ const ProfileText = styled(Typography)({
   left: "14rem", // Adjust left position as needed
 });
 
+const PageWrapper = styled(Box)({
+  height: "100vh",
+  display: "flex",
+  flexDirection: "column",
+  alignItems: "center",
+  overflow: "hidden", // Prevent overflow on the main page
+});
+
 const ProfileSettingsPage = () => {
   const [isEditing, setIsEditing] = useState({ email: false, title: false });
   const [email, setEmail] = useState("smith@gmail.com");
@@ -80,7 +93,7 @@ const ProfileSettingsPage = () => {
   };
 
   return (
-    <>
+    <PageWrapper>
       <ProfileText variant="h6">Profile</ProfileText>
       <Container>
         <ProfileHeader container spacing={2}>
@@ -195,7 +208,7 @@ const ProfileSettingsPage = () => {
           </Button>
         </ChangePasswordContainer>
       </Container>
-    </>
+    </PageWrapper>
   );
 };
 
