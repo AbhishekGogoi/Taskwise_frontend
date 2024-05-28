@@ -184,7 +184,7 @@ function ProjectPage() {
         <Grid container spacing={3} alignItems="center">
           {projectsData?.map((project) => (
             <Grid item key={project.id} xs={6} sm={6} md={3} lg={3} xl={2}>
-              <ProjectCard project={project} />
+              <ProjectCard project={project}/>
             </Grid>
           ))}
         </Grid>

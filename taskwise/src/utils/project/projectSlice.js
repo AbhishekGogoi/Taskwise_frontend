@@ -53,11 +53,11 @@ const projectSlice=createSlice({
             .addCase(fetchProjectByIdAsync.pending,(state)=>{
                 state.projectFetchStatus="loading"
             })
-            .addCase(fetchProjectAsync.fulfilled,(state,action)=>{
+            .addCase(fetchProjectByIdAsync.fulfilled,(state,action)=>{
                 state.projectFetchStatus="fulfilled"
                 state.selectedProject=action.payload
             })
-            .addCase(fetchProjectAsync.rejected,(state,action)=>{
+            .addCase(fetchProjectByIdAsync.rejected,(state,action)=>{
                 state.projectFetchStatus="rejected"
                 state.errors=action.error
             })
