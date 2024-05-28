@@ -62,8 +62,8 @@ const ChangePasswordContainer = styled(Box)({
 });
 
 const ProfileText = styled(Typography)({
-  backgroundColor: "#f2f1ff",
-  color: "#3f51b5",
+  backgroundColor: "#1565c0",
+  color: "#ffffff",
   padding: "8px 16px",
   borderRadius: "4px",
   position: "absolute", // Position absolutely
@@ -94,7 +94,7 @@ const ProfileSettingsPage = () => {
 
   return (
     <PageWrapper>
-      <ProfileText variant="h6">Profile</ProfileText>
+      <ProfileText variant="h7">Profile</ProfileText>
       <Container>
         <ProfileHeader container spacing={2}>
           <Grid
