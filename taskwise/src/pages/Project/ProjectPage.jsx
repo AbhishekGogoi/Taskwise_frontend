@@ -133,9 +133,7 @@ function ProjectPage() {
   const dispatch=useDispatch();
   const projectsData=useSelector((state)=>state.project.projects);
   console.log(projectsData)
-  const handleNewProject=()=>{
-    dispatch(addProject("projuct 1"))
-  }
+  
   useEffect(()=>{
       dispatch(fetchProjectAsync())
   },[dispatch])
@@ -165,7 +163,7 @@ function ProjectPage() {
           </Typography>
           <Stack spacing={2} direction="row" sx={{ pr: 2}}>
             <Button variant="contained" size="small" sx={{ fontSize: '0.70rem', padding: '4px 8px' }}>Create with AI</Button>
-            <Button variant="contained" size="small" sx={{ fontSize: '0.70rem', padding: '4px 8px' }} onClick={handleNewProject}>New Project</Button>
+            <Button variant="contained" size="small" sx={{ fontSize: '0.70rem', padding: '4px 8px' }}>New Project</Button>
           </Stack>
         </Box>
         <Box sx={{ width: '300px', height: '30px', paddingLeft: "15px" }}>
