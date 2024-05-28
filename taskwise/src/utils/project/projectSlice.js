@@ -1,9 +1,10 @@
 import { createAsyncThunk , createSlice } from "@reduxjs/toolkit";
-import { fetchProjects } from "./projectAPI";
+import { fetchProjects,fetchProjectById } from "./projectAPI";
 
 const initialState={
     projects:[],
     projectFetchStatus: 'idle',
+    selectedProject:null,
     status:"idle",
     errors:null,
     sucessMessage:null
@@ -13,6 +14,11 @@ export const fetchProjectAsync=createAsyncThunk("projects/fetchProjects",async()
     const projects=await fetchProjects();
     return projects
 });
+
+export const fetchProjectByIdAsync=createAsyncThunk("projects/fetchProjectsById",async(id)=>{
+    const selectedProject=await fetchProjectById(id);
+    return selectedProject
+})
 
 const projectSlice=createSlice({
     name:"projectSlice",
@@ -44,7 +50,17 @@ const projectSlice=createSlice({
                 state.projectFetchStatus="rejected"
                 state.errors=action.error
             })
-            
+            .addCase(fetchProjectByIdAsync.pending,(state)=>{
+                state.projectFetchStatus="loading"
+            })
+            .addCase(fetchProjectAsync.fulfilled,(state,action)=>{
+                state.projectFetchStatus="fulfilled"
+                state.selectedProject=action.payload
+            })
+            .addCase(fetchProjectAsync.rejected,(state,action)=>{
+                state.projectFetchStatus="rejected"
+                state.errors=action.error
+            })
     }
 })
 
