@@ -13,10 +13,10 @@ import LandingPage from "./pages/landingPage/LandingPage";
 import WorkspacesPage from "./pages/Workspace/WorkspacePage";
 import MyTaskPage from "./pages/MyTaskPage/MyTaskPage";
 import CalendarPage from "./pages/CalendarPage/CalendarPage";
-import Drawer from "@mui/material/Drawer";
-import WorkspaceDetails from "./pages/Workspace/WorkspaceDetails";
-import NewTaskPage from "./pages/Board/NewTaskPage";
-import TaskDetailsPage from "./pages/Board/TaskDetailsPage";
+import Drawer from '@mui/material/Drawer';
+import WorkspaceDetails from './pages/Workspace/WorkspaceDetails';
+import NewTaskPage from './pages/Board/NewTaskPage';
+import TaskDetailsPage from './pages/Board/TaskDetailsPage';
 import useMediaQuery from "@mui/material/useMediaQuery";
 import Board from "./pages/Board/Board";
 import LoginPage from "./pages/LoginPage/LoginPage";
@@ -25,7 +25,6 @@ import ForgotPasswordPage from "./pages/ForgotPassword/ForgotPasswordPage";
 import VerificationPage from "./pages/ForgotPassword/VerificationPage";
 import ResetPasswordPage from "./pages/ForgotPassword/ResetPasswordPage";
 import ConfirmationPage from "./pages/ForgotPassword/ConfirmationPage";
-import ProfileSettingsPage from "./pages/ProfilePage/ProfilePage";
 
 const theme = createTheme({
   typography: {
@@ -104,10 +103,9 @@ function AppLayout() {
             <Route path="/projects/:id/new-task" element={<NewTaskPage />} />
             <Route path="/tasks/:taskID" element={<TaskDetailsPage />} />
             <Route path="/workspaces" element={<WorkspacesPage />} />
-            <Route path="/workspaces/:id" element={<WorkspaceDetails />} />
+            <Route path='/workspaces/:id' element={<WorkspaceDetails/>}/>
             <Route path="/my-tasks" element={<MyTaskPage />} />
             <Route path="/calendar" element={<CalendarPage />} />
-            <Route path="/settings" element={<ProfileSettingsPage />} />
           </Routes>
         </main>
       </div>
