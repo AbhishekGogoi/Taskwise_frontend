@@ -13,6 +13,8 @@ import {
 } from "@mui/material";
 import { Email, Lock, Person } from "@mui/icons-material"; // Import Person icon for username
 import { styled } from "@mui/system";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import Joi from "joi";
 import googleiconnew from "../../assets/googleiconnew.png";
 import TaskWiseLogo from "../../assets/TaskWiseLogo.png";
@@ -118,6 +120,8 @@ const SignupPage = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const signupStatus = useSelector((state) => state.user.signupStatus);
+  const signupError = useSelector((state) => state.user.signupError);
+  console.log(signupError?.message);
 
   const schema = Joi.object({
     username: Joi.string().min(3).required().messages({
@@ -176,6 +180,12 @@ const SignupPage = () => {
     setErrors({});
     dispatch(signupAsync({ username, email, password })); // Exclude confirmPassword
   };
+
+  useEffect(() => {
+    if (signupError) {
+      toast.error(signupError.message);
+    }
+  }, [signupError]);
 
   useEffect(() => {
     if (signupStatus === "fullfilled") {
@@ -345,6 +355,7 @@ const SignupPage = () => {
           Log In
         </StyledSignUpLink>
       </Box>
+      <ToastContainer />
     </StyledContainer>
   );
 };

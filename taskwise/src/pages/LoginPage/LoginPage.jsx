@@ -10,6 +10,9 @@ import {
   Link,
 } from "@mui/material";
 import { Email, Lock } from "@mui/icons-material";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import Joi from "joi";
 import { styled } from "@mui/system";
 import googleiconnew from "../../assets/googleiconnew.png";
 import TaskWiseLogo from "../../assets/TaskWiseLogo.png";
@@ -123,9 +126,14 @@ const StyledButton = styled(Button)({
 const LoginPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [errors, setErrors] = useState({});
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
+
+  const loginError = useSelector((state) => state.user.loginError);
+  // console.log(loginError?.message);
+
   const handleForgotPasswordClick = () => {
     navigate("/forgotpassword"); // Navigate to forgot password page
   };
@@ -142,22 +150,58 @@ const LoginPage = () => {
   //   );
   // };
 
-  const handleLogin2 = (e) => {
+  const schema = Joi.object({
+    email: Joi.string()
+      .email({ tlds: { allow: false } })
+      .required()
+      .messages({
+        "string.empty": "Email is required",
+        "string.email": "Email must be a valid email",
+      }),
+    password: Joi.string()
+      .pattern(
+        new RegExp(
+          "^[a-zA-Z0-9!@#\\$%\\^&\\*\\(\\)_\\+\\-=[\\]{};:'\",<>\\.\\?/`~]{4,}$"
+        )
+      )
+      .required()
+      .messages({
+        "string.empty": "Password is required",
+        "string.pattern.base":
+          "Password must be at least 4 characters and contain only letters, numbers, and special characters",
+      }),
+  });
+
+  const handleLogin = (e) => {
     e.preventDefault();
-    console.log("Login button clicked");
-    console.log(email, password);
-    dispatch(
-      loginAsync({
-        email: email,
-        password: password,
-      })
+    const { error } = schema.validate(
+      { email, password },
+      { abortEarly: false }
     );
+
+    if (error) {
+      const validationErrors = {};
+      error.details.forEach((detail) => {
+        validationErrors[detail.path[0]] = detail.message;
+      });
+      setErrors(validationErrors);
+      return;
+    }
+
+    setErrors({});
+    dispatch(loginAsync({ email, password }));
   };
 
   const loggedInUser = useSelector((state) => state.user.loggedInUser);
-  console.log(loggedInUser);
+  // console.log(loggedInUser);
   // const state = useSelector((state) => state);
   // console.log(state);
+
+  useEffect(() => {
+    if (loginError) {
+      toast.error(loginError.message);
+    }
+  }, [loginError]);
 
   useEffect(() => {
     if (loggedInUser) {
@@ -207,6 +251,8 @@ const LoginPage = () => {
           }}
           value={email}
           onChange={(e) => setEmail(e.target.value)}
+          error={!!errors.email}
+          helperText={errors.email}
         />
         <TextField // Password field with icon
           variant="outlined"
@@ -227,6 +273,8 @@ const LoginPage = () => {
           }}
           value={password}
           onChange={(e) => setPassword(e.target.value)}
+          error={!!errors.password}
+          helperText={errors.password}
         />
         <StyledButton // Login button style adjustments
           type="submit"
@@ -237,7 +285,7 @@ const LoginPage = () => {
             backgroundColor: "#0062ff", // Example color
             "&:hover": { backgroundColor: "#303f9f" }, // Darker hover
           }}
-          onClick={handleLogin2}
+          onClick={handleLogin}
         >
           Log In
         </StyledButton>
@@ -288,6 +336,7 @@ const LoginPage = () => {
           Sign Up
         </StyledSignUpLink>
       </Box>
+      <ToastContainer />
     </StyledContainer>
   );
 };
