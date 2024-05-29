@@ -56,6 +56,7 @@ const ChangePasswordModal = ({ handleClose, onUpdatePassword }) => {
         margin="normal"
         value={formData.currentPassword}
         onChange={handleChange}
+        sx={{ mb: 2 }}
       />
       <TextField
         label="Enter new password"
@@ -73,10 +74,15 @@ const ChangePasswordModal = ({ handleClose, onUpdatePassword }) => {
               onClick={() => setShowPassword(!showPassword)}
               edge="end"
             >
-              {showPassword ? <VisibilityOff /> : <Visibility />}
+              {showPassword ? (
+                <VisibilityOff fontSize="small" />
+              ) : (
+                <Visibility fontSize="small" />
+              )}
             </IconButton>
           ),
         }}
+        sx={{ mb: 2 }}
       />
       <TextField
         label="Confirm new password"
@@ -94,10 +100,15 @@ const ChangePasswordModal = ({ handleClose, onUpdatePassword }) => {
               onClick={() => setShowPassword(!showPassword)}
               edge="end"
             >
-              {showPassword ? <VisibilityOff /> : <Visibility />}
+              {showPassword ? (
+                <VisibilityOff fontSize="small" />
+              ) : (
+                <Visibility fontSize="small" />
+              )}
             </IconButton>
           ),
         }}
+        sx={{ mb: 2 }}
       />
       <Button
         variant="contained"
