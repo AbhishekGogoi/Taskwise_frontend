@@ -46,6 +46,11 @@ function Header({ isSmallScreen, toggleDrawer }) {
     navigate("/"); // Navigate to the landing page
   };
 
+  const handleSettingsClick = () => {
+    handleCloseUserMenu();
+    navigate("/settings");
+  };
+
   return (
     <>
       <AppBar position="static" sx={{ backgroundColor: "white" }}>
@@ -130,6 +135,8 @@ function Header({ isSmallScreen, toggleDrawer }) {
                   onClick={
                     setting === "Logout"
                       ? handleLogoutClick
+                      : setting === "Settings"
+                      ? handleSettingsClick
                       : handleCloseUserMenu
                   }
                 >
