@@ -214,6 +214,9 @@ function Board() {
             width: '100%',
             maxWidth: '1600px', 
             padding: 2,
+            '&::-webkit-scrollbar': {
+              display: 'none', 
+            },
         }}>
         <Grid container spacing={2} direction="row" wrap="nowrap" sx={{marginTopt:"3"}} alignItems="flex-start">
           {initialData.order.map((columnId) => {
