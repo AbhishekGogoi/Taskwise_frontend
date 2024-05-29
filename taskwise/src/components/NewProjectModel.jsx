@@ -35,22 +35,34 @@ const NewProjectModel = ({ handleClose }) => {
   const [workspace, setWorkspace] = useState("Updated Workspace");
   const fileInputRef = useRef(null);
   const [name,setName]=useState("");
-  const [description,setDescription]=useState("")
+  const [description,setDescription]=useState("");
+  const [errors, setErrors] = useState({});
   const handleFileUploadClick = () => {
     fileInputRef.current.click();
   };
+  const validateForm =()=>{
+    const newErrors = {};
+    if (!name) {
+      newErrors.name = 'Project Name is required';
+    }
+    if (!workspace) {
+      newErrors.workspace = 'Assign Workspace is required';
+    }
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  }
   const handleCreate=()=>{
-    console.log("name",name);
-    console.log("desc",description);
-    console.log("workspace",workspace);
-    console.log("id",creatorUserID)
-    dispatch(addProjectAsync({
-      "name":name,
-      "description":description,
-      "workspaceName":workspace,
-      "creatorUserID":creatorUserID
-  }))
-    handleClose()
+    if(validateForm()){
+      const projectdata={
+        "name":name,
+        "description":description,
+        "workspaceName":workspace,
+        "creatorUserID":creatorUserID
+      }
+      dispatch(addProjectAsync(projectdata))
+      handleClose()
+    }
+    
   }
   const handleFileChange = (event) => {
     const file = event.target.files[0];
@@ -65,6 +77,16 @@ const NewProjectModel = ({ handleClose }) => {
 
   const handleWorkspaceChange = (event) => {
     setWorkspace(event.target.value);
+    if (event.target.value) {
+      setErrors((prevErrors) => ({ ...prevErrors, workspace: null }));
+    }
+  };
+
+  const handleNameChange = (event) => {
+    setName(event.target.value);
+    if (event.target.value) {
+      setErrors((prevErrors) => ({ ...prevErrors, name: null }));
+    }
   };
 
   return (
@@ -128,7 +150,9 @@ const NewProjectModel = ({ handleClose }) => {
         margin="normal"
         style={{ marginBottom: "20px", backgroundColor: "white" }}
         value={name}
-        onChange={(e)=>setName(e.target.value)}
+        onChange={handleNameChange}
+        error={!!errors.name}
+        helperText={errors.name}
       />
       <TextField
         id="project-description"
@@ -139,7 +163,7 @@ const NewProjectModel = ({ handleClose }) => {
         value={description}
         onChange={(e)=>setDescription(e.target.value)}
       />
-      <FormControl fullWidth margin="normal" style={{ marginBottom: "40px" }}>
+      <FormControl fullWidth margin="normal" style={{ marginBottom: "40px" }} error={!!errors.workspace}>
         <InputLabel id="assign-workspace-label">Assign Workspace</InputLabel>
         <Select
           labelId="assign-workspace-label"
@@ -151,10 +175,11 @@ const NewProjectModel = ({ handleClose }) => {
           <MenuItem value="">
             <em>None</em>
           </MenuItem>
-          <MenuItem value="workspace1">Workspace 1</MenuItem>
-          <MenuItem value="workspace2">Workspace 2</MenuItem>
-          <MenuItem value="workspace3">Workspace 3</MenuItem>
+          <MenuItem value="Updated Workspace">Workspace 1</MenuItem>
+          <MenuItem value="Updated Workspace">Workspace 2</MenuItem>
+          <MenuItem value="Updated Workspace">Workspace 3</MenuItem>
         </Select>
+        {!!errors.workspace && <Typography color="error">{errors.workspace}</Typography>}
       </FormControl>
       <Button
         variant="contained"
