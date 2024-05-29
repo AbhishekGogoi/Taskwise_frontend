@@ -135,11 +135,12 @@ const LoginPage = () => {
         }))
   }
   const loggedInUser=useSelector((state)=>state.user.loggedInUser)
+  
   useEffect(()=>{
     if(loggedInUser){
        navigate('/projects')
     }
-  },[loggedInUser])
+  },[loggedInUser,navigate])
 
 
 
