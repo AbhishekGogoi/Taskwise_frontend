@@ -13,6 +13,10 @@ import { Email, Lock } from "@mui/icons-material";
 import { styled } from "@mui/system";
 import googleiconnew from "../../assets/googleiconnew.png";
 import TaskWiseLogo from "../../assets/TaskWiseLogo.png";
+import { useDispatch } from "react-redux";
+import { loginAsync } from "../../features/user/userSlice";
+import { useSelector } from "react-redux";
+import { useEffect } from "react";
 
 // Styles
 const StyledContainer = styled(Container)({
@@ -118,10 +122,27 @@ const StyledButton = styled(Button)({
 // Component
 const LoginPage = () => {
   const navigate = useNavigate();
-
+  const dispatch=useDispatch()
   const handleForgotPasswordClick = () => {
     navigate("/forgotpassword"); // Navigate to forgot password page
   };
+
+  //redux
+  const handleLogin=()=>{
+        dispatch(loginAsync({
+          "email": "test@gmail.com",
+          "password": "Test123"
+        }))
+  }
+  const loggedInUser=useSelector((state)=>state.user.loggedInUser)
+  
+  useEffect(()=>{
+    if(loggedInUser){
+       navigate('/projects')
+    }
+  },[loggedInUser,navigate])
+
+
 
   const handleSignUpClick = () => {
     navigate("/signup"); // Navigate to signup page
@@ -191,6 +212,7 @@ const LoginPage = () => {
             backgroundColor: "#0062ff", // Example color
             "&:hover": { backgroundColor: "#303f9f" }, // Darker hover
           }}
+          onClick={handleLogin}
         >
           Log In
         </StyledButton>

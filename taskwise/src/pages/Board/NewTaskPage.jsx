@@ -4,18 +4,25 @@ import { Grid, TextField, Button, Box, Typography, IconButton, Paper, MenuItem, 
 import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
 
 function NewTaskPage() {
-    //const { id } = useParams();
+    const [title, setTitle] = useState('');
+    const [description, setDescription] = useState('');
+    const [comment, setComment] = useState('');
+    const [dueDate, setDueDate] = useState('');
     const [priority, setPriority] = useState('');
     const [status, setStatus] = useState('');
+    const [assignees, setAssignees] = useState([]);
     const navigate = useNavigate();
+
     const handleStatusChange = (event) => {
         setStatus(event.target.value);
-        console.log(event.target.value);
     };
 
     const handlePriorityChange = (event) => {
         setPriority(event.target.value);
-        console.log(event.target.value);
+    };
+
+    const handleAssigneesChange = (event) => {
+        setAssignees(event.target.value);
     };
 
     const handleCreateTask = () => {
@@ -33,7 +40,8 @@ function NewTaskPage() {
                 p: 2,
             }}
         >
-            <Paper
+           <Box sx={{display:"flex", justifyContent:"space-between"}}>
+           <Paper
                 elevation={3}
                 sx={{
                     p: 3,
@@ -43,6 +51,7 @@ function NewTaskPage() {
                     flexDirection: 'column',
                     justifyContent: 'space-between',
                 }}
+                
             >
                 <Grid container spacing={5}>
                     {/* Left side - Form Fields */}
@@ -54,6 +63,8 @@ function NewTaskPage() {
                             variant="outlined"
                             fullWidth
                             placeholder="Title"
+                            value={title}
+                            onChange={(e) => setTitle(e.target.value)}
                             sx={{
                                 mb: 4,
                                 '& input': {
@@ -71,6 +82,8 @@ function NewTaskPage() {
                             multiline
                             rows={4}
                             placeholder="Add your description here"
+                            value={description}
+                            onChange={(e) => setDescription(e.target.value)}
                             sx={{ mb: 4 }}
                         />
 
@@ -81,6 +94,8 @@ function NewTaskPage() {
                             variant="outlined"
                             fullWidth
                             placeholder="Ask a question or add a comment"
+                            value={comment}
+                            onChange={(e) => setComment(e.target.value)}
                             sx={{
                                 mb: 4,
                                 '& input': {
@@ -94,12 +109,13 @@ function NewTaskPage() {
                                 label="Select due date"
                                 type="date"
                                 InputLabelProps={{ shrink: true }}
+                                value={dueDate}
+                                onChange={(e) => setDueDate(e.target.value)}
                                 sx={{
                                     height: 32,
                                     width: '100%',
                                     maxWidth: 200,
                                 }}
-                                onChange={(event) => console.log(event.target.value)}
                             />
                         </Box>
                     </Grid>
@@ -108,14 +124,14 @@ function NewTaskPage() {
                     <Grid item xs={12} md={6}>
                         <Grid container spacing={4}>
                             <Grid item xs={12} sx={{ display: 'flex', alignItems: 'center' }}>
-                                <Typography variant="h6" gutterBottom sx={{ fontWeight: 'bold', mb: 3 }}>
+                                <Typography variant="h6" gutterBottom sx={{ fontWeight: 'bold' }}>
                                     Assign to
                                 </Typography>
                                 <Box sx={{ display: 'flex', alignItems: 'center', flexGrow: 1, ml: 2 }}>
                                     <Select
                                         multiple
-                                        value={['Option 1']}
-                                        onChange={(event) => console.log(event.target.value)}
+                                        value={assignees}
+                                        onChange={handleAssigneesChange}
                                         renderValue={(selected) => (
                                             <div>
                                                 {selected.join(', ')}
@@ -134,8 +150,8 @@ function NewTaskPage() {
                                 </Box>
                             </Grid>
 
-                            <Grid item xs={12} sx={{ display: 'flex', alignItems: 'center', justifyContent: "center" }}>
-                                <Typography variant="h6" gutterBottom sx={{ fontWeight: 'bold', mb: 3, mr: 2.5 }}>
+                            <Grid item xs={12} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                <Typography variant="h6" gutterBottom sx={{ fontWeight: 'bold', mr: 2.5 }}>
                                     Priority
                                 </Typography>
                                 <Box sx={{ display: 'flex', alignItems: 'center', flexGrow: 1, ml: 2 }}>
@@ -167,44 +183,45 @@ function NewTaskPage() {
                                         gutterBottom
                                         sx={{
                                             fontWeight: 'bold',
-                                            mb: 3,
                                             mr: 2, // Add some right margin to the Typography component to space it from the Select component
-                                            textAlign: "center",
-                                            alignItems: "center"
+                                            textAlign: 'center',
+                                            alignItems: 'center',
                                         }}
                                     >
                                         Status
                                     </Typography>
-                                    <Select
-                                        value={status}
-                                        onChange={handleStatusChange}
-                                        displayEmpty
-                                        inputProps={{ 'aria-label': 'Set Status' }}
-                                        sx={{
-                                            height: 32,
-                                            width: '100%',
-                                            maxWidth: 200,
-                                        }}
-                                    >
-                                        <MenuItem value="" disabled>
-                                            Set Status
-                                        </MenuItem>
-                                        <MenuItem value="Not Started">Not Started</MenuItem>
-                                        <MenuItem value="In Progress">In Progress</MenuItem>
-                                        <MenuItem value="Completed">Completed</MenuItem>
-                                    </Select>
+                                    <Box sx={{ display: 'flex', alignItems: 'center', flexGrow: 1, ml: 4 }}>
+                                        <Select
+                                            value={status}
+                                            onChange={handleStatusChange}
+                                            displayEmpty
+                                            inputProps={{ 'aria-label': 'Set Status' }}
+                                            sx={{
+                                                height: 32,
+                                                width: '100%',
+                                                maxWidth: 200,
+                                            }}
+                                        >
+                                            <MenuItem value="" disabled>
+                                                Set Status
+                                            </MenuItem>
+                                            <MenuItem value="Not Started">Not Started</MenuItem>
+                                            <MenuItem value="In Progress">In Progress</MenuItem>
+                                            <MenuItem value="Completed">Completed</MenuItem>
+                                        </Select>
+                                    </Box>
                                 </Box>
                             </Grid>
 
-
-
-                            <Grid item xs={12} sx={{ display: 'flex', alignItems: 'center', justifyContent: "space-around" }}>
+                            <Grid item xs={12} sx={{ display: 'flex', alignItems: 'center' }}>
                                 <Typography variant="h6" gutterBottom sx={{ fontWeight: 'bold' }}>
                                     Attachments
                                 </Typography>
-                                <IconButton>
-                                    <AddOutlinedIcon />
-                                </IconButton>
+                                <Box sx={{ ml: '3rem' }}>
+                                    <IconButton>
+                                        <AddOutlinedIcon />
+                                    </IconButton>
+                                </Box>
                             </Grid>
                         </Grid>
                     </Grid>
@@ -236,6 +253,9 @@ function NewTaskPage() {
                     </Grid>
                 </Box>
             </Paper>
+
+            
+           </Box>
         </Box>
     );
 }

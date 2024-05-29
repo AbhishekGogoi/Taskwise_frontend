@@ -111,6 +111,7 @@ function Board() {
           elevation={3}
           sx={{
             height: 120,
+            maxWidth:"100%"
           }}
         >
           <Box
@@ -193,7 +194,14 @@ function Board() {
             </Button>
           </Box>
         </Paper>
-        <Grid container spacing={2} alignItems="flex-start">
+        <Box sx={{
+            display: 'flex',
+            overflow: 'auto',
+            width: '100%',
+            maxWidth: '1600px', 
+            padding: 2,
+        }}>
+        <Grid container spacing={2} direction="row" wrap="nowrap" sx={{marginTopt:"3"}} alignItems="flex-start">
           {initialData.order.map((columnId) => {
             const column = columns[columnId];
             const tasks = column.taskIds.map(
@@ -206,6 +214,7 @@ function Board() {
             );
           })}
         </Grid>
+        </Box>
       </Box>
     </DndProvider>
   );

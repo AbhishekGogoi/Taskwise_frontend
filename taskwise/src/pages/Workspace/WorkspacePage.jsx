@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
@@ -9,10 +9,12 @@ import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
 import { Grid } from '@mui/material';
 import WorkspaceCard from './WorkspaceCard';
-import WorkspaceData from '../../data/workspaces.json';
+//import WorkspaceData from '../../data/workspaces.json';
 import AddIcon from '@mui/icons-material/Add';
 import NewWorkspaceModel from './NewWorkspaceModel';
 import Modal from '@mui/material/Modal';
+import { useDispatch,useSelector } from "react-redux";
+import { fetchWorkspaceAsync } from '../../features/workspace/workspaceSlice';
 
 const SearchIconWrapper = styled('div')(({ theme }) => ({
   padding: theme.spacing(0, 2),
@@ -71,6 +73,12 @@ function WorkspacePage() {
   const handleCloseModal = () => {
     setOpenModal(false);
   };
+  //redux
+ const dispatch=useDispatch();
+ const WorkspaceData=useSelector((state)=>state.workspace.workspaces)
+ useEffect(()=>{
+    dispatch(fetchWorkspaceAsync())
+ },[dispatch])
 
   return (
     <Box
