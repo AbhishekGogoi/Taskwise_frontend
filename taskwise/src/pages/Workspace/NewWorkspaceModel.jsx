@@ -7,7 +7,9 @@ import IconButton from '@mui/material/IconButton';
 import StarIcon from '@mui/icons-material/Star';
 import CloseIcon from '@mui/icons-material/Close';
 import PropTypes from 'prop-types';
-import WorkspaceThumbnail from './WorkspaceThumbnail'; // Import the ThumbnailComponent
+import Thumbnail from '../../components/Thumbnail';
+import { useDispatch } from "react-redux";
+import { createWorkspaceAsync } from "../../features/workspace/workspaceSlice";
 
 const style = {
   position: 'absolute',
@@ -23,22 +25,41 @@ const style = {
 };
 
 const NewWorkspaceModel = ({ handleClose }) => {
+  const dispatch = useDispatch();
+  const [workspaceName, setWorkspaceName] = useState('');
+  const [members, setMembers] = useState('');
+  // eslint-disable-next-line
   const [selectedImage, setSelectedImage] = useState(null);
+  const [imageUrl, setImageUrl] = useState('');
   const fileInputRef = useRef(null);
 
   const handleFileUploadClick = () => {
     fileInputRef.current.click();
   };
 
-  const handleFileChange = (event) => {
+  const handleFileChange = async (event) => {
     const file = event.target.files[0];
     if (file) {
-      const reader = new FileReader();
-      reader.onload = () => {
-        setSelectedImage(reader.result);
-      };
-      reader.readAsDataURL(file);
+      const formData = new FormData();
+      formData.append('image', file);
+
+      try {
+        setImageUrl("https://images.unsplash.com/photo-1506744038136-46273834b3fb"); // Adjust according to your API response
+      } catch (error) {
+        console.error('Error uploading image:', error);
+      }
     }
+  };
+
+  const handleCreateWorkspace = () => {
+    const newWorkspace = {
+      name: workspaceName,
+      // members: members.split(',').map((member) => member.trim()),
+      imgUrl: imageUrl,
+      creatorUserID: "6654807dec9a0c3fa996f002",
+    };
+    dispatch(createWorkspaceAsync(newWorkspace));
+    handleClose();
   };
 
   return (
@@ -55,12 +76,34 @@ const NewWorkspaceModel = ({ handleClose }) => {
         Thumbnail <StarIcon style={{ color: 'gray', marginLeft: '2px', fontSize: 'xx-small' }} />
       </Typography>
       <Box sx={{ display: 'flex', justifyContent: 'left', alignItems: 'left', marginBottom: '20px' }}>
-        <WorkspaceThumbnail selectedImage={selectedImage} handleFileUploadClick={handleFileUploadClick} width={80} height={80} />
+        <Thumbnail selectedImage={imageUrl || selectedImage} handleFileUploadClick={handleFileUploadClick} width={80} height={80} />
         <input type="file" ref={fileInputRef} style={{ display: 'none' }} onChange={handleFileChange} />
       </Box>
-      <TextField id="workspace-name" label="Workspace Name *" fullWidth margin="normal" style={{ marginBottom: '20px', backgroundColor: 'white' }} />
-      <TextField id="workspace-add-members" label="Add Members" fullWidth margin="normal" style={{ marginBottom: '40px', backgroundColor: 'white' }} />
-      <Button variant="contained" color="primary" fullWidth sx={{ textTransform: 'none' }} onClick={handleClose}>
+      <TextField
+        id="workspace-name"
+        label="Workspace Name *"
+        fullWidth
+        margin="normal"
+        style={{ marginBottom: '20px', backgroundColor: 'white' }}
+        value={workspaceName}
+        onChange={(e) => setWorkspaceName(e.target.value)}
+      />
+      <TextField
+        id="workspace-add-members"
+        label="Add Members"
+        fullWidth
+        margin="normal"
+        style={{ marginBottom: '40px', backgroundColor: 'white' }}
+        value={members}
+        onChange={(e) => setMembers(e.target.value)}
+      />
+      <Button
+        variant="contained"
+        color="primary"
+        fullWidth
+        sx={{ textTransform: 'none' }}
+        onClick={handleCreateWorkspace}
+      >
         Create Workspace
       </Button>
     </Box>

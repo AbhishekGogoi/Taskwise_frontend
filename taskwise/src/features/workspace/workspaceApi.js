@@ -8,3 +8,13 @@ export const fetchWorkspaces=async()=>{
         throw error.response.data
     }
 }
+
+export const createWorkspace = async (newWorkspace) => {
+    try {
+      const res = await axiosi.post(`/workspaces`, newWorkspace);
+      return { data: res.data };
+    } catch (error) {
+      throw error.response.data;
+    }
+  };
+  
