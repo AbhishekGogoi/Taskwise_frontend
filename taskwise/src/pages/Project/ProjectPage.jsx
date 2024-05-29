@@ -138,7 +138,7 @@ function ProjectPage() {
   //console.log(userId)
   useEffect(()=>{
     dispatch(fetchProjectAsync(userId))
-  },[dispatch])
+  },[dispatch,userId])
   const handleOpenModal = () => {
     setModalOpen(true);
   };
