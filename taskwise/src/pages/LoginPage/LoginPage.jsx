@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Container,
@@ -121,28 +121,49 @@ const StyledButton = styled(Button)({
 
 // Component
 const LoginPage = () => {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
   const navigate = useNavigate();
-  const dispatch=useDispatch()
+  const dispatch = useDispatch();
   const handleForgotPasswordClick = () => {
     navigate("/forgotpassword"); // Navigate to forgot password page
   };
 
   //redux
-  const handleLogin=()=>{
-        dispatch(loginAsync({
-          "email": "test@gmail.com",
-          "password": "Test123"
-        }))
-  }
-  const loggedInUser=useSelector((state)=>state.user.loggedInUser)
-  
-  useEffect(()=>{
-    if(loggedInUser){
-       navigate('/projects')
+  const handleLogin = () => {
+    console.log("Login button clicked");
+    console.log(email, password);
+    dispatch(
+      loginAsync({
+        email: "test@gmail.com",
+        password: "Test123",
+      })
+    );
+  };
+
+  const handleLogin2 = (e) => {
+    e.preventDefault();
+    console.log("Login button clicked");
+    console.log(email, password);
+    dispatch(
+      loginAsync({
+        email: email,
+        password: password,
+      })
+    );
+  };
+
+  const loggedInUser = useSelector((state) => state.user.loggedInUser);
+  console.log(loggedInUser);
+  // const state = useSelector((state) => state);
+  // console.log(state);
+
+  useEffect(() => {
+    if (loggedInUser) {
+      navigate("/projects");
     }
-  },[loggedInUser,navigate])
-
-
+  }, [loggedInUser, navigate]);
 
   const handleSignUpClick = () => {
     navigate("/signup"); // Navigate to signup page
@@ -184,6 +205,8 @@ const LoginPage = () => {
               </InputAdornment>
             ),
           }}
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
         />
         <TextField // Password field with icon
           variant="outlined"
@@ -202,6 +225,8 @@ const LoginPage = () => {
               </InputAdornment>
             ),
           }}
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
         />
         <StyledButton // Login button style adjustments
           type="submit"
@@ -212,7 +237,7 @@ const LoginPage = () => {
             backgroundColor: "#0062ff", // Example color
             "&:hover": { backgroundColor: "#303f9f" }, // Darker hover
           }}
-          onClick={handleLogin}
+          onClick={handleLogin2}
         >
           Log In
         </StyledButton>

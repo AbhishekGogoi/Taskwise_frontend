@@ -1,4 +1,4 @@
-import React, { useState,useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import Box from "@mui/material/Box";
 import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
@@ -11,7 +11,7 @@ import { Grid } from "@mui/material";
 import ProjectCard from "./ProjectCard";
 import NewProjectModel from "../../components/NewProjectModel";
 import Modal from "@mui/material/Modal";
-import { useDispatch,useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { fetchProjectAsync } from "../../features/project/projectSlice";
 
 const SearchIconWrapper = styled("div")(({ theme }) => ({
@@ -131,12 +131,15 @@ const CustomBox = styled(Box)(({ theme }) => ({
 
 function ProjectPage() {
   const [isModalOpen, setModalOpen] = useState(false);
-  const dispatch=useDispatch();
-  const projectData=useSelector((state)=>state.project.projects)
+  const dispatch = useDispatch();
+  const projectData = useSelector((state) => state.project.projects);
   console.log(projectData);
-  useEffect(()=>{
-    dispatch(fetchProjectAsync())
-  },[dispatch])
+  const state = useSelector((state) => state);
+  console.log(state);
+
+  useEffect(() => {
+    dispatch(fetchProjectAsync());
+  }, [dispatch]);
   const handleOpenModal = () => {
     setModalOpen(true);
   };
