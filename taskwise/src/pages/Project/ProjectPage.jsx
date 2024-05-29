@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import Box from "@mui/material/Box";
 import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
@@ -11,6 +11,8 @@ import { Grid } from "@mui/material";
 import ProjectCard from "./ProjectCard";
 import NewProjectModel from "../../components/NewProjectModel";
 import Modal from "@mui/material/Modal";
+import { useDispatch,useSelector } from "react-redux";
+import { fetchProjectAsync } from "../../features/project/projectSlice";
 
 const SearchIconWrapper = styled("div")(({ theme }) => ({
   padding: theme.spacing(0, 2),
@@ -58,78 +60,83 @@ const CustomBox = styled(Box)(({ theme }) => ({
   "-ms-overflow-style": "none", // IE and Edge
   "scrollbar-width": "none", // Firefox
 }));
-const projectsData = [
-  {
-    id: 1,
-    name: "Project 1",
-    workspace: "Workspace 1",
-    img: "https://img.freepik.com/free-vector/hand-drawn-minimal-background_23-2149001650.jpg?t=st=1716280160~exp=1716280760~hmac=f254cfeda21a263638253b9f6f0c0c9028bac218840dea34d6de5739054a4a96", // Image URL or path
-  },
-  {
-    id: 2,
-    name: "Project 2",
-    workspace: "Workspace 2",
-    img: "https://img.freepik.com/free-vector/hand-drawn-minimal-background_23-2149001650.jpg?t=st=1716280160~exp=1716280760~hmac=f254cfeda21a263638253b9f6f0c0c9028bac218840dea34d6de5739054a4a96", // Image URL or path
-  },
-  {
-    id: 3,
-    name: "Project 3",
-    workspace: "Workspace 3",
-    img: "https://img.freepik.com/free-vector/hand-drawn-minimal-background_23-2149001650.jpg?t=st=1716280160~exp=1716280760~hmac=f254cfeda21a263638253b9f6f0c0c9028bac218840dea34d6de5739054a4a96", // Image URL or path
-  },
-  {
-    id: 4,
-    name: "Project 3",
-    workspace: "Workspace 3",
-    img: "https://img.freepik.com/free-vector/hand-drawn-minimal-background_23-2149001650.jpg?t=st=1716280160~exp=1716280760~hmac=f254cfeda21a263638253b9f6f0c0c9028bac218840dea34d6de5739054a4a96", // Image URL or path
-  },
-  {
-    id: 5,
-    name: "Project 3",
-    workspace: "Workspace 3",
-    img: "https://img.freepik.com/free-vector/hand-drawn-minimal-background_23-2149001650.jpg?t=st=1716280160~exp=1716280760~hmac=f254cfeda21a263638253b9f6f0c0c9028bac218840dea34d6de5739054a4a96", // Image URL or path
-  },
-  {
-    id: 6,
-    name: "Project 3",
-    workspace: "Workspace 3",
-    img: "https://img.freepik.com/free-vector/hand-drawn-minimal-background_23-2149001650.jpg?t=st=1716280160~exp=1716280760~hmac=f254cfeda21a263638253b9f6f0c0c9028bac218840dea34d6de5739054a4a96", // Image URL or path
-  },
-  {
-    id: 7,
-    name: "Project 1",
-    workspace: "Workspace 1",
-    img: "https://img.freepik.com/free-vector/hand-drawn-minimal-background_23-2149001650.jpg?t=st=1716280160~exp=1716280760~hmac=f254cfeda21a263638253b9f6f0c0c9028bac218840dea34d6de5739054a4a96", // Image URL or path
-  },
-  {
-    id: 8,
-    name: "Project 1",
-    workspace: "Workspace 1",
-    img: "https://img.freepik.com/free-vector/hand-drawn-minimal-background_23-2149001650.jpg?t=st=1716280160~exp=1716280760~hmac=f254cfeda21a263638253b9f6f0c0c9028bac218840dea34d6de5739054a4a96", // Image URL or path
-  },
-  {
-    id: 9,
-    name: "Project 1",
-    workspace: "Workspace 1",
-    img: "https://img.freepik.com/free-vector/hand-drawn-minimal-background_23-2149001650.jpg?t=st=1716280160~exp=1716280760~hmac=f254cfeda21a263638253b9f6f0c0c9028bac218840dea34d6de5739054a4a96", // Image URL or path
-  },
-  {
-    id: 10,
-    name: "Project 1",
-    workspace: "Workspace 1",
-    img: "https://img.freepik.com/free-vector/hand-drawn-minimal-background_23-2149001650.jpg?t=st=1716280160~exp=1716280760~hmac=f254cfeda21a263638253b9f6f0c0c9028bac218840dea34d6de5739054a4a96", // Image URL or path
-  },
-  {
-    id: 11,
-    name: "Project 1",
-    workspace: "Workspace 1",
-    img: "https://img.freepik.com/free-vector/hand-drawn-minimal-background_23-2149001650.jpg?t=st=1716280160~exp=1716280760~hmac=f254cfeda21a263638253b9f6f0c0c9028bac218840dea34d6de5739054a4a96", // Image URL or path
-  },
-];
+// const projectsData = [
+//   {
+//     id: 1,
+//     name: "Project 1",
+//     workspace: "Workspace 1",
+//     img: "https://img.freepik.com/free-vector/hand-drawn-minimal-background_23-2149001650.jpg?t=st=1716280160~exp=1716280760~hmac=f254cfeda21a263638253b9f6f0c0c9028bac218840dea34d6de5739054a4a96", // Image URL or path
+//   },
+//   {
+//     id: 2,
+//     name: "Project 2",
+//     workspace: "Workspace 2",
+//     img: "https://img.freepik.com/free-vector/hand-drawn-minimal-background_23-2149001650.jpg?t=st=1716280160~exp=1716280760~hmac=f254cfeda21a263638253b9f6f0c0c9028bac218840dea34d6de5739054a4a96", // Image URL or path
+//   },
+//   {
+//     id: 3,
+//     name: "Project 3",
+//     workspace: "Workspace 3",
+//     img: "https://img.freepik.com/free-vector/hand-drawn-minimal-background_23-2149001650.jpg?t=st=1716280160~exp=1716280760~hmac=f254cfeda21a263638253b9f6f0c0c9028bac218840dea34d6de5739054a4a96", // Image URL or path
+//   },
+//   {
+//     id: 4,
+//     name: "Project 3",
+//     workspace: "Workspace 3",
+//     img: "https://img.freepik.com/free-vector/hand-drawn-minimal-background_23-2149001650.jpg?t=st=1716280160~exp=1716280760~hmac=f254cfeda21a263638253b9f6f0c0c9028bac218840dea34d6de5739054a4a96", // Image URL or path
+//   },
+//   {
+//     id: 5,
+//     name: "Project 3",
+//     workspace: "Workspace 3",
+//     img: "https://img.freepik.com/free-vector/hand-drawn-minimal-background_23-2149001650.jpg?t=st=1716280160~exp=1716280760~hmac=f254cfeda21a263638253b9f6f0c0c9028bac218840dea34d6de5739054a4a96", // Image URL or path
+//   },
+//   {
+//     id: 6,
+//     name: "Project 3",
+//     workspace: "Workspace 3",
+//     img: "https://img.freepik.com/free-vector/hand-drawn-minimal-background_23-2149001650.jpg?t=st=1716280160~exp=1716280760~hmac=f254cfeda21a263638253b9f6f0c0c9028bac218840dea34d6de5739054a4a96", // Image URL or path
+//   },
+//   {
+//     id: 7,
+//     name: "Project 1",
+//     workspace: "Workspace 1",
+//     img: "https://img.freepik.com/free-vector/hand-drawn-minimal-background_23-2149001650.jpg?t=st=1716280160~exp=1716280760~hmac=f254cfeda21a263638253b9f6f0c0c9028bac218840dea34d6de5739054a4a96", // Image URL or path
+//   },
+//   {
+//     id: 8,
+//     name: "Project 1",
+//     workspace: "Workspace 1",
+//     img: "https://img.freepik.com/free-vector/hand-drawn-minimal-background_23-2149001650.jpg?t=st=1716280160~exp=1716280760~hmac=f254cfeda21a263638253b9f6f0c0c9028bac218840dea34d6de5739054a4a96", // Image URL or path
+//   },
+//   {
+//     id: 9,
+//     name: "Project 1",
+//     workspace: "Workspace 1",
+//     img: "https://img.freepik.com/free-vector/hand-drawn-minimal-background_23-2149001650.jpg?t=st=1716280160~exp=1716280760~hmac=f254cfeda21a263638253b9f6f0c0c9028bac218840dea34d6de5739054a4a96", // Image URL or path
+//   },
+//   {
+//     id: 10,
+//     name: "Project 1",
+//     workspace: "Workspace 1",
+//     img: "https://img.freepik.com/free-vector/hand-drawn-minimal-background_23-2149001650.jpg?t=st=1716280160~exp=1716280760~hmac=f254cfeda21a263638253b9f6f0c0c9028bac218840dea34d6de5739054a4a96", // Image URL or path
+//   },
+//   {
+//     id: 11,
+//     name: "Project 1",
+//     workspace: "Workspace 1",
+//     img: "https://img.freepik.com/free-vector/hand-drawn-minimal-background_23-2149001650.jpg?t=st=1716280160~exp=1716280760~hmac=f254cfeda21a263638253b9f6f0c0c9028bac218840dea34d6de5739054a4a96", // Image URL or path
+//   },
+// ];
 
 function ProjectPage() {
   const [isModalOpen, setModalOpen] = useState(false);
-
+  const dispatch=useDispatch();
+  const projectData=useSelector((state)=>state.project.projects)
+  console.log(projectData);
+  useEffect(()=>{
+    dispatch(fetchProjectAsync())
+  },[dispatch])
   const handleOpenModal = () => {
     setModalOpen(true);
   };
@@ -204,7 +211,7 @@ function ProjectPage() {
       </Paper>
       <CustomBox>
         <Grid container spacing={3} alignItems="center">
-          {projectsData.map((project) => (
+          {projectData?.map((project) => (
             <Grid item key={project.id} xs={6} sm={6} md={3} lg={3} xl={2}>
               <ProjectCard project={project} />
             </Grid>

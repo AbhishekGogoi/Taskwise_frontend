@@ -12,7 +12,7 @@ function ProjectCard({project}) {
                 component="img"
                 alt="project image"
                 height="100"
-                image={project.img}
+                image={project.imgUrl}
                
                 
             />
