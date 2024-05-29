@@ -133,10 +133,12 @@ function ProjectPage() {
   const [isModalOpen, setModalOpen] = useState(false);
   const dispatch=useDispatch();
   const projectData=useSelector((state)=>state.project.projects)
-  console.log(projectData);
+  // console.log(projectData);
+  const userId=useSelector((state)=>state?.user?.loggedInUser?.user?._id);
+  //console.log(userId)
   useEffect(()=>{
-    dispatch(fetchProjectAsync())
-  },[dispatch])
+    dispatch(fetchProjectAsync(userId))
+  },[dispatch,userId])
   const handleOpenModal = () => {
     setModalOpen(true);
   };

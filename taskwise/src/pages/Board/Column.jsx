@@ -36,6 +36,9 @@ function Column({ column, tasks, onDrop }) {
           maxHeight: { xs: "100%", sm: "600px" },
           p: 2,
           overflow: "auto", // Optional: add overflow to handle large number of tasks
+          '&::-webkit-scrollbar': {
+            display: 'none', 
+          },
         }}
       >
         {tasks.map((task) => (
