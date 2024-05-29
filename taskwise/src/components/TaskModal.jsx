@@ -17,6 +17,19 @@ const Attachments = styled("img")({
 });
 
 const TaskModal = ({ open, handleClose, task }) => {
+  const getPriorityColor = (priority) => {
+    switch (priority) {
+      case "High":
+        return "red";
+      case "Medium":
+        return "orange";
+      case "Low":
+        return "green";
+      default:
+        return "black";
+    }
+  };
+
   return (
     <Modal open={open} onClose={handleClose}>
       <Box
@@ -47,34 +60,37 @@ const TaskModal = ({ open, handleClose, task }) => {
             <CloseIcon />
           </IconButton>
         </Box>
-        <Typography variant="subtitle1" sx={{ mb: 2 }}>
+        <Typography variant="subtitle1" sx={{ mb: 4 }}>
           {task?.Task}
         </Typography>
         <Grid container spacing={1} sx={{ mb: 2 }}>
-          <Grid item xs={6}>
+          <Grid item xs={6} sx={{ mb: 2 }}>
             <Typography variant="body1">
               <strong>Due Date:</strong>
             </Typography>
           </Grid>
-          <Grid item xs={6}>
+          <Grid item xs={6} sx={{ mb: 2 }}>
             <Typography variant="body1">{task?.DueDate}</Typography>
           </Grid>
-          <Grid item xs={6}>
+          <Grid item xs={6} sx={{ mb: 2 }}>
             <Typography variant="body1">
               <strong>Priority:</strong>
             </Typography>
           </Grid>
-          <Grid item xs={6}>
-            <Typography variant="body1" sx={{ color: "red" }}>
+          <Grid item xs={6} sx={{ mb: 2 }}>
+            <Typography
+              variant="body1"
+              sx={{ color: getPriorityColor(task?.Priority) }}
+            >
               {task?.Priority}
             </Typography>
           </Grid>
-          <Grid item xs={6}>
+          <Grid item xs={6} sx={{ mb: 2 }}>
             <Typography variant="body1">
               <strong>Status:</strong>
             </Typography>
           </Grid>
-          <Grid item xs={6}>
+          <Grid item xs={6} sx={{ mb: 2 }}>
             <Typography variant="body1" sx={{ color: "green" }}>
               {task?.Status}
             </Typography>
@@ -83,7 +99,7 @@ const TaskModal = ({ open, handleClose, task }) => {
         <Typography variant="body1" sx={{ mb: 1 }}>
           <strong>Attachments</strong>
         </Typography>
-        <Box sx={{ display: "flex", mb: 2 }}>
+        <Box sx={{ display: "flex", mb: 4 }}>
           <Attachments src="path/to/image1.png" alt="Attachment 1" />
           <Attachments src="path/to/image2.png" alt="Attachment 2" />
         </Box>
