@@ -52,8 +52,6 @@ const WorkspaceTaskPage = () => {
           defaultColDef={defaultColDef}
           rowSelection="multiple"
           suppressRowClickSelection={true}
-          pagination={true}
-          paginationPageSize={10}
         />
       </div>
     </StyledAgGridContainer>
