@@ -12,6 +12,8 @@ import FormControl from "@mui/material/FormControl";
 import InputLabel from "@mui/material/InputLabel";
 import PropTypes from "prop-types";
 import ProjectThumbnail from "../pages/Project/ProjectThumbnail"; // Import the ThumbnailComponent
+import { useDispatch, useSelector } from "react-redux";
+import { addProjectAsync } from "../features/project/projectSlice";
 
 const style = {
   position: "absolute",
@@ -27,14 +29,29 @@ const style = {
 };
 
 const NewProjectModel = ({ handleClose }) => {
+  const dispatch=useDispatch();
+  const creatorUserID=useSelector((state)=>state?.user?.loggedInUser?.user?._id);
   const [selectedImage, setSelectedImage] = useState(null);
-  const [workspace, setWorkspace] = useState("");
+  const [workspace, setWorkspace] = useState("Updated Workspace");
   const fileInputRef = useRef(null);
-
+  const [name,setName]=useState("");
+  const [description,setDescription]=useState("")
   const handleFileUploadClick = () => {
     fileInputRef.current.click();
   };
-
+  const handleCreate=()=>{
+    console.log("name",name);
+    console.log("desc",description);
+    console.log("workspace",workspace);
+    console.log("id",creatorUserID)
+    dispatch(addProjectAsync({
+      "name":name,
+      "description":description,
+      "workspaceName":workspace,
+      "creatorUserID":creatorUserID
+  }))
+    handleClose()
+  }
   const handleFileChange = (event) => {
     const file = event.target.files[0];
     if (file) {
@@ -110,6 +127,8 @@ const NewProjectModel = ({ handleClose }) => {
         fullWidth
         margin="normal"
         style={{ marginBottom: "20px", backgroundColor: "white" }}
+        value={name}
+        onChange={(e)=>setName(e.target.value)}
       />
       <TextField
         id="project-description"
@@ -117,6 +136,8 @@ const NewProjectModel = ({ handleClose }) => {
         fullWidth
         margin="normal"
         style={{ marginBottom: "20px", backgroundColor: "white" }}
+        value={description}
+        onChange={(e)=>setDescription(e.target.value)}
       />
       <FormControl fullWidth margin="normal" style={{ marginBottom: "40px" }}>
         <InputLabel id="assign-workspace-label">Assign Workspace</InputLabel>
@@ -140,7 +161,7 @@ const NewProjectModel = ({ handleClose }) => {
         color="primary"
         fullWidth
         sx={{ textTransform: "none" }}
-        onClick={handleClose}
+        onClick={handleCreate}
       >
         Create Project
       </Button>

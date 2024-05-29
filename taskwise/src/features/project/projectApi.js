@@ -16,3 +16,12 @@ export const fetchProjectById=async(id)=>{
         throw error.response.data
     }
 }
+
+export const addProject=async(data)=>{
+    try{
+        const res=await axiosi.post(`/projects`,data);
+        return res.data
+    }catch(error){
+        throw error.response.data
+    }
+}
