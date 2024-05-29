@@ -1,5 +1,5 @@
-import React, { useMemo, useState } from "react";
-import { Box, Typography, MenuItem } from "@mui/material";
+import React, { useMemo, useState, useCallback } from "react";
+import { Box, Typography, MenuItem, Modal } from "@mui/material";
 import InputLabel from "@mui/material/InputLabel";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
@@ -9,6 +9,7 @@ import "@ag-grid-community/styles/ag-theme-quartz.css"; // Theme
 import { ModuleRegistry } from "@ag-grid-community/core";
 import { ClientSideRowModelModule } from "@ag-grid-community/client-side-row-model";
 import { styled } from "@mui/material/styles";
+import TaskModal from "../../components/TaskModal";
 
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
@@ -33,9 +34,21 @@ const Toolbar = styled(Box)({
 
 const MyTaskPage = () => {
   const [selectedProject, setSelectedProject] = useState("");
+  const [modalOpen, setModalOpen] = useState(false);
+  const [selectedTask, setSelectedTask] = useState(null);
 
   const handleProjectChange = (event) => {
     setSelectedProject(event.target.value);
+  };
+
+  const handleRowClick = useCallback((params) => {
+    setSelectedTask(params.data);
+    setModalOpen(true);
+  }, []);
+
+  const handleModalClose = () => {
+    setModalOpen(false);
+    setSelectedTask(null);
   };
 
   // const containerStyle = useMemo(() => ({ width: "100%", height: "100%" }), []);
@@ -258,8 +271,16 @@ const MyTaskPage = () => {
           rowSelection="multiple"
           suppressRowClickSelection={true}
           autoSizeStrategy={autoSizeStrategy}
+          onRowClicked={handleRowClick}
         />
       </div>
+      {selectedTask && (
+        <TaskModal
+          open={modalOpen}
+          handleClose={handleModalClose}
+          task={selectedTask}
+        />
+      )}
       {/* </div> */}
     </StyledAgGridContainer>
   );
