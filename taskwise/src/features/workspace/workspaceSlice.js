@@ -1,5 +1,5 @@
 import { createAsyncThunk , createSlice } from "@reduxjs/toolkit";
-import { createWorkspace, fetchWorkspaces } from "./workspaceApi";
+import { createWorkspace, fetchWorkspaceByUserID } from "./workspaceApi";
 
 const initialState={
     workspaces:[],
@@ -10,8 +10,8 @@ const initialState={
     sucessMessage:null
 }
 
-export const fetchWorkspaceAsync=createAsyncThunk("workspacess/fetchWorkspaces",async()=>{
-    const workspaces=await fetchWorkspaces();
+export const fetchWorkspaceByUserIDAsync=createAsyncThunk("workspacess/fetchWorkspaceByUserID",async(userId)=>{
+    const workspaces=await fetchWorkspaceByUserID(userId);
     return workspaces
 });
 
@@ -42,14 +42,14 @@ export const createWorkspaceAsync = createAsyncThunk(
     },
     extraReducers: (builder) => {
       builder
-        .addCase(fetchWorkspaceAsync.pending, (state) => {
+        .addCase(fetchWorkspaceByUserIDAsync.pending, (state) => {
           state.workspaceFetchStatus = 'loading';
         })
-        .addCase(fetchWorkspaceAsync.fulfilled, (state, action) => {
+        .addCase(fetchWorkspaceByUserIDAsync.fulfilled, (state, action) => {
           state.workspaceFetchStatus = "fulfilled";
           state.workspaces = action.payload.data;
         })
-        .addCase(fetchWorkspaceAsync.rejected, (state, action) => {
+        .addCase(fetchWorkspaceByUserIDAsync.rejected, (state, action) => {
           state.workspaceFetchStatus = "rejected";
           state.errors = action.error;
         })

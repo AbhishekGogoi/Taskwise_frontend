@@ -4,11 +4,10 @@ import Typography from '@mui/material/Typography';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
-import StarIcon from '@mui/icons-material/Star';
 import CloseIcon from '@mui/icons-material/Close';
 import PropTypes from 'prop-types';
 import Thumbnail from '../../components/Thumbnail';
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { createWorkspaceAsync } from "../../features/workspace/workspaceSlice";
 
 const style = {
@@ -26,11 +25,14 @@ const style = {
 
 const NewWorkspaceModel = ({ handleClose }) => {
   const dispatch = useDispatch();
+  const userId = useSelector((state) => state?.user?.loggedInUser?.user?._id);
+
   const [workspaceName, setWorkspaceName] = useState('');
   const [members, setMembers] = useState('');
   // eslint-disable-next-line
-  const [selectedImage, setSelectedImage] = useState(null);
-  const [imageUrl, setImageUrl] = useState('');
+  const [selectedImage, setSelectedImage] = useState("https://images.unsplash.com/photo-1506744038136-46273834b3fb");
+  const [imageUrl, setImageUrl] = useState("https://images.unsplash.com/photo-1506744038136-46273834b3fb");
+  const [nameError, setNameError] = useState('');
   const fileInputRef = useRef(null);
 
   const handleFileUploadClick = () => {
@@ -44,7 +46,8 @@ const NewWorkspaceModel = ({ handleClose }) => {
       formData.append('image', file);
 
       try {
-        setImageUrl("https://images.unsplash.com/photo-1506744038136-46273834b3fb"); // Adjust according to your API response
+        // Simulating an image upload with a static URL
+        setImageUrl("https://images.unsplash.com/photo-1506744038136-46273834b3fb");
       } catch (error) {
         console.error('Error uploading image:', error);
       }
@@ -52,12 +55,18 @@ const NewWorkspaceModel = ({ handleClose }) => {
   };
 
   const handleCreateWorkspace = () => {
+    if (!workspaceName.trim()) {
+      setNameError('Workspace name is required.');
+      return;
+    }
+
     const newWorkspace = {
       name: workspaceName,
-      // members: members.split(',').map((member) => member.trim()),
-      imgUrl: imageUrl,
-      creatorUserID: "6654807dec9a0c3fa996f002",
+      imgUrl: imageUrl || selectedImage,
+      creatorUserID: userId,
     };
+
+    console.log(newWorkspace);
     dispatch(createWorkspaceAsync(newWorkspace));
     handleClose();
   };
@@ -73,7 +82,7 @@ const NewWorkspaceModel = ({ handleClose }) => {
         </IconButton>
       </Box>
       <Typography id="workspace-thumbnail" style={{ marginBottom: '10px', display: 'flex', alignItems: 'center' }}>
-        Thumbnail <StarIcon style={{ color: 'gray', marginLeft: '2px', fontSize: 'xx-small' }} />
+        Thumbnail
       </Typography>
       <Box sx={{ display: 'flex', justifyContent: 'left', alignItems: 'left', marginBottom: '20px' }}>
         <Thumbnail selectedImage={imageUrl || selectedImage} handleFileUploadClick={handleFileUploadClick} width={80} height={80} />
@@ -86,7 +95,14 @@ const NewWorkspaceModel = ({ handleClose }) => {
         margin="normal"
         style={{ marginBottom: '20px', backgroundColor: 'white' }}
         value={workspaceName}
-        onChange={(e) => setWorkspaceName(e.target.value)}
+        onChange={(e) => {
+          setWorkspaceName(e.target.value);
+          if (e.target.value.trim()) {
+            setNameError('');
+          }
+        }}
+        error={!!nameError}
+        helperText={nameError}
       />
       <TextField
         id="workspace-add-members"
