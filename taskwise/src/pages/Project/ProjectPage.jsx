@@ -134,8 +134,8 @@ function ProjectPage() {
   const dispatch = useDispatch();
   const projectData = useSelector((state) => state.project.projects);
   console.log(projectData);
-  const state = useSelector((state) => state);
-  console.log(state);
+  // const state = useSelector((state) => state);
+  // console.log(state);
 
   useEffect(() => {
     dispatch(fetchProjectAsync());

@@ -131,16 +131,16 @@ const LoginPage = () => {
   };
 
   //redux
-  const handleLogin = () => {
-    console.log("Login button clicked");
-    console.log(email, password);
-    dispatch(
-      loginAsync({
-        email: "test@gmail.com",
-        password: "Test123",
-      })
-    );
-  };
+  // const handleLogin = () => {
+  //   console.log("Login button clicked");
+  //   console.log(email, password);
+  //   dispatch(
+  //     loginAsync({
+  //       email: "test@gmail.com",
+  //       password: "Test123",
+  //     })
+  //   );
+  // };
 
   const handleLogin2 = (e) => {
     e.preventDefault();
