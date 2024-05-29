@@ -10,8 +10,8 @@ const initialState={
     sucessMessage:null
 }
 
-export const fetchProjectAsync=createAsyncThunk("projects/fetchProjects",async()=>{
-    const projects=await fetchProjects();
+export const fetchProjectAsync=createAsyncThunk("projects/fetchProjects",async(userId)=>{
+    const projects=await fetchProjects(userId);
     return projects
 });
 

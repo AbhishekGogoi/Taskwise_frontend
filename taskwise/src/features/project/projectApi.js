@@ -1,8 +1,8 @@
 import { axiosi } from "../../config/axios";
 
-export const fetchProjects=async()=>{
+export const fetchProjects=async(userId)=>{
     try{
-        const res=await axiosi.get(`/workspaces/user/6654807dec9a0c3fa996f002/projects`);
+        const res=await axiosi.get(`/workspaces/user/${userId}/projects`);
         return {data:res.data}
     }catch(error){
         throw error.response.data
