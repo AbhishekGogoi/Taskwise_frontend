@@ -110,7 +110,7 @@ function Board() {
       setOrder(initialData?.order);
       setDataTask(initialData?.tasks);
     }
-  }, [initialData,useDrop]);
+  }, [initialData]);
 
   const handleDrop = (taskId, newColumnId) => {
     //console.log("handleDrop", taskId, newColumnId);
@@ -149,7 +149,7 @@ function Board() {
       "destinationColumnId": newColumnId
     }
     const idObject = { id: id,taskId };
-    // dispatch(moveTaskAsync({ data, idObject }));
+    dispatch(moveTaskAsync({ data, idObject }));
 
     // Update the state with the modified columns
     setColumns([...updatedColumns]);
