@@ -14,7 +14,7 @@ import AddIcon from '@mui/icons-material/Add';
 import NewWorkspaceModel from './NewWorkspaceModel';
 import Modal from '@mui/material/Modal';
 import { useDispatch,useSelector } from "react-redux";
-import { fetchWorkspaceAsync } from '../../features/workspace/workspaceSlice';
+import { fetchWorkspaceByUserIDAsync } from '../../features/workspace/workspaceSlice';
 
 const SearchIconWrapper = styled('div')(({ theme }) => ({
   padding: theme.spacing(0, 2),
@@ -65,7 +65,6 @@ const CustomBox = styled(Box)(({ theme }) => ({
 
 function WorkspacePage() {
   const [openModal, setOpenModal] = useState(false);
-
   const handleNewWorkspaceClick = () => {
     setOpenModal(true);
   };
@@ -76,9 +75,11 @@ function WorkspacePage() {
   //redux
  const dispatch=useDispatch();
  const WorkspaceData=useSelector((state)=>state.workspace.workspaces)
+ const userId=useSelector((state)=>state?.user?.loggedInUser?.user?._id);
+
  useEffect(()=>{
-    dispatch(fetchWorkspaceAsync())
- },[dispatch])
+    dispatch(fetchWorkspaceByUserIDAsync(userId))
+ },[dispatch, userId])
 
   return (
     <Box

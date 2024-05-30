@@ -19,7 +19,7 @@ function WorkspaceCard({workspace}) {
                 component="img"
                 alt="workspace thumbnail"
                 height="100"
-                image={workspace.imageUrl}                
+                image={workspace.imgUrl}                
             />
             <CardContent sx={{ textAlign:"center"}}>          
                 <Grid container alignItems="center" spacing={0.2}>

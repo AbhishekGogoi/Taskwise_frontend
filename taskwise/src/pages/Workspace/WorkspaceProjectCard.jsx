@@ -50,7 +50,7 @@ function WorkspaceProjectCard({project}) {
               </Grid>
             </Grid>
             <Grid item xs={12} md={3}>
-              <WorkspaceMembers />
+          <WorkspaceMembers height="365px" width="90%" />
             </Grid>
           </Grid>
     )
