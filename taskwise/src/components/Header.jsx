@@ -28,6 +28,7 @@ function Header({ isSmallScreen, toggleDrawer }) {
   const dispatch = useDispatch();
 
   const { status, loggedInUser } = useSelector((state) => state.user);
+  console.log(loggedInUser);
 
   const handleOpenUserMenu = (event) => {
     setAnchorElUser(event.currentTarget);
@@ -56,7 +57,7 @@ function Header({ isSmallScreen, toggleDrawer }) {
   };
 
   useEffect(() => {
-    if (status === "fulfilled" && !loggedInUser) {
+    if (loggedInUser === null) {
       navigate("/");
     }
   }, [status, loggedInUser, navigate]);

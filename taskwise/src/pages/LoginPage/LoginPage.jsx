@@ -130,22 +130,11 @@ const LoginPage = () => {
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  // const location = useLocation();
 
   const loggedInUser = useSelector((state) => state.user.loggedInUser);
   const loginError = useSelector((state) => state.user.loginError);
   // console.log(loginError?.message);
-
-  //redux
-  // const handleLogin = () => {
-  //   console.log("Login button clicked");
-  //   console.log(email, password);
-  //   dispatch(
-  //     loginAsync({
-  //       email: "test@gmail.com",
-  //       password: "Test123",
-  //     })
-  //   );
-  // };
 
   const schema = Joi.object({
     email: Joi.string()
@@ -188,10 +177,6 @@ const LoginPage = () => {
     setErrors({});
     dispatch(loginAsync({ email, password }));
   };
-
-  // console.log(loggedInUser);
-  // const state = useSelector((state) => state);
-  // console.log(state);
 
   useEffect(() => {
     if (loginError) {
