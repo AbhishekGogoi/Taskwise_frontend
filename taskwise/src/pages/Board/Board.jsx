@@ -71,6 +71,7 @@ function Board() {
   const taskAddStatus = useSelector((state) => state.project.taskAddStatus);
   const projectFetchStatus=useSelector((state) => state.project.projectFetchStatus);
   const [order,setOrder]=useState(null)
+  const [dataTask,setDataTask]=useState(null)
   const handleClick = () => {
     navigate(`/projects/${id}/new-task`);
   };
@@ -106,7 +107,8 @@ function Board() {
     //console.log(initialData)
     if (initialData) {
       setColumns(initialData?.columns);
-      setOrder(initialData?.order)
+      setOrder(initialData?.order);
+      setDataTask(initialData?.tasks);
     }
   }, [initialData,useDrop]);
 
@@ -141,12 +143,12 @@ function Board() {
     } else {
       console.error(`Target column with ID ${newColumnId} not found.`);
     }
-    //console.log(previousColumn._id,"previouscolumn")
-    // const data = {
-    //   "sourceColumnId": previousColumn._id,
-    //   "destinationColumnId": newColumnId
-    // }
-    // const idObject = { id: id,taskId };
+    console.log(previousColumn._id,"previouscolumn")
+    const data = {
+      "sourceColumnId": previousColumn._id,
+      "destinationColumnId": newColumnId
+    }
+    const idObject = { id: id,taskId };
     // dispatch(moveTaskAsync({ data, idObject }));
 
     // Update the state with the modified columns
@@ -279,8 +281,8 @@ function Board() {
           <Grid container spacing={2} direction="row" wrap="nowrap" sx={{ marginTopt: "3" }} alignItems="flex-start">
             {order?.map((columnId) => {
               const column = columns?.find((col) => col._id === columnId);
-              const tasks = column?.taskIds.map((taskId) => {
-                const task = initialData.tasks.find((task) => task._id === taskId);
+              const tasks = column?.taskIds?.map((taskId) => {
+                const task = dataTask?.find((task) => task._id === taskId);
                 if (!task) {
                   console.warn(`Task with ID ${taskId} not found`);
                 }
