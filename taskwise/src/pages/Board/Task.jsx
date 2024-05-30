@@ -13,6 +13,7 @@ function Task({ task }) {
       isDragging: !!monitor.isDragging(),
     }),
   });
+  console.log(task.attachments)
   return (
     <Box>
       <Card
@@ -40,16 +41,16 @@ function Task({ task }) {
             </IconButton>
           </Box>
           <Typography variant="h6" component="div" sx={{ fontSize: "1rem" }}>
-            {task.content}
+            {task.taskName}
           </Typography>
           <Typography
             variant="body2"
             color="text.secondary"
             sx={{ fontSize: "0.4rem" }}
           >
-            Pellentesque eget nulla turpis. Sed ligula dui, porta ac commodo nec,
-            iaculis eget nibh
+            {task.content}
           </Typography>
+          {task.attachments && task.attachments.length > 0 &&
           <Box
             display="flex"
             justifyContent="space-around"
@@ -67,6 +68,7 @@ function Task({ task }) {
               style={{ width: "45%", marginBottom: "8px" }}
             />
           </Box>
+          }
           <Box display="flex" justifyContent="space-between" alignItems="center">
             <Box display="flex" alignItems="center">
               <DateRange sx={{ fontSize: "0.75rem" }} />
@@ -81,14 +83,18 @@ function Task({ task }) {
             </Box>
             <Box display="flex" alignItems="center">
               <AttachFile sx={{ fontSize: "0.75rem" }} />
-              <Typography
-                variant="body2"
-                color="text.secondary"
-                ml={0.5}
-                sx={{ fontSize: "0.7rem" }}
-              >
-                2
-              </Typography>
+              {task.attachments &&
+                  <Typography
+                  variant="body2"
+                  color="text.secondary"
+                  ml={0.5}
+                  sx={{ fontSize: "0.7rem" }}
+                >
+                  {task.attachments.length > 0 ?  task.attachments.length : 0}
+
+                </Typography>
+              }
+              
             </Box>
           </Box>
         </CardContent>
