@@ -131,12 +131,9 @@ const LoginPage = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
+  const loggedInUser = useSelector((state) => state.user.loggedInUser);
   const loginError = useSelector((state) => state.user.loginError);
   // console.log(loginError?.message);
-
-  const handleForgotPasswordClick = () => {
-    navigate("/forgotpassword"); // Navigate to forgot password page
-  };
 
   //redux
   // const handleLogin = () => {
@@ -161,14 +158,14 @@ const LoginPage = () => {
     password: Joi.string()
       .pattern(
         new RegExp(
-          "^[a-zA-Z0-9!@#\\$%\\^&\\*\\(\\)_\\+\\-=[\\]{};:'\",<>\\.\\?/`~]{4,}$"
+          "^[a-zA-Z0-9!@#\\$%\\^&\\*\\(\\)_\\+\\-=[\\]{};:'\",<>\\.\\?/`~]{8,}$"
         )
       )
       .required()
       .messages({
         "string.empty": "Password is required",
         "string.pattern.base":
-          "Password must be at least 4 characters and contain only letters, numbers, and special characters",
+          "Password must be at least 8 characters and contain only letters, numbers, and special characters",
       }),
   });
 
@@ -192,7 +189,6 @@ const LoginPage = () => {
     dispatch(loginAsync({ email, password }));
   };
 
-  const loggedInUser = useSelector((state) => state.user.loggedInUser);
   // console.log(loggedInUser);
   // const state = useSelector((state) => state);
   // console.log(state);
@@ -211,6 +207,10 @@ const LoginPage = () => {
 
   const handleSignUpClick = () => {
     navigate("/signup"); // Navigate to signup page
+  };
+
+  const handleForgotPasswordClick = () => {
+    navigate("/forgotpassword"); // Navigate to forgot password page
   };
 
   return (

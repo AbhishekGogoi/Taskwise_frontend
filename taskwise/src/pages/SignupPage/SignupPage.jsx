@@ -119,9 +119,10 @@ const SignupPage = () => {
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
+
   const signupStatus = useSelector((state) => state.user.signupStatus);
   const signupError = useSelector((state) => state.user.signupError);
-  console.log(signupError?.message);
+  // console.log(signupError?.message);
 
   const schema = Joi.object({
     username: Joi.string().min(3).required().messages({
@@ -138,14 +139,14 @@ const SignupPage = () => {
     password: Joi.string()
       .pattern(
         new RegExp(
-          "^[a-zA-Z0-9!@#\\$%\\^&\\*\\(\\)_\\+\\-=[\\]{};:'\",<>\\.\\?/`~]{4,}$"
+          "^[a-zA-Z0-9!@#\\$%\\^&\\*\\(\\)_\\+\\-=[\\]{};:'\",<>\\.\\?/`~]{8,}$"
         )
       )
       .required()
       .messages({
         "string.empty": "Password is required",
         "string.pattern.base":
-          "Password must be at least 4 characters and contain only letters, numbers, and special characters",
+          "Password must be at least 8 characters and contain only letters, numbers, and special characters",
       }),
     confirmPassword: Joi.any().valid(Joi.ref("password")).required().messages({
       "any.only": "Passwords do not match",
