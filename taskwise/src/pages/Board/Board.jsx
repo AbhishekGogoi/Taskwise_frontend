@@ -12,7 +12,7 @@ import Divider from "@mui/material/Divider";
 import { Button } from "@mui/material";
 import { useSelector, useDispatch } from "react-redux";
 import { useEffect } from "react";
-import { fetchProjectByIdAsync, resetTaskAddStatus } from "../../features/project/projectSlice";
+import { fetchProjectByIdAsync, resetTaskAddStatus, moveTaskAsync } from "../../features/project/projectSlice";
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -60,6 +60,7 @@ function Board() {
 
 
   useEffect(() => {
+    console.log("useEffect for dispatch")
     if (id) {
       dispatch(fetchProjectByIdAsync(id));
     }
@@ -101,6 +102,8 @@ function Board() {
   const [columns, setColumns] = useState({});
 
   useEffect(() => {
+    console.log("useEffect for initial data")
+    console.log(initialData?.columns)
     if (initialData) {
       setColumns(initialData?.columns);
     }
@@ -114,36 +117,43 @@ function Board() {
 
     // Find the previous column where the task was located
     const previousColumn = updatedColumns.find((column) =>
-        column.taskIds.includes(taskId)
+      column.taskIds.includes(taskId)
     );
 
     if (previousColumn) {
-        // Remove the taskId from the taskIds array of the previous column
-        previousColumn.taskIds = previousColumn.taskIds.filter(
-            (id) => id !== taskId
-        );
+      // Remove the taskId from the taskIds array of the previous column
+      previousColumn.taskIds = previousColumn.taskIds.filter(
+        (id) => id !== taskId
+      );
     } else {
-        console.error(`Previous column for task ${taskId} not found.`);
+      console.error(`Previous column for task ${taskId} not found.`);
     }
 
     // Find the target column where the task will be moved
     const targetColumn = updatedColumns.find(
-        (column) => column._id === newColumnId
+      (column) => column._id === newColumnId
     );
 
     if (targetColumn) {
-        // Add the taskId to the taskIds array of the target column
-        targetColumn.taskIds.push(taskId);
+      // Add the taskId to the taskIds array of the target column
+      targetColumn.taskIds.push(taskId);
     } else {
-        console.error(`Target column with ID ${newColumnId} not found.`);
+      console.error(`Target column with ID ${newColumnId} not found.`);
     }
+    //console.log(previousColumn._id,"previouscolumn")
+    const data = {
+      "sourceColumnId": previousColumn._id,
+      "destinationColumnId": newColumnId
+    }
+    const idObject = { id: id,taskId };
+    dispatch(moveTaskAsync({ data, idObject }));
 
-    // Update the state with the modified columns
-    setColumns([...updatedColumns]);
+    // // Update the state with the modified columns
+    // setColumns([...updatedColumns]);
 
-    // Log the updated columns for debugging
-    console.log("updatedcolumns", updatedColumns);
-};
+    // // Log the updated columns for debugging
+    // console.log("updatedcolumns", updatedColumns);
+  };
 
   useEffect(() => {
     if (taskAddStatus == "fulfilled") {
@@ -262,7 +272,6 @@ function Board() {
             display: 'none',
           },
         }}>
-          {console.log(initialData?.order)}
           <Grid container spacing={2} direction="row" wrap="nowrap" sx={{ marginTopt: "3" }} alignItems="flex-start">
             {initialData?.order?.map((columnId) => {
               const column = initialData?.columns?.find((col) => col._id === columnId);
@@ -273,7 +282,7 @@ function Board() {
                 }
                 return task;
               }).filter(Boolean);
-              console.log(column, tasks)
+              //console.log(column, tasks)
               return (
                 <Grid key={column?.id}>
                   <Column column={column} tasks={tasks} onDrop={handleDrop} />
