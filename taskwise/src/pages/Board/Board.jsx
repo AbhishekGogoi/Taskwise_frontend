@@ -70,7 +70,7 @@ function Board() {
   //console.log(initialData,"initialData")
   const taskAddStatus = useSelector((state) => state.project.taskAddStatus);
   const projectFetchStatus=useSelector((state) => state.project.projectFetchStatus);
-  const [order,setOrder]=useState(initialData?.order)
+  const [order,setOrder]=useState(null)
   const handleClick = () => {
     navigate(`/projects/${id}/new-task`);
   };
@@ -99,13 +99,14 @@ function Board() {
   //   },
   // };
 
-  const [columns, setColumns] = useState(initialData?.columns);
+  const [columns, setColumns] = useState({});
 
   useEffect(() => {
     //console.log("useEffect for initial data")
     //console.log(initialData)
     if (initialData) {
       setColumns(initialData?.columns);
+      setOrder(initialData?.order)
     }
   }, [initialData,useDrop]);
 
@@ -277,8 +278,8 @@ function Board() {
         }}>
           <Grid container spacing={2} direction="row" wrap="nowrap" sx={{ marginTopt: "3" }} alignItems="flex-start">
             {order?.map((columnId) => {
-              const column = columns.find((col) => col._id === columnId);
-              const tasks = column.taskIds.map((taskId) => {
+              const column = columns?.find((col) => col._id === columnId);
+              const tasks = column?.taskIds.map((taskId) => {
                 const task = initialData.tasks.find((task) => task._id === taskId);
                 if (!task) {
                   console.warn(`Task with ID ${taskId} not found`);
