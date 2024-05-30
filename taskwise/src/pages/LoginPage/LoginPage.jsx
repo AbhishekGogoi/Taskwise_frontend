@@ -213,6 +213,13 @@ const LoginPage = () => {
     navigate("/forgotpassword"); // Navigate to forgot password page
   };
 
+  const googleAuth = () => {
+    window.open(
+      `${process.env.REACT_APP_API_URL}/auth/google/callback`,
+      "_self"
+    );
+  };
+
   return (
     <StyledContainer>
       <img
@@ -310,6 +317,7 @@ const LoginPage = () => {
               alt="Google"
             />
           }
+          onClick={googleAuth}
         >
           Sign in with Google
         </StyledGoogleButton>
