@@ -1,5 +1,6 @@
 import { createAsyncThunk , createSlice } from "@reduxjs/toolkit";
-import { fetchProjects, fetchProjectById, addProject } from "./projectApi";
+import { fetchProjects, fetchProjectById, addProject, addTask } from "./projectApi";
+import { act } from "react";
 
 const initialState={
     projects:[],
@@ -8,7 +9,8 @@ const initialState={
     selectedProject:null,
     status:"idle",
     errors:null,
-    sucessMessage:null
+    sucessMessage:null,
+    taskAddStatus:"idle"
 }
 
 export const fetchProjectAsync=createAsyncThunk("projects/fetchProjects",async(userId)=>{
@@ -25,6 +27,12 @@ export const addProjectAsync=createAsyncThunk("projects/addProjectAsync",async(d
     const addedProject=await addProject(data)
     return addedProject
 })
+
+export const addTaskAsync=createAsyncThunk("projects/addTaskAsync",async(data,id)=>{
+    const addedTask=await addTask(data,id)
+    return addedTask
+})
+
 const projectSlice=createSlice({
     name:"projectSlice",
     initialState:initialState,
@@ -75,6 +83,17 @@ const projectSlice=createSlice({
             })
             .addCase(addProjectAsync.rejected,(state,action)=>{
                 state.projectAddStatus="rejected"
+                state.errors=action.error
+            })
+            .addCase(addTaskAsync.pending,(state,action)=>{
+                state.taskAddStatus="pending"
+            })
+            .addCase(addTaskAsync.fulfilled,(state,action)=>{
+                state.taskAddStatus="fulfilled"
+                state.selectedProject.tasks.push(action.payload)
+            })
+            .addCase(addTaskAsync.rejected,(state,action)=>{
+                state.taskAddStatus="rejected"
                 state.errors=action.error
             })
     }

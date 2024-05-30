@@ -25,3 +25,12 @@ export const addProject=async(data)=>{
         throw error.response.data
     }
 }
+
+export const addTask=async(data,id)=>{
+    try{
+        const res=await axiosi.post(`projects/6655840c9d6b2d09cfbbde15/tasks`,data);
+        return res.data
+    }catch(error){
+        throw error.response.data
+    }
+}
