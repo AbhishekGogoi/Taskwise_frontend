@@ -8,7 +8,7 @@ function Column({ column, tasks, onDrop }) {
   // eslint-disable-next-line
   const [{ isOver }, drop] = useDrop({
     accept: "task", // Specify the accepted item type here
-    drop: (item) => onDrop(item.id, column.id),
+    drop: (item) => onDrop(item.id, column._id),
     collect: (monitor) => ({
       isOver: !!monitor.isOver(),
     }),

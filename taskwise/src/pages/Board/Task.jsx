@@ -8,12 +8,11 @@ function Task({ task }) {
   const navigate = useNavigate();
   const [{ isDragging }, drag] = useDrag({
     type: "task",
-    item: { id: task.id },
+    item: { id: task?._id },
     collect: (monitor) => ({
       isDragging: !!monitor.isDragging(),
     }),
   });
-  console.log(task.attachments)
   return (
     <Box>
       <Card

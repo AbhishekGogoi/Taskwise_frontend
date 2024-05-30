@@ -12,7 +12,7 @@ import Divider from "@mui/material/Divider";
 import { Button } from "@mui/material";
 import { useSelector, useDispatch } from "react-redux";
 import { useEffect } from "react";
-import { fetchProjectByIdAsync,resetTaskAddStatus } from "../../features/project/projectSlice";
+import { fetchProjectByIdAsync, resetTaskAddStatus } from "../../features/project/projectSlice";
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -58,7 +58,7 @@ function Board() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  
+
   useEffect(() => {
     if (id) {
       dispatch(fetchProjectByIdAsync(id));
@@ -67,8 +67,8 @@ function Board() {
   // console.log(id)
   const initialData = useSelector((state) => state.project.selectedProject);
   //console.log(initialData)
-  
-  const taskAddStatus= useSelector((state) => state.project.taskAddStatus);
+
+  const taskAddStatus = useSelector((state) => state.project.taskAddStatus);
 
   const handleClick = () => {
     navigate(`/projects/${id}/new-task`);
@@ -97,28 +97,60 @@ function Board() {
   //     8: { id: 8, content: "Attend meeting" },
   //   },
   // };
-  const [columns, setColumns] = useState(initialData?.columns);
+
+  const [columns, setColumns] = useState({});
+
+  useEffect(() => {
+    if (initialData) {
+      setColumns(initialData?.columns);
+    }
+  }, [initialData]);
 
   const handleDrop = (taskId, newColumnId) => {
     console.log("handleDrop", taskId, newColumnId);
-    const updatedColumns = { ...columns };
-    // Remove task from current column
-    Object.keys(updatedColumns).forEach((columnId) => {
-      updatedColumns[columnId].taskIds = updatedColumns[
-        columnId
-      ].taskIds.filter((id) => id !== taskId);
-    });
-    // Add task to the target column
-    updatedColumns[newColumnId].taskIds.push(taskId);
-    setColumns(updatedColumns);
+    // Clone the columns state
+    const updatedColumns = JSON.parse(JSON.stringify(columns));
+    console.log("updatedcolumn", columns);
+
+    // Find the previous column where the task was located
+    const previousColumn = updatedColumns.find((column) =>
+        column.taskIds.includes(taskId)
+    );
+
+    if (previousColumn) {
+        // Remove the taskId from the taskIds array of the previous column
+        previousColumn.taskIds = previousColumn.taskIds.filter(
+            (id) => id !== taskId
+        );
+    } else {
+        console.error(`Previous column for task ${taskId} not found.`);
+    }
+
+    // Find the target column where the task will be moved
+    const targetColumn = updatedColumns.find(
+        (column) => column._id === newColumnId
+    );
+
+    if (targetColumn) {
+        // Add the taskId to the taskIds array of the target column
+        targetColumn.taskIds.push(taskId);
+    } else {
+        console.error(`Target column with ID ${newColumnId} not found.`);
+    }
+
+    // Update the state with the modified columns
+    setColumns([...updatedColumns]);
+
+    // Log the updated columns for debugging
     console.log("updatedcolumns", updatedColumns);
-  };
+};
+
   useEffect(() => {
-    if (taskAddStatus=="fulfilled") {
+    if (taskAddStatus == "fulfilled") {
       toast.success("Task added successfully!");
       dispatch(resetTaskAddStatus());
     }
-  }, [taskAddStatus,dispatch]);
+  }, [taskAddStatus, dispatch]);
   return (
     <DndProvider backend={HTML5Backend}>
       <Box
