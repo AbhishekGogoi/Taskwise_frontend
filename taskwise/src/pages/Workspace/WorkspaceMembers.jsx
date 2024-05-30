@@ -5,8 +5,6 @@ import { styled } from '@mui/material/styles';
 import MemberData from '../../data/members.json';
 
 const StyledPaper = styled(Paper)(({ theme }) => ({
-  height: '400px',
-  width: '90%',
   padding: theme.spacing(2),
   overflowY: 'auto',
   '&::-webkit-scrollbar': {
@@ -23,7 +21,7 @@ const StyledPaper = styled(Paper)(({ theme }) => ({
   },
 }));
 
-function WorkspaceMembers() {
+function WorkspaceMembers({height, width}) {
   const memberList = MemberData.length === 0 ? (
     <Typography sx={{ textAlign: 'center', paddingTop: 2 }}>
       Please add members
@@ -42,7 +40,7 @@ function WorkspaceMembers() {
   );
 
   return (
-    <StyledPaper>
+    <StyledPaper sx={{height: height, width: width}}>
       <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderRadius: 2 }}>
         <Typography sx={{ paddingTop: 0.5, paddingLeft: 1, fontSize: 20, fontWeight: 'bold' }}>
           Members

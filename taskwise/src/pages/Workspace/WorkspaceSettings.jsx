@@ -5,7 +5,7 @@ import LinkSharpIcon from '@mui/icons-material/LinkSharp';
 import { styled } from '@mui/material/styles';
 import WorkspaceSettingsMembers from './WorkspaceSettingsMembers';
 import LogoutIcon from '@mui/icons-material/Logout';
-import WorkspaceThumbnail from './WorkspaceThumbnail';
+import Thumbnail from '../../components/Thumbnail';
 import ModeEditSharpIcon from '@mui/icons-material/ModeEditSharp';
 import SaveIcon from '@mui/icons-material/Save';
 import CancelIcon from '@mui/icons-material/Cancel';
@@ -125,7 +125,7 @@ function WorkspaceSettings({ workspace }) {
       <Grid item xs={12} md={6}>
         <StyledPaper>
           <Box sx={{ display: 'flex', alignItems: 'center', marginBottom: '20px' }}>
-            <WorkspaceThumbnail
+            <Thumbnail
               selectedImage={selectedImage}
               handleFileUploadClick={handleFileUploadClick}
               width={150}
