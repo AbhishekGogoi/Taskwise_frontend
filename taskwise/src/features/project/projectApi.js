@@ -1,3 +1,4 @@
+import { TaskAbortError } from "@reduxjs/toolkit";
 import { axiosi } from "../../config/axios";
 
 export const fetchProjects=async(userId)=>{
@@ -26,9 +27,10 @@ export const addProject=async(data)=>{
     }
 }
 
-export const addTask=async(data,id)=>{
+export const addTask=async(task,id)=>{
+    console.log(task,id,"project slice")
     try{
-        const res=await axiosi.post(`/projects/6655840c9d6b2d09cfbbde15/tasks`,data);
+        const res=await axiosi.post(`/projects/${id}/tasks`,task);
         return res.data
     }catch(error){
         throw error.response.data

@@ -29,8 +29,8 @@ export const addProjectAsync=createAsyncThunk("projects/addProjectAsync",async(d
     return addedProject
 })
 
-export const addTaskAsync=createAsyncThunk("projects/addTaskAsync",async(data,id)=>{
-    const addedTask=await addTask(data,id)
+export const addTaskAsync=createAsyncThunk("projects/addTaskAsync",async({task,id})=>{
+    const addedTask=await addTask(task,id)
     return addedTask
 })
 
@@ -107,9 +107,11 @@ const projectSlice=createSlice({
             })
             .addCase(moveTaskAsync.pending,(state,action)=>{
                 state.taskMoveStatus="pending"
+                state.projectFetchStatus="loading"
             })
             .addCase(moveTaskAsync.fulfilled,(state,action)=>{
                 state.taskMoveStatus="fulfilled"
+                state.projectFetchStatus="idle"
                 state.selectedProject=action.payload
             })
             .addCase(moveTaskAsync.rejected,(state,action)=>{

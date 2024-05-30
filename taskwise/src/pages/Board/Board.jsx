@@ -1,6 +1,6 @@
 import React from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { DndProvider } from "react-dnd";
+import { DndProvider, useDrop } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import Column from "./Column";
 import { useState } from "react";
@@ -60,17 +60,16 @@ function Board() {
 
 
   useEffect(() => {
-    console.log("useEffect for dispatch")
+    //console.log("useEffect for dispatch")
     if (id) {
       dispatch(fetchProjectByIdAsync(id));
     }
   }, [dispatch, id]);
   // console.log(id)
   const initialData = useSelector((state) => state.project.selectedProject);
-  //console.log(initialData)
-
+  //console.log(initialData,"initialData")
   const taskAddStatus = useSelector((state) => state.project.taskAddStatus);
-
+  const projectFetchStatus=useSelector((state) => state.project.projectFetchStatus);
   const handleClick = () => {
     navigate(`/projects/${id}/new-task`);
   };
@@ -102,18 +101,18 @@ function Board() {
   const [columns, setColumns] = useState({});
 
   useEffect(() => {
-    console.log("useEffect for initial data")
-    console.log(initialData?.columns)
+    //console.log("useEffect for initial data")
+    //console.log(initialData)
     if (initialData) {
       setColumns(initialData?.columns);
     }
-  }, [initialData]);
+  }, [initialData,useDrop]);
 
   const handleDrop = (taskId, newColumnId) => {
-    console.log("handleDrop", taskId, newColumnId);
+    //console.log("handleDrop", taskId, newColumnId);
     // Clone the columns state
     const updatedColumns = JSON.parse(JSON.stringify(columns));
-    console.log("updatedcolumn", columns);
+    //console.log("updatedcolumn", columns);
 
     // Find the previous column where the task was located
     const previousColumn = updatedColumns.find((column) =>
@@ -126,7 +125,7 @@ function Board() {
         (id) => id !== taskId
       );
     } else {
-      console.error(`Previous column for task ${taskId} not found.`);
+      //console.error(`Previous column for task ${taskId} not found.`);
     }
 
     // Find the target column where the task will be moved
@@ -141,18 +140,18 @@ function Board() {
       console.error(`Target column with ID ${newColumnId} not found.`);
     }
     //console.log(previousColumn._id,"previouscolumn")
-    const data = {
-      "sourceColumnId": previousColumn._id,
-      "destinationColumnId": newColumnId
-    }
-    const idObject = { id: id,taskId };
-    dispatch(moveTaskAsync({ data, idObject }));
+    // const data = {
+    //   "sourceColumnId": previousColumn._id,
+    //   "destinationColumnId": newColumnId
+    // }
+    // const idObject = { id: id,taskId };
+    // dispatch(moveTaskAsync({ data, idObject }));
 
-    // // Update the state with the modified columns
-    // setColumns([...updatedColumns]);
+    // Update the state with the modified columns
+    setColumns([...updatedColumns]);
 
-    // // Log the updated columns for debugging
-    // console.log("updatedcolumns", updatedColumns);
+    // Log the updated columns for debugging
+    //console.log("updatedcolumns", updatedColumns);
   };
 
   useEffect(() => {
@@ -161,6 +160,9 @@ function Board() {
       dispatch(resetTaskAddStatus());
     }
   }, [taskAddStatus, dispatch]);
+  if(projectFetchStatus=="loading"){
+      return <div className="loading">Loading...</div>
+  }
   return (
     <DndProvider backend={HTML5Backend}>
       <Box

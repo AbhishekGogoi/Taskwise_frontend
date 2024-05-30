@@ -19,8 +19,9 @@ function NewTaskPage() {
     const [errors, setErrors] = useState({ title: '', description: '' });
     const navigate = useNavigate();
     const dispatch = useDispatch();
-    const {id}=useParams()
-    //console.log(id)
+    const {id}=useParams();
+    const colId=useSelector((state) => state.project.selectedProject.order[0])
+    console.log(colId,id)
     const handleStatusChange = (event) => {
         setStatus(event.target.value);
     };
@@ -52,13 +53,21 @@ function NewTaskPage() {
     };
 
     const handleCreateTask = () => {
+        console.log("Entered into function")
+        console.log(colId,"colId in dispatch")
         if (validateFields()) {
+           
             const task = {
                 taskName: title,
                 content: description,
-                columnId: "6655840c9d6b2d09cfbbde16",
+                columnId: colId,
+                // dueDate,
+                // priority,
+                // status,
+                // assignees,
+                // comment,
             };
-            dispatch(addTaskAsync(task, id));
+            dispatch(addTaskAsync({task, id}));
             if (taskAddStatus !=="rejected"){
                 navigate(-1);
             }

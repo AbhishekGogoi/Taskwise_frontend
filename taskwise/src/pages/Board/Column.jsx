@@ -13,7 +13,7 @@ function Column({ column, tasks, onDrop }) {
       isOver: !!monitor.isOver(),
     }),
   });
-  //console.log(tasks)
+  //console.log("column re renders")
   return (
     <Box sx={{ display: "flex", flexDirection: "column" }}>
       <Box sx={{ display: "flex", alignItems: "center", cursor: "pointer" }}>
