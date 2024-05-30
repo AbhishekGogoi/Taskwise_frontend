@@ -1,6 +1,6 @@
 import { createAsyncThunk , createSlice } from "@reduxjs/toolkit";
 import { fetchProjects, fetchProjectById, addProject, addTask } from "./projectApi";
-import { act } from "react";
+
 
 const initialState={
     projects:[],
@@ -48,6 +48,9 @@ const projectSlice=createSlice({
         },
         resetProjectFetchStatus:(state)=>{
             state.projectFetchStatus='idle'
+        },
+        resetTaskAddStatus: (state) => {
+            state.taskAddStatus = 'idle';
         }
     },
     extraReducers:(builder)=>{
@@ -103,7 +106,8 @@ export const {
     clearProjectErrors,
     clearProjectSuccessMessage,
     resetProjectStatus,
-    resetProjectFetchStatus
+    resetProjectFetchStatus,
+    resetTaskAddStatus,
 } = projectSlice.actions;
 
 export default projectSlice.reducer;

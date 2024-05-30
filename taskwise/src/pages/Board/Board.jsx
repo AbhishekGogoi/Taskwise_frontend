@@ -12,7 +12,9 @@ import Divider from "@mui/material/Divider";
 import { Button } from "@mui/material";
 import { useSelector, useDispatch } from "react-redux";
 import { useEffect } from "react";
-import { fetchProjectByIdAsync } from "../../features/project/projectSlice";
+import { fetchProjectByIdAsync,resetTaskAddStatus } from "../../features/project/projectSlice";
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const SearchIconWrapper = styled("div")(({ theme }) => ({
   padding: theme.spacing(0, 2),
@@ -55,6 +57,8 @@ function Board() {
   const { id } = useParams();
   const navigate = useNavigate();
   const dispatch = useDispatch();
+
+  
   useEffect(() => {
     if (id) {
       dispatch(fetchProjectByIdAsync(id));
@@ -64,6 +68,7 @@ function Board() {
   const initialData = useSelector((state) => state.project.selectedProject);
   //console.log(initialData)
   
+  const taskAddStatus= useSelector((state) => state.project.taskAddStatus)
 
   const handleClick = () => {
     navigate(`/projects/${id}/new-task`);
@@ -108,6 +113,12 @@ function Board() {
     setColumns(updatedColumns);
     console.log("updatedcolumns", updatedColumns);
   };
+  useEffect(() => {
+    if (taskAddStatus=="fulfilled") {
+      toast.success("Task added successfully!");
+      dispatch(resetTaskAddStatus());
+    }
+  }, [taskAddStatus,dispatch]);
   return (
     <DndProvider backend={HTML5Backend}>
       <Box
@@ -121,6 +132,7 @@ function Board() {
           },
         }}
       >
+        <ToastContainer />
         <Paper
           elevation={3}
           sx={{

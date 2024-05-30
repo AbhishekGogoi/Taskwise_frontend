@@ -14,7 +14,6 @@ function NewTaskPage() {
     const [status, setStatus] = useState('');
     const [assignees, setAssignees] = useState([]);
     const [errors, setErrors] = useState({ title: '', description: '' });
-
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const {id}=useParams()
