@@ -1,9 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Grid, TextField, Button, Box, Typography, IconButton, Paper, MenuItem, Select } from '@mui/material';
 import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
-import { addTaskAsync } from '../../features/project/projectSlice';
+import { addTaskAsync , resetTaskAddStatus} from '../../features/project/projectSlice';
 import { useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 function NewTaskPage() {
     const [title, setTitle] = useState('');
@@ -56,7 +59,9 @@ function NewTaskPage() {
                 columnId: "6655840c9d6b2d09cfbbde16",
             };
             dispatch(addTaskAsync(task, id));
-            navigate(-1);
+            if (taskAddStatus !=="rejected"){
+                navigate(-1);
+            }
         }
     };
 
@@ -77,6 +82,13 @@ function NewTaskPage() {
             setErrors(prevErrors => ({ ...prevErrors, description: '' }));
         }
     };
+    const taskAddStatus= useSelector((state) => state.project.taskAddStatus);
+    useEffect(() => {
+        if (taskAddStatus=="rejected") {
+          toast.error("Failed to add task.");
+          dispatch(resetTaskAddStatus());
+        }
+      }, [taskAddStatus,dispatch]);
 
     return (
         <Box
@@ -89,6 +101,7 @@ function NewTaskPage() {
                 p: 2,
             }}
         >
+            <ToastContainer />
             <Box sx={{ display: "flex", justifyContent: "space-between" }}>
                 <Paper
                     elevation={3}

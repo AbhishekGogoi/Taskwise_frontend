@@ -68,7 +68,7 @@ function Board() {
   const initialData = useSelector((state) => state.project.selectedProject);
   //console.log(initialData)
   
-  const taskAddStatus= useSelector((state) => state.project.taskAddStatus)
+  const taskAddStatus= useSelector((state) => state.project.taskAddStatus);
 
   const handleClick = () => {
     navigate(`/projects/${id}/new-task`);
