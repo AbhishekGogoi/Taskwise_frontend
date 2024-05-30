@@ -32,7 +32,7 @@ const NewProjectModel = ({ handleClose }) => {
   const dispatch=useDispatch();
   const creatorUserID=useSelector((state)=>state?.user?.loggedInUser?.user?._id);
   const [selectedImage, setSelectedImage] = useState(null);
-  const [workspace, setWorkspace] = useState("Updated Workspace");
+  const [workspace, setWorkspace] = useState("Updated WS");
   const fileInputRef = useRef(null);
   const [name,setName]=useState("");
   const [description,setDescription]=useState("");
