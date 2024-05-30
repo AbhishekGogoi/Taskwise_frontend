@@ -13,6 +13,8 @@ function NewTaskPage() {
     const [priority, setPriority] = useState('');
     const [status, setStatus] = useState('');
     const [assignees, setAssignees] = useState([]);
+    const [errors, setErrors] = useState({ title: '', description: '' });
+
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const {id}=useParams()
@@ -29,14 +31,52 @@ function NewTaskPage() {
         setAssignees(event.target.value);
     };
 
-    const handleCreateTask = () => {
-        const task = {
-            "taskName": title,
-            "content": description,
-            "columnId": "6655840c9d6b2d09cfbbde16"
+    const validateFields = () => {
+        const newErrors = { title: '', description: '' };
+        let hasError = false;
+
+        if (!title.trim()) {
+            newErrors.title = 'Title is required';
+            hasError = true;
         }
-        dispatch(addTaskAsync(task,id))
-        navigate(-1);
+
+        if (!description.trim()) {
+            newErrors.description = 'Description is required';
+            hasError = true;
+        }
+
+        setErrors(newErrors);
+        return !hasError;
+    };
+
+    const handleCreateTask = () => {
+        if (validateFields()) {
+            const task = {
+                taskName: title,
+                content: description,
+                columnId: "6655840c9d6b2d09cfbbde16",
+            };
+            dispatch(addTaskAsync(task, id));
+            navigate(-1);
+        }
+    };
+
+    const handleTitleChange = (e) => {
+        setTitle(e.target.value);
+        if (!e.target.value.trim()) {
+            setErrors(prevErrors => ({ ...prevErrors, title: 'Title is required' }));
+        } else {
+            setErrors(prevErrors => ({ ...prevErrors, title: '' }));
+        }
+    };
+
+    const handleDescriptionChange = (e) => {
+        setDescription(e.target.value);
+        if (!e.target.value.trim()) {
+            setErrors(prevErrors => ({ ...prevErrors, description: 'Description is required' }));
+        } else {
+            setErrors(prevErrors => ({ ...prevErrors, description: '' }));
+        }
     };
 
     return (
@@ -74,13 +114,15 @@ function NewTaskPage() {
                                 fullWidth
                                 placeholder="Title"
                                 value={title}
-                                onChange={(e) => setTitle(e.target.value)}
+                                onChange={handleTitleChange}
                                 sx={{
                                     mb: 4,
                                     '& input': {
                                         backgroundColor: '#ededed',
                                     },
                                 }}
+                                error={!!errors.title}
+                                helperText={errors.title}
                             />
 
                             <Typography variant="h6" gutterBottom sx={{ fontWeight: 'bold', mb: 3 }}>
@@ -93,8 +135,10 @@ function NewTaskPage() {
                                 rows={4}
                                 placeholder="Add your description here"
                                 value={description}
-                                onChange={(e) => setDescription(e.target.value)}
+                                onChange={handleDescriptionChange}
                                 sx={{ mb: 4 }}
+                                error={!!errors.description}
+                                helperText={errors.description}
                             />
 
                             <Typography variant="h6" gutterBottom sx={{ fontWeight: 'bold', mb: 3 }}>
