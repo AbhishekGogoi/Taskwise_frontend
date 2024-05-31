@@ -12,7 +12,9 @@ import ProjectCard from "./ProjectCard";
 import NewProjectModel from "../../components/NewProjectModel";
 import Modal from "@mui/material/Modal";
 import { useDispatch,useSelector } from "react-redux";
-import { fetchProjectAsync } from "../../features/project/projectSlice";
+import { fetchProjectAsync , resetProjectAddStatus} from "../../features/project/projectSlice";
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const SearchIconWrapper = styled("div")(({ theme }) => ({
   padding: theme.spacing(0, 2),
@@ -132,13 +134,20 @@ const CustomBox = styled(Box)(({ theme }) => ({
 function ProjectPage() {
   const [isModalOpen, setModalOpen] = useState(false);
   const dispatch=useDispatch();
-  const projectData=useSelector((state)=>state.project.projects)
+  const projectData=useSelector((state)=>state.project.projects);
+  const projectAddStatus=useSelector((state)=>state.project.projectAddStatus);
   // console.log(projectData);
   const userId=useSelector((state)=>state?.user?.loggedInUser?.user?._id);
   //console.log(userId)
   useEffect(()=>{
     dispatch(fetchProjectAsync(userId))
-  },[dispatch,userId])
+  },[dispatch,userId]);
+  useEffect(()=>{
+    if (projectAddStatus == "fulfilled") {
+      toast.success("Project created successfully!");
+      dispatch(resetProjectAddStatus());
+    }
+  },[projectAddStatus])
   const handleOpenModal = () => {
     setModalOpen(true);
   };
@@ -166,6 +175,7 @@ function ProjectPage() {
           height: 100,
         }}
       >
+         <ToastContainer />
         <Box
           sx={{
             display: "flex",

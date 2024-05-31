@@ -57,6 +57,9 @@ const projectSlice=createSlice({
         },
         resetTaskAddStatus: (state) => {
             state.taskAddStatus = 'idle';
+        },
+        resetProjectAddStatus:(state) => {
+            state.projectAddStatus="idle"
         }
     },
     extraReducers:(builder)=>{
@@ -126,6 +129,7 @@ export const {
     resetProjectStatus,
     resetProjectFetchStatus,
     resetTaskAddStatus,
+    resetProjectAddStatus
 } = projectSlice.actions;
 
 export default projectSlice.reducer;
