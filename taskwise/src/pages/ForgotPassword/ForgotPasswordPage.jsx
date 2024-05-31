@@ -133,13 +133,15 @@ const ForgotPasswordPage = () => {
 
     setError(""); // Clear any previous error
     dispatch(forgotPasswordAsync({ email }));
-    navigate("/forgotpassword/verification");
+    // navigate("/forgotpassword/verification");
   };
 
-  // useEffect(() => {
-  //   navigate("/forgotpassword/verification");
-  //   dispatch(resetForgotPasswordStatus());
-  // }, [forgotPasswordStatus, navigate, dispatch]);
+  useEffect(() => {
+    if (forgotPasswordStatus === "fulfilled") {
+      navigate("/forgotpassword/verification");
+      dispatch(resetForgotPasswordStatus());
+    }
+  }, [forgotPasswordStatus, navigate, dispatch]);
 
   useEffect(() => {
     if (forgotPasswordError) {

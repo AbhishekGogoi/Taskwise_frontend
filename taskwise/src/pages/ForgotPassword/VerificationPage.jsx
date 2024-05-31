@@ -9,7 +9,10 @@ import { styled, ThemeProvider, createTheme } from "@mui/material/styles";
 import TaskWiseLogo from "../../assets/TaskWiseLogo.png";
 import verificationlogo from "../../assets/verificationlogo.jpeg";
 import { useDispatch, useSelector } from "react-redux";
-import { verifyResetCodeAsync } from "../../features/user/userSlice";
+import {
+  verifyResetCodeAsync,
+  resetVerifyCodeStatus,
+} from "../../features/user/userSlice";
 import { ToastContainer, toast } from "react-toastify";
 
 const theme = createTheme();
@@ -103,18 +106,29 @@ const VerificationPage = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const successMessage = useSelector((state) => state.user.successMessage);
+  // const successMessage = useSelector((state) => state.user.successMessage);
+  const verifyCodeStatus = useSelector((state) => state.user.verifyCodeStatus);
   const verifyCodeError = useSelector((state) => state.user.verifyCodeError);
-
-  const handleSubmit = () => {
-    const code = otp.join("");
-    dispatch(verifyResetCodeAsync({ email, code }));
-    navigate("/forgotpassword/resetpassword");
-  };
+  const resetEmail = useSelector((state) => state.user.resetEmail);
 
   const [otp, setOtp] = useState(["", "", "", ""]);
+  const [error, setError] = useState("");
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const code = otp.join("");
+    if (!code.trim()) {
+      setError("Please enter the OTP");
+      return;
+    }
+
+    setError("");
+    dispatch(verifyResetCodeAsync({ email: resetEmail, code }));
+    // navigate("/forgotpassword/resetpassword");
+  };
+
   // eslint-disable-next-line
-  const [email, setEmail] = useState("example@gmail.com");
+  // const [email, setEmail] = useState("example@gmail.com");
 
   // Function to mask email
   const maskEmail = (email) => {
@@ -137,17 +151,20 @@ const VerificationPage = () => {
     }
   };
 
-  // useEffect(() => {
-  //   if (successMessage) {
-  //     navigate("/forgotpassword/resetpassword");
-  //   }
-  // }, [successMessage, navigate]);
+  useEffect(() => {
+    if (verifyCodeStatus === "fulfilled") {
+      navigate("/forgotpassword/resetpassword", {
+        state: { email: resetEmail, code: otp.join("") },
+      });
+      dispatch(resetVerifyCodeStatus());
+    }
+  }, [verifyCodeStatus, navigate, dispatch, resetEmail, otp]);
 
-  // useEffect(() => {
-  //   if (verifyCodeError) {
-  //     toast.error(verifyCodeError.message);
-  //   }
-  // }, [verifyCodeError]);
+  useEffect(() => {
+    if (verifyCodeError) {
+      toast.error(verifyCodeError.message);
+    }
+  }, [verifyCodeError]);
 
   return (
     <ThemeProvider theme={theme}>
@@ -185,7 +202,8 @@ const VerificationPage = () => {
           variant="body2"
           sx={{ color: "#5b5858", marginBottom: "1.5rem" }}
         >
-          Enter the OTP sent to {maskEmail(email)}
+          Enter the OTP sent to{" "}
+          {resetEmail ? maskEmail(resetEmail) : "your email"}
         </Typography>
 
         <OtpContainer>

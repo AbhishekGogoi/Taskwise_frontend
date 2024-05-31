@@ -8,7 +8,10 @@ import { styled, ThemeProvider, createTheme } from "@mui/material/styles";
 import TaskWiseLogo from "../../assets/TaskWiseLogo.png";
 import forgotpasswordlogo from "../../assets/forgotpasswordlogo.jpeg";
 import { useDispatch, useSelector } from "react-redux";
-import { resetPasswordAsync } from "../../features/user/userSlice";
+import {
+  resetPasswordAsync,
+  resetResetPasswordStatus,
+} from "../../features/user/userSlice";
 import { ToastContainer, toast } from "react-toastify";
 import { useLocation } from "react-router-dom";
 
@@ -82,7 +85,10 @@ const ResetPasswordPage = () => {
   const dispatch = useDispatch();
   const location = useLocation();
 
-  const successMessage = useSelector((state) => state.user.successMessage);
+  // const successMessage = useSelector((state) => state.user.successMessage);
+  const resetPasswordStatus = useSelector(
+    (state) => state.user.resetPasswordStatus
+  );
   const resetPasswordError = useSelector(
     (state) => state.user.resetPasswordError
   );
@@ -108,19 +114,21 @@ const ResetPasswordPage = () => {
     setError("");
     const newPassword = checkPassword;
     dispatch(resetPasswordAsync({ email, code, newPassword }));
+    // navigate("/forgotpassword/confirmation");
   };
 
-  // useEffect(() => {
-  //   if (successMessage) {
-  //     navigate("/forgotpassword/confirmation");
-  //   }
-  // }, [successMessage, navigate]);
+  useEffect(() => {
+    if (resetPasswordStatus === "fulfilled") {
+      navigate("/forgotpassword/confirmation");
+      dispatch(resetResetPasswordStatus());
+    }
+  }, [resetPasswordStatus, navigate, dispatch]);
 
-  // useEffect(() => {
-  //   if (resetPasswordError) {
-  //     toast.error(resetPasswordError.message);
-  //   }
-  // }, [resetPasswordError]);
+  useEffect(() => {
+    if (resetPasswordError) {
+      toast.error(resetPasswordError.message);
+    }
+  }, [resetPasswordError]);
 
   return (
     <ThemeProvider theme={theme}>
@@ -155,7 +163,7 @@ const ResetPasswordPage = () => {
         >
           Reset Password...
         </Typography>
-        <Form onSubmit={handleSubmit}>
+        <Form>
           <StyledTextField
             label="Check Password"
             type="password"
@@ -181,6 +189,7 @@ const ResetPasswordPage = () => {
             variant="contained"
             color="primary"
             fullWidth
+            onClick={handleSubmit}
           >
             Update
           </SubmitButton>

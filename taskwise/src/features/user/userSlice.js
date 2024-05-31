@@ -24,6 +24,7 @@ const initialState = {
   verifyCodeError: null,
   resetPasswordStatus: "idle",
   resetPasswordError: null,
+  resetEmail: null,
 };
 
 export const signupAsync = createAsyncThunk(
@@ -153,6 +154,7 @@ const userSlice = createSlice({
       .addCase(forgotPasswordAsync.fulfilled, (state, action) => {
         state.forgotPasswordStatus = "fulfilled";
         state.successMessage = action.payload;
+        state.resetEmail = action.payload.email; // Store the email
       })
       .addCase(forgotPasswordAsync.rejected, (state, action) => {
         state.forgotPasswordStatus = "rejected";
