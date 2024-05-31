@@ -4,7 +4,10 @@ import { DndProvider, useDrop } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import Column from "./Column";
 import { useState } from "react";
-import { Box, Paper, Typography, Grid } from "@mui/material";
+import ModeEditSharpIcon from '@mui/icons-material/ModeEditSharp';
+import SaveIcon from '@mui/icons-material/Save';
+import CancelIcon from '@mui/icons-material/Cancel';
+import { Box, Paper, Typography, Grid,TextField,IconButton } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import { styled } from "@mui/material/styles";
 import InputBase from "@mui/material/InputBase";
@@ -57,7 +60,7 @@ function Board() {
   const { id } = useParams();
   const navigate = useNavigate();
   const dispatch = useDispatch();
-
+  const [isEditing, setIsEditing] = useState(false);
 
   useEffect(() => {
     //console.log("useEffect for dispatch")
@@ -101,7 +104,7 @@ function Board() {
   // };
 
   const [columns, setColumns] = useState({});
-
+  const [neewColumnText,setNewColumnText]=useState(null)
   useEffect(() => {
     //console.log("useEffect for initial data")
     //console.log(initialData)
@@ -156,6 +159,22 @@ function Board() {
 
     // Log the updated columns for debugging
     console.log("updatedcolumns", updatedColumns);
+  };
+
+  const handleTextChange = (event) => {
+    setNewColumnText(event.target.value);
+  };
+
+  const handleEditClick = () => {
+    setIsEditing(true);
+  };
+
+  const handleSaveClick = () => {
+    setIsEditing(false);
+  };
+
+  const handleCancelClick = () => {
+    setIsEditing(false);
   };
 
   useEffect(() => {
@@ -295,6 +314,34 @@ function Board() {
                 </Grid>
               );
             })}
+            <Box sx={{ display: 'flex', alignItems: 'center' }}>
+            {isEditing ? (
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                <TextField
+                  variant="outlined"
+                  value={neewColumnText}
+                  onChange={handleTextChange}
+                  autoFocus
+                  sx={{ flexGrow: 1 }}
+                />
+                <IconButton  onClick={handleSaveClick}>
+                  <SaveIcon />
+                </IconButton>
+                <IconButton  onClick={handleCancelClick}>
+                  <CancelIcon />
+                </IconButton>
+              </Box>
+            ) : (
+              <>
+                <Typography variant="body1" component="div" sx={{ p: 2, fontWeight: 'bold' }}>
+                  ADD NEW COLUMN
+                </Typography>
+                <IconButton onClick={handleEditClick}>
+                  <ModeEditSharpIcon sx={{ color: "#000000" }} />
+                </IconButton>
+              </>
+            )}
+          </Box>
           </Grid>
         </Box>
       </Box>
