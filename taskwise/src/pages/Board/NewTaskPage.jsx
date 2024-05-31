@@ -1,8 +1,8 @@
-import React, { useState,useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Grid, TextField, Button, Box, Typography, IconButton, Paper, MenuItem, Select } from '@mui/material';
 import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
-import { addTaskAsync , resetTaskAddStatus} from '../../features/project/projectSlice';
+import { addTaskAsync, resetTaskAddStatus } from '../../features/project/projectSlice';
 import { useDispatch } from 'react-redux';
 import { useSelector } from 'react-redux';
 import { toast, ToastContainer } from 'react-toastify';
@@ -14,14 +14,18 @@ function NewTaskPage() {
     const [comment, setComment] = useState('');
     const [dueDate, setDueDate] = useState('');
     const [priority, setPriority] = useState('');
-    const [status, setStatus] = useState('');
+    const [status, setStatus] = useState(null);
     const [assignees, setAssignees] = useState([]);
     const [errors, setErrors] = useState({ title: '', description: '' });
     const navigate = useNavigate();
     const dispatch = useDispatch();
-    const {id}=useParams();
-    const colId=useSelector((state) => state?.project?.selectedProject?.order[0])
-    //console.log(colId,id)
+    const { id } = useParams();
+    const colId = useSelector((state) => state?.project?.selectedProject?.order[0])
+    const coldata = useSelector((state) => state?.project?.selectedProject?.columns)
+    const titlesAndIds = coldata.map(item => ({
+        title: item.title,
+        id: item._id
+    }));
     const handleStatusChange = (event) => {
         setStatus(event.target.value);
     };
@@ -54,19 +58,19 @@ function NewTaskPage() {
 
     const handleCreateTask = () => {
         if (validateFields()) {
-           
+
             const task = {
                 taskName: title,
                 content: description,
-                columnId: colId,
-                dueDate:dueDate,
-                priority:priority
+                columnId: status,
+                dueDate: dueDate,
+                priority: priority
                 // status,
                 // assigneeUserID,
                 // attachments,
             };
-            dispatch(addTaskAsync({task, id}));
-            if (taskAddStatus !=="rejected"){
+            dispatch(addTaskAsync({ task, id }));
+            if (taskAddStatus !== "rejected") {
                 navigate(-1);
             }
         }
@@ -89,13 +93,13 @@ function NewTaskPage() {
             setErrors(prevErrors => ({ ...prevErrors, description: '' }));
         }
     };
-    const taskAddStatus= useSelector((state) => state.project.taskAddStatus);
+    const taskAddStatus = useSelector((state) => state.project.taskAddStatus);
     useEffect(() => {
-        if (taskAddStatus=="rejected") {
-          toast.error("Failed to add task.");
-          dispatch(resetTaskAddStatus());
+        if (taskAddStatus == "rejected") {
+            toast.error("Failed to add task.");
+            dispatch(resetTaskAddStatus());
         }
-      }, [taskAddStatus,dispatch]);
+    }, [taskAddStatus, dispatch]);
 
     return (
         <Box
@@ -109,7 +113,7 @@ function NewTaskPage() {
             }}
         >
             <ToastContainer />
-            <Box sx={{ display: "flex", justifyContent: "space-between" ,marginBottom:"10rem"}}>
+            <Box sx={{ display: "flex", justifyContent: "space-between", marginBottom: "10rem" }}>
                 <Paper
                     elevation={3}
                     sx={{
@@ -125,7 +129,7 @@ function NewTaskPage() {
                     <Grid container spacing={20}>
                         {/* Left side - Form Fields */}
                         <Grid item xs={12} md={6}>
-                            <Typography variant="h6" gutterBottom sx={{ fontWeight: '700', mb: 1, fontSize:"1rem" }}>
+                            <Typography variant="h6" gutterBottom sx={{ fontWeight: '700', mb: 1, fontSize: "1rem" }}>
                                 Add a title <span style={{ color: 'red' }}>*</span>
                             </Typography>
                             <TextField
@@ -141,7 +145,7 @@ function NewTaskPage() {
                                 helperText={errors.title}
                             />
 
-                            <Typography variant="h6" gutterBottom sx={{ fontWeight: '700', mb: 1, fontSize:"1rem" }}>
+                            <Typography variant="h6" gutterBottom sx={{ fontWeight: '700', mb: 1, fontSize: "1rem" }}>
                                 Add a description <span style={{ color: 'red' }}>*</span>
                             </Typography>
                             <TextField
@@ -152,16 +156,18 @@ function NewTaskPage() {
                                 placeholder="Add your description here"
                                 value={description}
                                 onChange={handleDescriptionChange}
-                                sx={{ mb: 4, '& .MuiFilledInput-root': {
-                                    backgroundColor: 'white',
-                                    border: '1px solid #ccc',
-                                    borderRadius: '4px',
-                                }, }}
+                                sx={{
+                                    mb: 4, '& .MuiFilledInput-root': {
+                                        backgroundColor: 'white',
+                                        border: '1px solid #ccc',
+                                        borderRadius: '4px',
+                                    },
+                                }}
                                 error={!!errors.description}
                                 helperText={errors.description}
                             />
 
-                            <Typography variant="h6" gutterBottom sx={{ fontWeight: '700', mb: 1, fontSize:"1rem" }}>
+                            <Typography variant="h6" gutterBottom sx={{ fontWeight: '700', mb: 1, fontSize: "1rem" }}>
                                 Ask a question or add a comment
                             </Typography>
                             <TextField
@@ -195,7 +201,7 @@ function NewTaskPage() {
                         <Grid item xs={12} md={6}>
                             <Grid container spacing={4}>
                                 <Grid item xs={12} sx={{ display: 'flex', alignItems: 'center' }}>
-                                    <Typography variant="h6" gutterBottom sx={{ fontWeight: '700', mb: 1, fontSize:"1rem" }}>
+                                    <Typography variant="h6" gutterBottom sx={{ fontWeight: '700', mb: 1, fontSize: "1rem" }}>
                                         Assign to
                                     </Typography>
                                     <Box sx={{ display: 'flex', alignItems: 'center', flexGrow: 1, ml: 4 }}>
@@ -214,6 +220,9 @@ function NewTaskPage() {
                                                 maxWidth: 200,
                                             }}
                                         >
+                                            <MenuItem value="" disabled>
+                                                Select
+                                            </MenuItem>
                                             <MenuItem value="Option 1">Option 1</MenuItem>
                                             <MenuItem value="Option 2">Option 2</MenuItem>
                                             <MenuItem value="Option 3">Option 3</MenuItem>
@@ -222,7 +231,7 @@ function NewTaskPage() {
                                 </Grid>
 
                                 <Grid item xs={12} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                                    <Typography variant="h6" gutterBottom sx={{ fontWeight: '700', mb: 1, fontSize:"1rem" , mr:"2.5"}}>
+                                    <Typography variant="h6" gutterBottom sx={{ fontWeight: '700', mb: 1, fontSize: "1rem", mr: "2.5" }}>
                                         Priority
                                     </Typography>
                                     <Box sx={{ display: 'flex', alignItems: 'center', flexGrow: 1, ml: 6 }}>
@@ -257,8 +266,8 @@ function NewTaskPage() {
                                                 mr: 2, // Add some right margin to the Typography component to space it from the Select component
                                                 textAlign: 'center',
                                                 alignItems: 'center',
-                                                mb:1,
-                                                fontSize:"1rem"
+                                                mb: 1,
+                                                fontSize: "1rem"
                                             }}
                                         >
                                             Status
@@ -278,16 +287,18 @@ function NewTaskPage() {
                                                 <MenuItem value="" disabled>
                                                     Set Status
                                                 </MenuItem>
-                                                <MenuItem value="Not Started">Not Started</MenuItem>
-                                                <MenuItem value="In Progress">In Progress</MenuItem>
-                                                <MenuItem value="Completed">Completed</MenuItem>
+                                                {titlesAndIds.map(item => (
+                                                    <MenuItem key={item.id} value={item.id}>
+                                                        {item.title}
+                                                    </MenuItem>
+                                                ))}
                                             </Select>
                                         </Box>
                                     </Box>
                                 </Grid>
 
                                 <Grid item xs={12} sx={{ display: 'flex', alignItems: 'center' }}>
-                                    <Typography variant="h6" gutterBottom sx={{ fontWeight: '700', mb: 1, fontSize:"1rem" }}>
+                                    <Typography variant="h6" gutterBottom sx={{ fontWeight: '700', mb: 1, fontSize: "1rem" }}>
                                         Attachments
                                     </Typography>
                                     <Box sx={{ ml: '3rem' }}>
