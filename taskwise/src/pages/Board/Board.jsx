@@ -4,7 +4,7 @@ import { DndProvider, useDrop } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import Column from "./Column";
 import { useState } from "react";
-import { Box, Paper, Typography, Grid } from "@mui/material";
+import { Box, Paper, Typography, Grid, Stack } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import { styled } from "@mui/material/styles";
 import InputBase from "@mui/material/InputBase";
@@ -15,6 +15,8 @@ import { useEffect } from "react";
 import { fetchProjectByIdAsync, resetTaskAddStatus, moveTaskAsync } from "../../features/project/projectSlice";
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import AddColumnModal from "./AddColumnModal";
+
 
 const SearchIconWrapper = styled("div")(({ theme }) => ({
   padding: theme.spacing(0, 2),
@@ -69,9 +71,9 @@ function Board() {
   const initialData = useSelector((state) => state.project.selectedProject);
   //console.log(initialData,"initialData")
   const taskAddStatus = useSelector((state) => state.project.taskAddStatus);
-  const projectFetchStatus=useSelector((state) => state.project.projectFetchStatus);
-  const [order,setOrder]=useState(null)
-  const [dataTask,setDataTask]=useState(null)
+  const projectFetchStatus = useSelector((state) => state.project.projectFetchStatus);
+  const [order, setOrder] = useState(null)
+  const [dataTask, setDataTask] = useState(null)
   const handleClick = () => {
     navigate(`/projects/${id}/new-task`);
   };
@@ -101,6 +103,20 @@ function Board() {
   // };
 
   const [columns, setColumns] = useState({});
+  const [isAddColumnModalOpen, setIsAddColumnModalOpen] = useState(false);
+  const handleOpenAddColumnModal = () => {
+    setIsAddColumnModalOpen(true);
+  };
+
+  const handleCloseAddColumnModal = () => {
+    setIsAddColumnModalOpen(false);
+  };
+
+  const handleAddColumn = (newColumnName) => {
+    // Implement the logic to add a new column
+    // For example, you might want to update the state or dispatch an action
+    console.log("New column added:", newColumnName);
+  };
 
   useEffect(() => {
     //console.log("useEffect for initial data")
@@ -143,12 +159,12 @@ function Board() {
     } else {
       console.error(`Target column with ID ${newColumnId} not found.`);
     }
-    console.log(previousColumn._id,"previouscolumn")
+    console.log(previousColumn._id, "previouscolumn")
     const data = {
       "sourceColumnId": previousColumn._id,
       "destinationColumnId": newColumnId
     }
-    const idObject = { id: id,taskId };
+    const idObject = { id: id, taskId };
     dispatch(moveTaskAsync({ data, idObject }));
 
     // Update the state with the modified columns
@@ -164,8 +180,8 @@ function Board() {
       dispatch(resetTaskAddStatus());
     }
   }, [taskAddStatus, dispatch]);
-  if(projectFetchStatus=="loading"){
-      return <div className="loading">Loading...</div>
+  if (projectFetchStatus == "loading") {
+    return <div className="loading">Loading...</div>
   }
   return (
     <DndProvider backend={HTML5Backend}>
@@ -250,7 +266,7 @@ function Board() {
               textAlign: "center",
             }}
           >
-            <Button
+            {/* <Button
               variant="contained"
               size="small"
               sx={{
@@ -265,7 +281,26 @@ function Board() {
               onClick={handleClick}
             >
               Add new task
-            </Button>
+            </Button> */}
+            <Stack spacing={2} direction="row" sx={{ pr: 2 }}>
+              <Button
+                variant="contained"
+                size="small"
+                sx={{ fontSize: "0.70rem", padding: "4px 8px" }}
+                onClick={handleOpenAddColumnModal}
+              >
+                Add new column
+              </Button>
+              <Button
+                variant="contained"
+                size="small"
+                sx={{ fontSize: "0.70rem", padding: "4px 8px" }}
+                onClick={handleClick}
+              >
+                Add new task
+              </Button>
+            </Stack>
+
           </Box>
         </Paper>
         <Box sx={{
@@ -298,6 +333,12 @@ function Board() {
           </Grid>
         </Box>
       </Box>
+      <AddColumnModal
+        open={isAddColumnModalOpen}
+        onClose={handleCloseAddColumnModal}
+        onAddColumn={handleAddColumn}
+      />
+
     </DndProvider>
   );
 }

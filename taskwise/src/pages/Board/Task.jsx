@@ -4,6 +4,10 @@ import { useDrag } from "react-dnd";
 import { Card, CardContent, Chip, Box, IconButton } from "@mui/material";
 import { DateRange, AttachFile, MoreVert } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
+import Dropdown from "./Dropdown";
+
+
+
 function Task({ task }) {
   const navigate = useNavigate();
   const [{ isDragging }, drag] = useDrag({
@@ -13,6 +17,14 @@ function Task({ task }) {
       isDragging: !!monitor.isDragging(),
     }),
   });
+
+  const handleCardClick = (e) => {
+    // Only navigate if the click target is not the dropdown button
+    if (e.target.closest(".dropdown")) {
+      return;
+    }
+    navigate(`/tasks/${task.id}`);
+  };
   return (
     <Box>
       <Card
@@ -25,7 +37,7 @@ function Task({ task }) {
         ref={drag} // Attach the drag source ref to the Paper component
         style={{ cursor: "pointer", opacity: isDragging ? 0 : 2 }}
         className="draggable-item"
-        onClick={() => navigate(`/tasks/${task.id}`)}
+        onClick={handleCardClick}
       >
         <CardContent sx={{ p: "0.5rem" }}>
           <Box display="flex" justifyContent="space-between" alignItems="center">
@@ -35,9 +47,9 @@ function Task({ task }) {
               size="small"
               sx={{ fontSize: "0.4rem", height: "15px" }}
             />
-            <IconButton>
-              <MoreVert sx={{ fontSize: "0.75rem" }} />
-            </IconButton>
+            <Box className="dropdown">
+              <Dropdown />
+            </Box>
           </Box>
           <Typography variant="h6" component="div" sx={{ fontSize: "1rem" }}>
             {task.taskName}
