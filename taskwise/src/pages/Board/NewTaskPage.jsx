@@ -20,7 +20,7 @@ function NewTaskPage() {
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const {id}=useParams();
-    const colId=useSelector((state) => state.project.selectedProject.order[0])
+    const colId=useSelector((state) => state?.project?.selectedProject?.order[0])
     //console.log(colId,id)
     const handleStatusChange = (event) => {
         setStatus(event.target.value);
@@ -62,8 +62,8 @@ function NewTaskPage() {
                 // dueDate,
                 // priority,
                 // status,
-                // assignees,
-                // comment,
+                // assigneeUserID,
+                // attachments,
             };
             dispatch(addTaskAsync({task, id}));
             if (taskAddStatus !=="rejected"){

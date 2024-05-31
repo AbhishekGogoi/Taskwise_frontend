@@ -29,20 +29,33 @@ const style = {
 };
 
 const NewProjectModel = ({ handleClose }) => {
-  const dispatch=useDispatch();
-  const creatorUserID=useSelector((state)=>state?.user?.loggedInUser?.user?._id);
+  const dispatch = useDispatch();
+  const creatorUserID = useSelector((state) => state?.user?.loggedInUser?.user?._id);
   const [selectedImage, setSelectedImage] = useState(null);
-  const [workspace, setWorkspace] = useState("Updated WS");
+  const [workspace, setWorkspace] = useState(null);
   const fileInputRef = useRef(null);
-  const [name,setName]=useState("");
-  const [description,setDescription]=useState("");
+  const [name, setName] = useState("");
+  const [description, setDescription] = useState("");
   const [errors, setErrors] = useState({});
-  const workspaceData=useSelector((state)=>state?.workspace?.workspaces);
-  console.log(workspaceData)
+  const Data = useSelector((state) => state?.project?.projects);
+  const uniqueWorkspaces = {};
+
+  Data.forEach(project => {
+    const { workspaceName, workspaceId } = project;
+    if (!uniqueWorkspaces[workspaceId]) {
+      uniqueWorkspaces[workspaceId] = workspaceName;
+    }
+  });
+
+  const result = Object.keys(uniqueWorkspaces).map(workspaceId => ({
+    workspaceId,
+    workspaceName: uniqueWorkspaces[workspaceId]
+  }));
+  console.log(result, "result")
   const handleFileUploadClick = () => {
     fileInputRef.current.click();
   };
-  const validateForm =()=>{
+  const validateForm = () => {
     const newErrors = {};
     if (!name) {
       newErrors.name = 'Project Name is required';
@@ -53,18 +66,18 @@ const NewProjectModel = ({ handleClose }) => {
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   }
-  const handleCreate=()=>{
-    if(validateForm()){
-      const projectdata={
-        "name":name,
-        "description":description,
-        "workspaceName":workspace,
-        "creatorUserID":creatorUserID
+  const handleCreate = () => {
+    if (validateForm()) {
+      const projectdata = {
+        "name": name,
+        "description": description,
+        "workspaceID": workspace,
+        "creatorUserID": creatorUserID,
       }
       dispatch(addProjectAsync(projectdata))
       handleClose()
     }
-    
+
   }
   const handleFileChange = (event) => {
     const file = event.target.files[0];
@@ -163,7 +176,7 @@ const NewProjectModel = ({ handleClose }) => {
         margin="normal"
         style={{ marginBottom: "20px", backgroundColor: "white" }}
         value={description}
-        onChange={(e)=>setDescription(e.target.value)}
+        onChange={(e) => setDescription(e.target.value)}
       />
       <FormControl fullWidth margin="normal" style={{ marginBottom: "40px" }} error={!!errors.workspace}>
         <InputLabel id="assign-workspace-label">Assign Workspace</InputLabel>
@@ -177,9 +190,12 @@ const NewProjectModel = ({ handleClose }) => {
           <MenuItem value="">
             <em>None</em>
           </MenuItem>
-          <MenuItem value="Updated Workspace">Workspace 1</MenuItem>
-          <MenuItem value="Updated Workspace">Workspace 2</MenuItem>
-          <MenuItem value="Updated Workspace">Workspace 3</MenuItem>
+          {console.log(uniqueWorkspaces)}
+          {Object.entries(uniqueWorkspaces).map(([workspaceId, workspaceName]) => (
+            <MenuItem key={workspaceId} value={workspaceId}>
+              {workspaceName}
+            </MenuItem>
+          ))}
         </Select>
         {!!errors.workspace && <Typography color="error">{errors.workspace}</Typography>}
       </FormControl>
