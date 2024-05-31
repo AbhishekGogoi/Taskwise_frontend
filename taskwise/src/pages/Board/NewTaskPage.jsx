@@ -122,7 +122,7 @@ function NewTaskPage() {
                     }}
 
                 >
-                    <Grid container spacing={5}>
+                    <Grid container spacing={20}>
                         {/* Left side - Form Fields */}
                         <Grid item xs={12} md={6}>
                             <Typography variant="h6" gutterBottom sx={{ fontWeight: '700', mb: 1, fontSize:"1rem" }}>
@@ -198,7 +198,7 @@ function NewTaskPage() {
                                     <Typography variant="h6" gutterBottom sx={{ fontWeight: '700', mb: 1, fontSize:"1rem" }}>
                                         Assign to
                                     </Typography>
-                                    <Box sx={{ display: 'flex', alignItems: 'center', flexGrow: 1, ml: 2 }}>
+                                    <Box sx={{ display: 'flex', alignItems: 'center', flexGrow: 1, ml: 4 }}>
                                         <Select
                                             multiple
                                             value={assignees}
@@ -225,7 +225,7 @@ function NewTaskPage() {
                                     <Typography variant="h6" gutterBottom sx={{ fontWeight: '700', mb: 1, fontSize:"1rem" , mr:"2.5"}}>
                                         Priority
                                     </Typography>
-                                    <Box sx={{ display: 'flex', alignItems: 'center', flexGrow: 1, ml: 2 }}>
+                                    <Box sx={{ display: 'flex', alignItems: 'center', flexGrow: 1, ml: 6 }}>
                                         <Select
                                             value={priority}
                                             onChange={handlePriorityChange}
@@ -263,7 +263,7 @@ function NewTaskPage() {
                                         >
                                             Status
                                         </Typography>
-                                        <Box sx={{ display: 'flex', alignItems: 'center', flexGrow: 1, ml: 4 }}>
+                                        <Box sx={{ display: 'flex', alignItems: 'center', flexGrow: 1, ml: 5 }}>
                                             <Select
                                                 value={status}
                                                 onChange={handleStatusChange}
