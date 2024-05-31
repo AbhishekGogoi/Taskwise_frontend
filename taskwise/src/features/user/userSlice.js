@@ -1,5 +1,12 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { login, logout, signUp } from "./userApi";
+import {
+  login,
+  logout,
+  signUp,
+  forgotPassword,
+  verifyResetCode,
+  resetPassword,
+} from "./userApi";
 
 const initialState = {
   status: "idle",
@@ -11,6 +18,12 @@ const initialState = {
   loggedInUser: null,
   successMessage: null,
   isAuthChecked: false,
+  forgotPasswordStatus: "idle",
+  forgotPasswordError: null,
+  verifyCodeStatus: "idle",
+  verifyCodeError: null,
+  resetPasswordStatus: "idle",
+  resetPasswordError: null,
 };
 
 export const signupAsync = createAsyncThunk(
@@ -30,6 +43,30 @@ export const logoutAsync = createAsyncThunk("user/logoutAsync", async () => {
   const res = await logout();
   return res;
 });
+
+export const forgotPasswordAsync = createAsyncThunk(
+  "user/forgotPasswordAsync",
+  async (cred) => {
+    const res = await forgotPassword(cred);
+    return res;
+  }
+);
+
+export const verifyResetCodeAsync = createAsyncThunk(
+  "user/verifyResetCodeAsync",
+  async (cred) => {
+    const res = await verifyResetCode(cred);
+    return res;
+  }
+);
+
+export const resetPasswordAsync = createAsyncThunk(
+  "user/resetPasswordAsync",
+  async (cred) => {
+    const res = await resetPassword(cred);
+    return res;
+  }
+);
 
 const userSlice = createSlice({
   name: "userSlice",
@@ -55,6 +92,24 @@ const userSlice = createSlice({
     },
     clearLoginError: (state) => {
       state.loginError = null;
+    },
+    resetForgotPasswordStatus: (state) => {
+      state.forgotPasswordStatus = "idle";
+    },
+    clearForgotPasswordError: (state) => {
+      state.forgotPasswordError = null;
+    },
+    resetVerifyCodeStatus: (state) => {
+      state.verifyCodeStatus = "idle";
+    },
+    clearVerifyCodeError: (state) => {
+      state.verifyCodeError = null;
+    },
+    resetResetPasswordStatus: (state) => {
+      state.resetPasswordStatus = "idle";
+    },
+    clearResetPasswordError: (state) => {
+      state.resetPasswordError = null;
     },
   },
   extraReducers: (builder) => {
@@ -91,6 +146,39 @@ const userSlice = createSlice({
       .addCase(logoutAsync.rejected, (state, action) => {
         state.status = "rejected";
         state.errors = action.error;
+      })
+      .addCase(forgotPasswordAsync.pending, (state) => {
+        state.forgotPasswordStatus = "pending";
+      })
+      .addCase(forgotPasswordAsync.fulfilled, (state, action) => {
+        state.forgotPasswordStatus = "fulfilled";
+        state.successMessage = action.payload;
+      })
+      .addCase(forgotPasswordAsync.rejected, (state, action) => {
+        state.forgotPasswordStatus = "rejected";
+        state.forgotPasswordError = action.error;
+      })
+      .addCase(verifyResetCodeAsync.pending, (state) => {
+        state.verifyCodeStatus = "pending";
+      })
+      .addCase(verifyResetCodeAsync.fulfilled, (state, action) => {
+        state.verifyCodeStatus = "fulfilled";
+        state.successMessage = action.payload;
+      })
+      .addCase(verifyResetCodeAsync.rejected, (state, action) => {
+        state.verifyCodeStatus = "rejected";
+        state.verifyCodeError = action.error;
+      })
+      .addCase(resetPasswordAsync.pending, (state) => {
+        state.resetPasswordStatus = "pending";
+      })
+      .addCase(resetPasswordAsync.fulfilled, (state, action) => {
+        state.resetPasswordStatus = "fulfilled";
+        state.successMessage = action.payload;
+      })
+      .addCase(resetPasswordAsync.rejected, (state, action) => {
+        state.resetPasswordStatus = "rejected";
+        state.resetPasswordError = action.error;
       });
   },
 });
@@ -102,6 +190,12 @@ export const {
   clearSignupError,
   resetLoginStatus,
   clearLoginError,
+  resetForgotPasswordStatus,
+  clearForgotPasswordError,
+  resetVerifyCodeStatus,
+  clearVerifyCodeError,
+  resetResetPasswordStatus,
+  clearResetPasswordError,
 } = userSlice.actions;
 
 export default userSlice.reducer;

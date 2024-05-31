@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
@@ -8,6 +8,9 @@ import Typography from "@mui/material/Typography";
 import { styled, ThemeProvider, createTheme } from "@mui/material/styles";
 import TaskWiseLogo from "../../assets/TaskWiseLogo.png";
 import verificationlogo from "../../assets/verificationlogo.jpeg";
+import { useDispatch, useSelector } from "react-redux";
+import { verifyResetCodeAsync } from "../../features/user/userSlice";
+import { ToastContainer, toast } from "react-toastify";
 
 const theme = createTheme();
 
@@ -98,10 +101,14 @@ const CopyrightText = styled(Typography)(({ theme }) => ({
 
 const VerificationPage = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  const successMessage = useSelector((state) => state.user.successMessage);
+  const verifyCodeError = useSelector((state) => state.user.verifyCodeError);
 
   const handleSubmit = () => {
-    // Add your OTP verification logic here
-    // If OTP is correct, then navigate:
+    const code = otp.join("");
+    dispatch(verifyResetCodeAsync({ email, code }));
     navigate("/forgotpassword/resetpassword");
   };
 
@@ -129,6 +136,18 @@ const VerificationPage = () => {
       nextInput?.focus();
     }
   };
+
+  // useEffect(() => {
+  //   if (successMessage) {
+  //     navigate("/forgotpassword/resetpassword");
+  //   }
+  // }, [successMessage, navigate]);
+
+  // useEffect(() => {
+  //   if (verifyCodeError) {
+  //     toast.error(verifyCodeError.message);
+  //   }
+  // }, [verifyCodeError]);
 
   return (
     <ThemeProvider theme={theme}>
@@ -208,6 +227,7 @@ const VerificationPage = () => {
           Copyright © 2024. TaskWise All rights reserved.
         </CopyrightText>
       </Container>
+      <ToastContainer />
     </ThemeProvider>
   );
 };

@@ -25,3 +25,33 @@ export const logout = async () => {
     throw error.response.data;
   }
 };
+
+// Forgot password: send reset code
+export const forgotPassword = async (cred) => {
+  try {
+    const res = await axiosi.post(`/auth/forgotpassword`, cred);
+    return res.data;
+  } catch (error) {
+    throw error.response.data;
+  }
+};
+
+// Verify reset code
+export const verifyResetCode = async (cred) => {
+  try {
+    const res = await axiosi.post(`/auth/forgotpassword/verification`, cred);
+    return res.data;
+  } catch (error) {
+    throw error.response.data;
+  }
+};
+
+// Reset password
+export const resetPassword = async (cred) => {
+  try {
+    const res = await axiosi.post(`/auth/forgotpassword/resetpassword`, cred);
+    return res.data;
+  } catch (error) {
+    throw error.response.data;
+  }
+};
