@@ -109,7 +109,7 @@ function NewTaskPage() {
             }}
         >
             <ToastContainer />
-            <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+            <Box sx={{ display: "flex", justifyContent: "space-between" ,marginBottom:"10rem"}}>
                 <Paper
                     elevation={3}
                     sx={{
@@ -125,7 +125,7 @@ function NewTaskPage() {
                     <Grid container spacing={5}>
                         {/* Left side - Form Fields */}
                         <Grid item xs={12} md={6}>
-                            <Typography variant="h6" gutterBottom sx={{ fontWeight: 'bold', mb: 3 }}>
+                            <Typography variant="h6" gutterBottom sx={{ fontWeight: '700', mb: 1, fontSize:"1rem" }}>
                                 Add a title <span style={{ color: 'red' }}>*</span>
                             </Typography>
                             <TextField
@@ -136,15 +136,12 @@ function NewTaskPage() {
                                 onChange={handleTitleChange}
                                 sx={{
                                     mb: 4,
-                                    '& input': {
-                                        backgroundColor: '#ededed',
-                                    },
                                 }}
                                 error={!!errors.title}
                                 helperText={errors.title}
                             />
 
-                            <Typography variant="h6" gutterBottom sx={{ fontWeight: 'bold', mb: 3 }}>
+                            <Typography variant="h6" gutterBottom sx={{ fontWeight: '700', mb: 1, fontSize:"1rem" }}>
                                 Add a description <span style={{ color: 'red' }}>*</span>
                             </Typography>
                             <TextField
@@ -155,12 +152,16 @@ function NewTaskPage() {
                                 placeholder="Add your description here"
                                 value={description}
                                 onChange={handleDescriptionChange}
-                                sx={{ mb: 4 }}
+                                sx={{ mb: 4, '& .MuiFilledInput-root': {
+                                    backgroundColor: 'white',
+                                    border: '1px solid #ccc',
+                                    borderRadius: '4px',
+                                }, }}
                                 error={!!errors.description}
                                 helperText={errors.description}
                             />
 
-                            <Typography variant="h6" gutterBottom sx={{ fontWeight: 'bold', mb: 3 }}>
+                            <Typography variant="h6" gutterBottom sx={{ fontWeight: '700', mb: 1, fontSize:"1rem" }}>
                                 Ask a question or add a comment
                             </Typography>
                             <TextField
@@ -170,10 +171,7 @@ function NewTaskPage() {
                                 value={comment}
                                 onChange={(e) => setComment(e.target.value)}
                                 sx={{
-                                    mb: 4,
-                                    '& input': {
-                                        backgroundColor: '#ededed',
-                                    },
+                                    mb: 4
                                 }}
                             />
 
@@ -197,7 +195,7 @@ function NewTaskPage() {
                         <Grid item xs={12} md={6}>
                             <Grid container spacing={4}>
                                 <Grid item xs={12} sx={{ display: 'flex', alignItems: 'center' }}>
-                                    <Typography variant="h6" gutterBottom sx={{ fontWeight: 'bold' }}>
+                                    <Typography variant="h6" gutterBottom sx={{ fontWeight: '700', mb: 1, fontSize:"1rem" }}>
                                         Assign to
                                     </Typography>
                                     <Box sx={{ display: 'flex', alignItems: 'center', flexGrow: 1, ml: 2 }}>
@@ -224,7 +222,7 @@ function NewTaskPage() {
                                 </Grid>
 
                                 <Grid item xs={12} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                                    <Typography variant="h6" gutterBottom sx={{ fontWeight: 'bold', mr: 2.5 }}>
+                                    <Typography variant="h6" gutterBottom sx={{ fontWeight: '700', mb: 1, fontSize:"1rem" , mr:"2.5"}}>
                                         Priority
                                     </Typography>
                                     <Box sx={{ display: 'flex', alignItems: 'center', flexGrow: 1, ml: 2 }}>
@@ -255,10 +253,12 @@ function NewTaskPage() {
                                             variant="h6"
                                             gutterBottom
                                             sx={{
-                                                fontWeight: 'bold',
+                                                fontWeight: '700',
                                                 mr: 2, // Add some right margin to the Typography component to space it from the Select component
                                                 textAlign: 'center',
                                                 alignItems: 'center',
+                                                mb:1,
+                                                fontSize:"1rem"
                                             }}
                                         >
                                             Status
@@ -287,7 +287,7 @@ function NewTaskPage() {
                                 </Grid>
 
                                 <Grid item xs={12} sx={{ display: 'flex', alignItems: 'center' }}>
-                                    <Typography variant="h6" gutterBottom sx={{ fontWeight: 'bold' }}>
+                                    <Typography variant="h6" gutterBottom sx={{ fontWeight: '700', mb: 1, fontSize:"1rem" }}>
                                         Attachments
                                     </Typography>
                                     <Box sx={{ ml: '3rem' }}>
