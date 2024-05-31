@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { Grid, TextField, Button, Box, Typography, IconButton, Paper, MenuItem, Select } from '@mui/material';
+import { Grid, TextField, Button, Box, Typography, IconButton, Paper, MenuItem, Select,FormControl, FormHelperText } from '@mui/material';
 import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
 import { addTaskAsync, resetTaskAddStatus } from '../../features/project/projectSlice';
 import { useDispatch } from 'react-redux';
@@ -28,10 +28,12 @@ function NewTaskPage() {
     }));
     const handleStatusChange = (event) => {
         setStatus(event.target.value);
+        setErrors(prevErrors => ({ ...prevErrors, status: '' }));
     };
 
     const handlePriorityChange = (event) => {
         setPriority(event.target.value);
+        setErrors(prevErrors => ({ ...prevErrors, priority: '' }));
     };
 
     const handleAssigneesChange = (event) => {
@@ -39,7 +41,7 @@ function NewTaskPage() {
     };
 
     const validateFields = () => {
-        const newErrors = { title: '', description: '' };
+        const newErrors = { title: '', description: '', priority: '', status: ''  };
         let hasError = false;
 
         if (!title.trim()) {
@@ -49,6 +51,16 @@ function NewTaskPage() {
 
         if (!description.trim()) {
             newErrors.description = 'Description is required';
+            hasError = true;
+        }
+
+        if (!priority) {
+            newErrors.priority = 'Priority is required';
+            hasError = true;
+        }
+
+        if (!status) {
+            newErrors.status = 'Status is required';
             hasError = true;
         }
 
@@ -65,7 +77,6 @@ function NewTaskPage() {
                 columnId: status,
                 dueDate: dueDate,
                 priority: priority
-                // status,
                 // assigneeUserID,
                 // attachments,
             };
@@ -235,24 +246,23 @@ function NewTaskPage() {
                                         Priority
                                     </Typography>
                                     <Box sx={{ display: 'flex', alignItems: 'center', flexGrow: 1, ml: 6 }}>
-                                        <Select
-                                            value={priority}
-                                            onChange={handlePriorityChange}
-                                            displayEmpty
-                                            inputProps={{ 'aria-label': 'Priority Level' }}
-                                            sx={{
-                                                height: 32,
-                                                width: '100%',
-                                                maxWidth: 200,
-                                            }}
-                                        >
-                                            <MenuItem value="" disabled>
-                                                Level
-                                            </MenuItem>
-                                            <MenuItem value="Low">Low</MenuItem>
-                                            <MenuItem value="Medium">Medium</MenuItem>
-                                            <MenuItem value="High">High</MenuItem>
-                                        </Select>
+                                    <FormControl sx={{ width: '100%', maxWidth: 200 }} error={!!errors.priority}>
+                                            <Select
+                                                value={priority}
+                                                onChange={handlePriorityChange}
+                                                displayEmpty
+                                                inputProps={{ 'aria-label': 'Priority Level' }}
+                                                sx={{ height: 32 }}
+                                            >
+                                                <MenuItem value="" disabled>
+                                                    Level
+                                                </MenuItem>
+                                                <MenuItem value="Low">Low</MenuItem>
+                                                <MenuItem value="Medium">Medium</MenuItem>
+                                                <MenuItem value="High">High</MenuItem>
+                                            </Select>
+                                            {!!errors.priority && <FormHelperText>{errors.priority}</FormHelperText>}
+                                        </FormControl>
                                     </Box>
                                 </Grid>
 
@@ -273,26 +283,25 @@ function NewTaskPage() {
                                             Status
                                         </Typography>
                                         <Box sx={{ display: 'flex', alignItems: 'center', flexGrow: 1, ml: 5 }}>
-                                            <Select
-                                                value={status}
-                                                onChange={handleStatusChange}
-                                                displayEmpty
-                                                inputProps={{ 'aria-label': 'Set Status' }}
-                                                sx={{
-                                                    height: 32,
-                                                    width: '100%',
-                                                    maxWidth: 200,
-                                                }}
-                                            >
-                                                <MenuItem value="" disabled>
-                                                    Set Status
-                                                </MenuItem>
-                                                {titlesAndIds.map(item => (
-                                                    <MenuItem key={item.id} value={item.id}>
-                                                        {item.title}
+                                        <FormControl sx={{ width: '100%', maxWidth: 200 }} error={!!errors.status}>
+                                                <Select
+                                                    value={status}
+                                                    onChange={handleStatusChange}
+                                                    displayEmpty
+                                                    inputProps={{ 'aria-label': 'Set Status' }}
+                                                    sx={{ height: 32 }}
+                                                >
+                                                    <MenuItem value="" disabled>
+                                                        Set Status
                                                     </MenuItem>
-                                                ))}
-                                            </Select>
+                                                    {titlesAndIds.map(item => (
+                                                        <MenuItem key={item.id} value={item.id}>
+                                                            {item.title}
+                                                        </MenuItem>
+                                                    ))}
+                                                </Select>
+                                                {!!errors.status && <FormHelperText>{errors.status}</FormHelperText>}
+                                            </FormControl>
                                         </Box>
                                     </Box>
                                 </Grid>
