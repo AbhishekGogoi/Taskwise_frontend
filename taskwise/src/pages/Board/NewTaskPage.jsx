@@ -59,8 +59,8 @@ function NewTaskPage() {
                 taskName: title,
                 content: description,
                 columnId: colId,
-                // dueDate,
-                // priority,
+                dueDate:dueDate,
+                priority:priority
                 // status,
                 // assigneeUserID,
                 // attachments,
