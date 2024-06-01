@@ -1,12 +1,10 @@
 import React from "react";
-import { Typography } from "@mui/material";
+import { Typography, Tooltip } from "@mui/material";
 import { useDrag } from "react-dnd";
-import { Card, CardContent, Chip, Box, IconButton } from "@mui/material";
-import { DateRange, AttachFile, MoreVert } from "@mui/icons-material";
+import { Card, CardContent, Chip, Box } from "@mui/material";
+import { DateRange, AttachFile } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import Dropdown from "./Dropdown";
-
-
 
 function Task({ task }) {
   const navigate = useNavigate();
@@ -18,6 +16,12 @@ function Task({ task }) {
     }),
   });
 
+  const formattedDate = new Intl.DateTimeFormat('en-GB', {
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric'
+  }).format(new Date(task.dueDate));
+
   const handleCardClick = (e) => {
     // Only navigate if the click target is not the dropdown button
     if (e.target.closest(".dropdown")) {
@@ -25,6 +29,21 @@ function Task({ task }) {
     }
     navigate(`/tasks/${task._id}`);
   };
+
+  const getChipProps = (priority) => {
+    switch (priority) {
+      case 'High':
+        return { label: 'High', color: 'error' };
+      case 'Medium':
+        return { label: 'Medium', color: 'warning' };
+      case 'Low':
+      default:
+        return { label: 'Low', color: 'success' };
+    }
+  };
+
+  const chipProps = getChipProps(task.priority);
+
   return (
     <Box>
       <Card
@@ -34,16 +53,16 @@ function Task({ task }) {
           maxHeight: "250px", // Set max height
           minHeight: "100px", // Set min height
         }}
-        ref={drag} // Attach the drag source ref to the Paper component
-        style={{ cursor: "pointer", opacity: isDragging ? 0 : 2 }}
+        ref={drag} // Attach the drag source ref to the Card component
+        style={{ cursor: "pointer", opacity: isDragging ? 0 : 1 }}
         className="draggable-item"
         onClick={handleCardClick}
       >
         <CardContent sx={{ p: "0.5rem" }}>
           <Box display="flex" justifyContent="space-between" alignItems="center">
             <Chip
-              label="Low"
-              color="success"
+              label={chipProps.label}
+              color={chipProps.color}
               size="small"
               sx={{ fontSize: "0.4rem", height: "15px" }}
             />
@@ -61,51 +80,30 @@ function Task({ task }) {
           >
             {task.content}
           </Typography>
-          {task.attachments && task.attachments.length > 0 &&
-          <Box
-            display="flex"
-            justifyContent="space-around"
-            my={0.5}
-            sx={{ flexWrap: "wrap" }}
-          >
-            <img
-              src="https://img.freepik.com/free-vector/hand-drawn-minimal-background_23-2149001650.jpg?t=st=1716280160~exp=1716280760~hmac=f254cfeda21a263638253b9f6f0c0c9028bac218840dea34d6de5739054a4a96" // Image URL or path"
-              alt="Moodboard"
-              style={{ width: "45%", marginBottom: "8px" }}
-            />
-            <img
-              src="https://img.freepik.com/free-vector/hand-drawn-minimal-background_23-2149001650.jpg?t=st=1716280160~exp=1716280760~hmac=f254cfeda21a263638253b9f6f0c0c9028bac218840dea34d6de5739054a4a96" // Image URL or path"
-              alt="Moodboard 2"
-              style={{ width: "45%", marginBottom: "8px" }}
-            />
-          </Box>
-          }
-          <Box display="flex" justifyContent="space-between" alignItems="center">
+          <Box display="flex" justifyContent="space-between" alignItems="center" mt={1}>
+            <Tooltip title="Due Date">
+              <Box display="flex" alignItems="center">
+                <DateRange sx={{ fontSize: "0.75rem" }} />
+                <Typography
+                  variant="body2"
+                  color="text.secondary"
+                  ml={0.5}
+                  sx={{ fontSize: "0.7rem" }}
+                >
+                  {formattedDate}
+                </Typography>
+              </Box>
+            </Tooltip>
             <Box display="flex" alignItems="center">
-              <DateRange sx={{ fontSize: "0.75rem" }} />
+              <AttachFile sx={{ fontSize: "0.75rem" }} />
               <Typography
                 variant="body2"
                 color="text.secondary"
                 ml={0.5}
                 sx={{ fontSize: "0.7rem" }}
               >
-                Oct
+                {task.attachments?.length || 0}
               </Typography>
-            </Box>
-            <Box display="flex" alignItems="center">
-              <AttachFile sx={{ fontSize: "0.75rem" }} />
-              {task.attachments &&
-                  <Typography
-                  variant="body2"
-                  color="text.secondary"
-                  ml={0.5}
-                  sx={{ fontSize: "0.7rem" }}
-                >
-                  {task.attachments.length > 0 ?  task.attachments.length : 0}
-
-                </Typography>
-              }
-              
             </Box>
           </Box>
         </CardContent>
