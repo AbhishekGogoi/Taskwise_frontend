@@ -12,7 +12,7 @@ import Divider from "@mui/material/Divider";
 import { Button } from "@mui/material";
 import { useSelector, useDispatch } from "react-redux";
 import { useEffect } from "react";
-import { fetchProjectByIdAsync, resetTaskAddStatus, moveTaskAsync } from "../../features/project/projectSlice";
+import { fetchProjectByIdAsync, resetTaskAddStatus, moveTaskAsync, resetColumnAddStatus } from "../../features/project/projectSlice";
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import AddColumnModal from "./AddColumnModal";
@@ -69,7 +69,7 @@ function Board() {
   }, [dispatch, id]);
   // console.log(id)
   const initialData = useSelector((state) => state.project.selectedProject);
-  //console.log(initialData,"initialData")
+  const columnAddStatus = useSelector((state)=>state.project.columnAddStatus)
   const taskAddStatus = useSelector((state) => state.project.taskAddStatus);
   const projectFetchStatus = useSelector((state) => state.project.projectFetchStatus);
   const [order, setOrder] = useState(null)
@@ -112,15 +112,20 @@ function Board() {
     setIsAddColumnModalOpen(false);
   };
 
-  const handleAddColumn = (newColumnName) => {
-    // Implement the logic to add a new column
-    // For example, you might want to update the state or dispatch an action
-    console.log("New column added:", newColumnName);
-  };
+  // const handleAddColumn = (newColumnName) => {
+  //   // Implement the logic to add a new column
+  //   // For example, you might want to update the state or dispatch an action
+  //   console.log("New column added:", newColumnName);
+  // };
 
   useEffect(() => {
-    //console.log("useEffect for initial data")
-    //console.log(initialData)
+    if(columnAddStatus=="fulfilled"){
+      toast.success("Column added successfully!");
+    }
+    if(columnAddStatus=="rejected"){
+      toast.error("Column not added!");
+    }
+    dispatch(resetColumnAddStatus())
     if (initialData) {
       setColumns(initialData?.columns);
       setOrder(initialData?.order);
@@ -336,7 +341,8 @@ function Board() {
       <AddColumnModal
         open={isAddColumnModalOpen}
         onClose={handleCloseAddColumnModal}
-        onAddColumn={handleAddColumn}
+        //onAddColumn={handleAddColumn}
+        id={id}
       />
 
     </DndProvider>

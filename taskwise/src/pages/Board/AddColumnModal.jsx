@@ -1,16 +1,22 @@
 import React, { useState } from "react";
 import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, TextField, Button } from "@mui/material";
+import { useDispatch } from "react-redux";
+import { addColumnAsync } from "../../features/project/projectSlice";
 
-function AddColumnModal({ open, onClose, onAddColumn }) {
+function AddColumnModal({ open, onClose, id}) {
   const [newColumnName, setNewColumnName] = useState("");
-
+  const dispatch=useDispatch()
   const handleClose = () => {
     setNewColumnName(""); // Clear input field when closing
     onClose();
   };
 
   const handleAddColumn = () => {
-    onAddColumn(newColumnName); // Pass the new column name to the parent component
+    const data={
+        title:newColumnName
+    }
+    //onAddColumn(newColumnName); // Pass the new column name to the parent component
+    dispatch(addColumnAsync({data,id}))
     handleClose();
   };
 

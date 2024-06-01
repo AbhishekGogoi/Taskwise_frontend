@@ -46,3 +46,12 @@ export const moveTask=async(data,idObject)=>{
         throw error.response.data
     }
 }
+
+export const addColumn=async(data,id)=>{
+    try{
+        const res=await axiosi.post(`/projects/${id}/columns`,data);
+        return res.data
+    }catch(error){
+        throw error.response.data
+    }
+}
