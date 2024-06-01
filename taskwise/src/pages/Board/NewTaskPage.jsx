@@ -333,7 +333,7 @@ function NewTaskPage() {
                                             backgroundColor: '#d0d0d0',
                                         },
                                     }}
-                                    onClick={handleCreateTask}
+                                    onClick={()=>navigate(-1)}
                                 >
                                     Cancel
                                 </Button>

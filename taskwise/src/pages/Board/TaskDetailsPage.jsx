@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
 import {
   Grid,
@@ -16,6 +16,7 @@ import { toast, ToastContainer } from "react-toastify";
 import AddOutlinedIcon from "@mui/icons-material/AddOutlined";
 
 const TaskDetailsPage = () => {
+  const navigate=useNavigate()
   const { taskID } = useParams();
   const [isEditing, setIsEditing] = useState(false);
   const [taskDetails, setTaskDetails] = useState({
@@ -318,6 +319,7 @@ const TaskDetailsPage = () => {
                       backgroundColor: "#d0d0d0",
                     },
                   }}
+                  onClick={()=>navigate(-1)}
                 >
                   Cancel
                 </Button>
