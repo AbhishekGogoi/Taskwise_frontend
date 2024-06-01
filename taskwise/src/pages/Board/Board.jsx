@@ -59,7 +59,7 @@ function Board() {
   const { id } = useParams();
   const navigate = useNavigate();
   const dispatch = useDispatch();
-
+  const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
     //console.log("useEffect for dispatch")
@@ -188,6 +188,12 @@ function Board() {
   if (projectFetchStatus == "loading") {
     return <div className="loading">Loading...</div>
   }
+
+  const handleSearchChange = (event) => {
+    setSearchTerm(event.target.value);
+  };
+
+
   return (
     <DndProvider backend={HTML5Backend}>
       <Box
@@ -257,6 +263,8 @@ function Board() {
                 <StyledInputBase
                   placeholder="Search…"
                   inputProps={{ "aria-label": "search" }}
+                  value={searchTerm}
+                  onChange={handleSearchChange}
                 />
               </Search>
             </Box>
@@ -329,9 +337,13 @@ function Board() {
                 return task;
               }).filter(Boolean);
               //console.log(column, tasks)
+              const filteredTasks = tasks?.filter(task => 
+                (task.content && task.content.toLowerCase().includes(searchTerm.toLowerCase())) || 
+                (task.title && task.title.toLowerCase().includes(searchTerm.toLowerCase()))
+              );
               return (
                 <Grid key={column?.id}>
-                  <Column column={column} tasks={tasks} onDrop={handleDrop} />
+                  <Column column={column} tasks={filteredTasks} onDrop={handleDrop} />
                 </Grid>
               );
             })}
