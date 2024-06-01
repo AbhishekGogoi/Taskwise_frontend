@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import {
   Grid,
   TextField,
@@ -14,18 +14,21 @@ import {
 } from "@mui/material";
 import { toast, ToastContainer } from "react-toastify";
 import AddOutlinedIcon from "@mui/icons-material/AddOutlined";
+import { updateTaskAsync } from "../../features/project/projectSlice"; // Import the update task action
 
 const TaskDetailsPage = () => {
-  const navigate=useNavigate()
+  const navigate = useNavigate();
   const { taskID } = useParams();
+  const dispatch = useDispatch();
+  
   const [isEditing, setIsEditing] = useState(false);
+  const [initialTaskDetails, setInitialTaskDetails] = useState(null);
   const [taskDetails, setTaskDetails] = useState({
     taskName: "",
     content: "",
     assignees: "",
     priority: "",
     dueDate: "",
-    comment: "",
   });
 
   const coldata = useSelector(
@@ -44,14 +47,15 @@ const TaskDetailsPage = () => {
 
   useEffect(() => {
     if (filteredTask) {
-      setTaskDetails({
+      const details = {
         taskName: filteredTask.taskName || "",
         content: filteredTask.content || "",
         assignees: filteredTask.assignees || "",
         priority: filteredTask.priority || "",
-        comment: filteredTask.comment || "",
         dueDate: filteredTask.dueDate ? filteredTask.dueDate.split("T")[0] : "",
-      });
+      };
+      setTaskDetails(details);
+      setInitialTaskDetails(details); // Set the initial task details
     }
   }, [filteredTask]);
 
@@ -61,6 +65,26 @@ const TaskDetailsPage = () => {
       ...prevDetails,
       [name]: value,
     }));
+  };
+  const findChangedFields = (initial, current) => {
+    const changedFields = {};
+    for (const key in initial) {
+      if (initial[key] !== current[key]) {
+        changedFields[key] = current[key];
+      }
+    }
+    return changedFields;
+  };
+
+  const handleSaveTask = () => {
+    const changedFields = findChangedFields(initialTaskDetails, taskDetails);
+    if (Object.keys(changedFields).length > 0) {
+      console.log(changedFields,"changedFields")
+      //dispatch(updateTaskAsync({ taskDetails: changedFields, taskID }));
+      toast.success("Task updated successfully!");
+    } else {
+      toast.info("No changes to save.");
+    }
   };
 
   return (
@@ -183,7 +207,7 @@ const TaskDetailsPage = () => {
                           width: "100%",
                           maxWidth: 200,
                         }}
-                        name="assignee"
+                        name="assignees"
                         value={taskDetails?.assignees}
                         onChange={handleChange}
                       >
@@ -319,13 +343,18 @@ const TaskDetailsPage = () => {
                       backgroundColor: "#d0d0d0",
                     },
                   }}
-                  onClick={()=>navigate(-1)}
+                  onClick={() => navigate(-1)}
                 >
                   Cancel
                 </Button>
               </Grid>
               <Grid item xs={12} sm={6}>
-                <Button variant="contained" color="primary" fullWidth>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  fullWidth
+                  onClick={handleSaveTask}
+                >
                   Save Task
                 </Button>
               </Grid>
