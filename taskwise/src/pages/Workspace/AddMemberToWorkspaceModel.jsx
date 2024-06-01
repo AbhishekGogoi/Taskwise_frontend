@@ -25,7 +25,9 @@ const style = {
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 const AddMemberToWorkspaceModel = ({ handleClose }) => {
+  // eslint-disable-next-line
   const dispatch = useDispatch();
+  // eslint-disable-next-line
   const userId = useSelector((state) => state?.user?.loggedInUser?.user?._id);
 
   const [members, setMembers] = useState([]);
