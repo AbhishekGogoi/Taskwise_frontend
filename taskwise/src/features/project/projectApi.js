@@ -55,3 +55,12 @@ export const addColumn=async(data,id)=>{
         throw error.response.data
     }
 }
+export const editColumn=async(data,idObject)=>{
+    try{
+        const { id, columnId } = idObject;
+        const res=await axiosi.put(`/projects/${id}/columns/${columnId}`,data);
+        return res.data
+    }catch(error){
+        throw error.response.data
+    }
+}

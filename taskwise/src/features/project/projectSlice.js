@@ -1,5 +1,5 @@
 import { createAsyncThunk , createSlice } from "@reduxjs/toolkit";
-import { fetchProjects, fetchProjectById, addProject, addTask, moveTask,addColumn } from "./projectApi";
+import { fetchProjects, fetchProjectById, addProject, addTask, moveTask,addColumn, editColumn } from "./projectApi";
 
 
 const initialState={
@@ -13,6 +13,7 @@ const initialState={
     taskAddStatus:"idle",
     taskMoveStatus:"idle",
     columnAddStatus:"idle",
+    columnEditStatus:"idle"
 }
 
 export const fetchProjectAsync=createAsyncThunk("projects/fetchProjects",async(userId)=>{
@@ -40,9 +41,14 @@ export const moveTaskAsync=createAsyncThunk("projects/moveTaskAsync",async({ dat
     return movedTask
 })
 
-export const addColumnAsync=createAsyncThunk("projects/addColumn",async({data,id})=>{
+export const addColumnAsync=createAsyncThunk("projects/addColumnAsync",async({data,id})=>{
     const addedColumn=await addColumn(data,id);
     return addedColumn
+})
+
+export const editColumnAsync=createAsyncThunk("projects/editColumnAsync",async({data,idObject})=>{
+    const editedColumn=await editColumn(data,idObject);
+    return editedColumn
 })
 
 const projectSlice=createSlice({
@@ -69,6 +75,9 @@ const projectSlice=createSlice({
         },
         resetColumnAddStatus:(state) => {
             state.columnAddStatus="idle"
+        },
+        resetColumnEditStatus:(state)=>{
+            state.columnEditStatus="idle"
         }
     },
     extraReducers:(builder)=>{
@@ -139,6 +148,15 @@ const projectSlice=createSlice({
             .addCase(addColumnAsync.rejected,(state,action)=>{
                 state.columnAddStatus="rejected"
             })
+            .addCase(editColumnAsync.pending,(state,action)=>{
+                state.columnEditStatus="pending"
+            })
+            .addCase(editColumnAsync.fulfilled,(state,action)=>{
+                state.columnEditStatus="fulfilled"
+            })
+            .addCase(editColumnAsync.rejected,(state,action)=>{
+                state.columnEditStatus="rejected"
+            })
     }
 })
 
@@ -149,7 +167,8 @@ export const {
     resetProjectFetchStatus,
     resetTaskAddStatus,
     resetProjectAddStatus,
-    resetColumnAddStatus
+    resetColumnAddStatus,
+    resetColumnEditStatus
 } = projectSlice.actions;
 
 export default projectSlice.reducer;

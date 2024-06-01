@@ -1,5 +1,4 @@
-import { Typography, IconButton, Box,TextField, Button  } from "@mui/material";
-import AddIcon from "@mui/icons-material/Add";
+import { Typography, IconButton, Box, TextField, CircularProgress } from "@mui/material";
 import React from "react";
 import Task from "./Task";
 import { useDrop } from "react-dnd";
@@ -7,11 +6,16 @@ import ColumnDropdown from "./ColumnDropdown";
 import { useState } from "react";
 import SaveIcon from '@mui/icons-material/Save';
 import CancelIcon from '@mui/icons-material/Cancel';
-
+import { useDispatch, useSelector } from "react-redux";
+import { editColumnAsync, resetColumnEditStatus } from "../../features/project/projectSlice";
+import { useParams } from "react-router-dom";
 function Column({ column, tasks, onDrop }) {
   const [isEditing, setIsEditing] = useState(false);
   const [title, setTitle] = useState(column.title);
   const [editTitle, setEditTitle] = useState(column.title);
+  const dispatch = useDispatch();
+  const { id } = useParams();
+  const editingColumn = useSelector((state) => state.project.columnEditStatus);
   // eslint-disable-next-line
   const [{ isOver }, drop] = useDrop({
     accept: "task", // Specify the accepted item type here
@@ -30,7 +34,15 @@ function Column({ column, tasks, onDrop }) {
     setEditTitle(event.target.value);
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
+    const data = {
+      title: editTitle,
+    }
+    const idObject = {
+      id: id,
+      columnId: column._id
+    }
+    dispatch(editColumnAsync({ data, idObject }))
     setTitle(editTitle);
     setIsEditing(false);
     // Here you can also add the logic to save the updated title to your backend if needed
@@ -44,7 +56,7 @@ function Column({ column, tasks, onDrop }) {
   return (
     <Box sx={{ display: "flex", flexDirection: "column" }}>
       <Box sx={{ display: "flex", alignItems: "center", cursor: "pointer" }}>
-      {isEditing ? (
+        {isEditing ? (
           <Box sx={{ display: "flex", flexGrow: 1 }}>
             <TextField
               value={editTitle}
@@ -52,12 +64,19 @@ function Column({ column, tasks, onDrop }) {
               size="small"
               sx={{ flexGrow: 1, marginRight: 1 }}
             />
-            <IconButton onClick={handleSave} color="primary">
-            <SaveIcon />
-            </IconButton>
-            <IconButton onClick={handleCancel} color="secondary">
-            <CancelIcon />
-            </IconButton>
+            {editingColumn === "pending" ? (
+              <CircularProgress size={24} sx={{ margin: '0 8px' }} />
+            ) : (
+              <>
+                <IconButton onClick={handleSave} color="primary">
+                  <SaveIcon />
+                </IconButton>
+                <IconButton onClick={handleCancel} color="secondary">
+                  <CancelIcon />
+                </IconButton>
+              </>
+            )
+          }
           </Box>
         ) : (
           <Typography variant="h6" sx={{ flexGrow: 1 }} onClick={handleTitleClick}>
@@ -79,7 +98,7 @@ function Column({ column, tasks, onDrop }) {
           p: 2,
           overflow: "auto", // Optional: add overflow to handle large number of tasks
           '&::-webkit-scrollbar': {
-            display: 'none', 
+            display: 'none',
           },
         }}
       >
