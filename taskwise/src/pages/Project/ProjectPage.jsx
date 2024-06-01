@@ -1,4 +1,4 @@
-import React, { useState,useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import Box from "@mui/material/Box";
 import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
@@ -11,8 +11,8 @@ import { Grid } from "@mui/material";
 import ProjectCard from "./ProjectCard";
 import NewProjectModel from "../../components/NewProjectModel";
 import Modal from "@mui/material/Modal";
-import { useDispatch,useSelector } from "react-redux";
-import { fetchProjectAsync , resetProjectAddStatus} from "../../features/project/projectSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchProjectAsync, resetProjectAddStatus } from "../../features/project/projectSlice";
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -133,21 +133,29 @@ const CustomBox = styled(Box)(({ theme }) => ({
 
 function ProjectPage() {
   const [isModalOpen, setModalOpen] = useState(false);
-  const dispatch=useDispatch();
-  const projectData=useSelector((state)=>state.project.projects);
-  const projectAddStatus=useSelector((state)=>state.project.projectAddStatus);
+  const dispatch = useDispatch();
+  const projectData = useSelector((state) => state.project.projects);
+  const projectAddStatus = useSelector((state) => state.project.projectAddStatus);
   // console.log(projectData);
-  const userId=useSelector((state)=>state?.user?.loggedInUser?.user?._id);
+  const userId = useSelector((state) => state?.user?.loggedInUser?.user?._id);
+  const [searchQuery, setSearchQuery] = useState("");
+  const handleSearchChange = (event) => {
+    setSearchQuery(event.target.value);
+  };
+  const filteredProjects = projectData?.filter((project) =>
+    project.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
   //console.log(userId)
-  useEffect(()=>{
+  useEffect(() => {
     dispatch(fetchProjectAsync(userId))
-  },[dispatch,userId]);
-  useEffect(()=>{
+  }, [dispatch, userId]);
+  useEffect(() => {
     if (projectAddStatus == "fulfilled") {
       toast.success("Project created successfully!");
       dispatch(resetProjectAddStatus());
     }
-  },[projectAddStatus])
+  }, [projectAddStatus])
   const handleOpenModal = () => {
     setModalOpen(true);
   };
@@ -175,7 +183,7 @@ function ProjectPage() {
           height: 100,
         }}
       >
-         <ToastContainer />
+        <ToastContainer />
         <Box
           sx={{
             display: "flex",
@@ -217,13 +225,15 @@ function ProjectPage() {
             <StyledInputBase
               placeholder="Search…"
               inputProps={{ "aria-label": "search" }}
+              value={searchQuery}
+              onChange={handleSearchChange}
             />
           </Search>
         </Box>
       </Paper>
       <CustomBox>
         <Grid container spacing={3} alignItems="center">
-          {projectData?.map((project) => (
+          {filteredProjects?.map((project) => (
             <Grid item key={project.id} xs={6} sm={6} md={3} lg={3} xl={2}>
               <ProjectCard project={project} />
             </Grid>
