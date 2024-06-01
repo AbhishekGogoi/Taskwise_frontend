@@ -23,7 +23,7 @@ function Task({ task }) {
     if (e.target.closest(".dropdown")) {
       return;
     }
-    navigate(`/tasks/${task.id}`);
+    navigate(`/tasks/${task._id}`);
   };
   return (
     <Box>
