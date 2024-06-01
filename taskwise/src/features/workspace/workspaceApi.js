@@ -9,6 +9,33 @@ export const fetchWorkspaceByUserID=async(userId)=>{
     }
 }
 
+export const fetchWorkspaceById=async(id)=>{
+    try{
+        const res=await axiosi.get(`/workspaces/${id}`);
+        return {data:res.data}
+    }catch(error){
+        throw error.response.data
+    }
+}
+
+export const fetchWorkspaceProjects=async(workspaceId)=>{
+  try{
+      const res=await axiosi.get(`/workspaces/${workspaceId}/projects`);
+      return {data:res.data}
+  }catch(error){
+      throw error.response.data
+  }
+}
+
+export const fetchWorkspaceMembers=async(workspaceId)=>{
+  try{
+      const res=await axiosi.get(`/workspaces/${workspaceId}/members`);
+      return {data:res.data}
+  }catch(error){
+      throw error.response.data
+  }
+}
+
 export const createWorkspace = async (newWorkspace) => {
     try {
       const res = await axiosi.post(`/workspaces`, newWorkspace);
@@ -17,4 +44,17 @@ export const createWorkspace = async (newWorkspace) => {
       throw error.response.data;
     }
   };
+
+export const uploadFile = async (formData) => {
+    try {
+        const res = await axiosi.post(`/upload`, formData, {
+        headers: {
+            'Content-Type': 'multipart/form-data'
+        }
+        });
+        return { data: res.data };
+    } catch (error) {
+        throw error.response.data;
+    }
+};
   
