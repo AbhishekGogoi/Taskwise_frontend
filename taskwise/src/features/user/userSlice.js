@@ -18,7 +18,8 @@ const initialState = {
   loginError: null,
   loggedInUser: null,
   successMessage: null,
-  isAuthChecked: false,
+  isAuthChecked: false, //Indicates if auth check is complete
+  isAuthenticated: false, //Indicates if user is authenticated
   forgotPasswordStatus: "idle",
   forgotPasswordError: null,
   verifyCodeStatus: "idle",
@@ -129,6 +130,17 @@ const userSlice = createSlice({
     clearResendOTPError: (state) => {
       state.resendOTPError = null;
     },
+    // for session management
+    rehydrate: (state) => {
+      const user = localStorage.getItem("user");
+      const isAuthenticated =
+        localStorage.getItem("isAuthenticated") === "true";
+      if (user) {
+        state.isAuthenticated = isAuthenticated;
+        state.loggedInUser = JSON.parse(user);
+      }
+      state.isAuthChecked = true;
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -149,6 +161,10 @@ const userSlice = createSlice({
       .addCase(loginAsync.fulfilled, (state, action) => {
         state.loginStatus = "fullfilled";
         state.loggedInUser = action.payload;
+        // for session management
+        state.isAuthenticated = true;
+        localStorage.setItem("user", JSON.stringify(action.payload));
+        localStorage.setItem("isAuthenticated", true);
       })
       .addCase(loginAsync.rejected, (state, action) => {
         state.loginStatus = "rejected";
@@ -160,6 +176,10 @@ const userSlice = createSlice({
       .addCase(logoutAsync.fulfilled, (state) => {
         state.status = "fullfilled";
         state.loggedInUser = null;
+        // for session management
+        state.isAuthenticated = false;
+        localStorage.removeItem("user");
+        localStorage.removeItem("isAuthenticated");
       })
       .addCase(logoutAsync.rejected, (state, action) => {
         state.status = "rejected";
@@ -209,6 +229,17 @@ const userSlice = createSlice({
       .addCase(resendOTPAsync.rejected, (state, action) => {
         state.resendOTPStatus = "rejected";
         state.resendOTPError = action.error;
+      })
+      // for session management
+      .addCase(rehydrate, (state) => {
+        const user = localStorage.getItem("user");
+        const isAuthenticated =
+          localStorage.getItem("isAuthenticated") === "true";
+        if (user) {
+          state.isAuthenticated = isAuthenticated;
+          state.loggedInUser = JSON.parse(user);
+        }
+        state.isAuthChecked = true;
       });
   },
 });
@@ -228,6 +259,7 @@ export const {
   clearResetPasswordError,
   resetResendOTPStatus,
   clearResendOTPError,
+  rehydrate,
 } = userSlice.actions;
 
 export default userSlice.reducer;
