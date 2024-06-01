@@ -1,5 +1,5 @@
 import { createAsyncThunk , createSlice } from "@reduxjs/toolkit";
-import { fetchProjects, fetchProjectById, addProject, addTask, moveTask,addColumn, editColumn } from "./projectApi";
+import { fetchProjects, fetchProjectById, addProject, addTask, moveTask,addColumn, editColumn, editTask } from "./projectApi";
 
 
 const initialState={
@@ -13,7 +13,8 @@ const initialState={
     taskAddStatus:"idle",
     taskMoveStatus:"idle",
     columnAddStatus:"idle",
-    columnEditStatus:"idle"
+    columnEditStatus:"idle",
+    taskEditStatus:"idle"
 }
 
 export const fetchProjectAsync=createAsyncThunk("projects/fetchProjects",async(userId)=>{
@@ -49,6 +50,11 @@ export const addColumnAsync=createAsyncThunk("projects/addColumnAsync",async({da
 export const editColumnAsync=createAsyncThunk("projects/editColumnAsync",async({data,idObject})=>{
     const editedColumn=await editColumn(data,idObject);
     return editedColumn
+})
+
+export const editTaskAsync=createAsyncThunk("projects/editTaskAsync",async({data,idObject})=>{
+    const editedTask=await editTask(data,idObject);
+    return editedTask
 })
 
 const projectSlice=createSlice({
@@ -156,6 +162,16 @@ const projectSlice=createSlice({
             })
             .addCase(editColumnAsync.rejected,(state,action)=>{
                 state.columnEditStatus="rejected"
+            })
+            .addCase(editTaskAsync.pending,(state,action)=>{
+                state.taskEditStatus="pending"
+            })
+            .addCase(editTaskAsync.fulfilled,(state,action)=>{
+                state.taskEditStatus="fulfilled";
+                state.selectedProject=action.payload;
+            })
+            .addCase(editTaskAsync.rejected,(state,action)=>{
+                state.taskEditStatus="rejected"
             })
     }
 })

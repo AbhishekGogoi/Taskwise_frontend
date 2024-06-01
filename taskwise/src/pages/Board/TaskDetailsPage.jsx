@@ -14,14 +14,13 @@ import {
 } from "@mui/material";
 import { toast, ToastContainer } from "react-toastify";
 import AddOutlinedIcon from "@mui/icons-material/AddOutlined";
-import { updateTaskAsync } from "../../features/project/projectSlice"; // Import the update task action
+import { editTaskAsync, updateTaskAsync } from "../../features/project/projectSlice"; // Import the update task action
 
 const TaskDetailsPage = () => {
   const navigate = useNavigate();
   const { taskID } = useParams();
   const dispatch = useDispatch();
-  
-  const [isEditing, setIsEditing] = useState(false);
+
   const [initialTaskDetails, setInitialTaskDetails] = useState(null);
   const [taskDetails, setTaskDetails] = useState({
     taskName: "",
@@ -32,9 +31,13 @@ const TaskDetailsPage = () => {
   });
 
   const coldata = useSelector(
-    (state) => state?.project?.selectedProject?.columns
+    (state) => state.project?.selectedProject?.columns
   );
-  const titlesAndIds = coldata.map((item) => ({
+  const pid=useSelector(
+    (state) => state?.project?.selectedProject?.id
+  );
+  console.log(pid,"pid")
+  const titlesAndIds = coldata?.map((item) => ({
     title: item.title,
     id: item._id,
   }));
@@ -43,7 +46,7 @@ const TaskDetailsPage = () => {
   const taskData = selectedProject ? selectedProject.tasks : [];
 
   const filteredTask = taskData.find((eachData) => eachData._id === taskID);
-  console.log("FD", selectedProject);
+
 
   useEffect(() => {
     if (filteredTask) {
@@ -77,11 +80,17 @@ const TaskDetailsPage = () => {
   };
 
   const handleSaveTask = () => {
-    const changedFields = findChangedFields(initialTaskDetails, taskDetails);
-    if (Object.keys(changedFields).length > 0) {
-      console.log(changedFields,"changedFields")
+    const data = findChangedFields(initialTaskDetails, taskDetails);
+    if (Object.keys(data).length > 0) {
+      console.log(data,"changedFields");
+      const idObject={
+        taskId:taskID,
+        id:pid
+      }
       //dispatch(updateTaskAsync({ taskDetails: changedFields, taskID }));
+      dispatch(editTaskAsync({data,idObject}))
       toast.success("Task updated successfully!");
+      navigate(-1)
     } else {
       toast.info("No changes to save.");
     }

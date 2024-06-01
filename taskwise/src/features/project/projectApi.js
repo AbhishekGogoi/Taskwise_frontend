@@ -64,3 +64,15 @@ export const editColumn=async(data,idObject)=>{
         throw error.response.data
     }
 }
+
+export const editTask=async(data,idObject)=>{
+    try{
+        const { id, taskId } = idObject;
+        console.log(data,"editdata")
+        const res=await axiosi.put(`/projects/${id}/tasks/${taskId}`,data);
+        return res.data
+    }catch(error){
+        throw error.response.data
+    }
+}
+
