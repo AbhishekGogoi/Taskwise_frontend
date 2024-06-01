@@ -242,13 +242,13 @@ const TaskDetailsPage = () => {
                     xs={12}
                     sx={{ display: "flex", alignItems: "center" }}
                   >
-                    <Typography
+                    {/* <Typography
                       variant="h6"
                       gutterBottom
                       sx={{ fontWeight: "700", mb: 1, fontSize: "1rem" }}
                     >
                       Status
-                    </Typography>
+                    </Typography> */}
                     <Box
                       sx={{
                         display: "flex",
@@ -257,7 +257,7 @@ const TaskDetailsPage = () => {
                         ml: 6,
                       }}
                     >
-                      <Select
+                      {/* <Select
                         sx={{
                           height: 32,
                           width: "100%",
@@ -276,7 +276,7 @@ const TaskDetailsPage = () => {
                             {item.title}
                           </MenuItem>
                         ))}
-                      </Select>
+                      </Select> */}
                     </Box>
                   </Grid>
 
