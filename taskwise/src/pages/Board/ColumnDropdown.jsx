@@ -33,8 +33,8 @@ const ColumnDropdown = () => {
         onClose={handleClose}
       >
         <MenuItem onClick={handleClose}>Edit</MenuItem>
-        <MenuItem onClick={handleClose}>Duplicate</MenuItem>
-        <MenuItem onClick={handleClose}>Archive</MenuItem>
+        <MenuItem onClick={handleClose}></MenuItem>
+        <MenuItem onClick={handleClose}>Delete</MenuItem>
       </Menu>
     </div>
   );
