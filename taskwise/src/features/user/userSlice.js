@@ -5,6 +5,7 @@ import {
   signUp,
   forgotPassword,
   verifyResetCode,
+  resendOTP,
   resetPassword,
 } from "./userApi";
 
@@ -25,6 +26,8 @@ const initialState = {
   resetPasswordStatus: "idle",
   resetPasswordError: null,
   resetEmail: null,
+  resendOTPStatus: "idle",
+  resendOTPError: null,
 };
 
 export const signupAsync = createAsyncThunk(
@@ -57,6 +60,14 @@ export const verifyResetCodeAsync = createAsyncThunk(
   "user/verifyResetCodeAsync",
   async (cred) => {
     const res = await verifyResetCode(cred);
+    return res;
+  }
+);
+
+export const resendOTPAsync = createAsyncThunk(
+  "user/resendOTPAsync",
+  async (cred) => {
+    const res = await resendOTP(cred);
     return res;
   }
 );
@@ -111,6 +122,12 @@ const userSlice = createSlice({
     },
     clearResetPasswordError: (state) => {
       state.resetPasswordError = null;
+    },
+    resetResendOTPStatus: (state) => {
+      state.resendOTPStatus = "idle";
+    },
+    clearResendOTPError: (state) => {
+      state.resendOTPError = null;
     },
   },
   extraReducers: (builder) => {
@@ -181,6 +198,17 @@ const userSlice = createSlice({
       .addCase(resetPasswordAsync.rejected, (state, action) => {
         state.resetPasswordStatus = "rejected";
         state.resetPasswordError = action.error;
+      })
+      .addCase(resendOTPAsync.pending, (state) => {
+        state.resendOTPStatus = "pending";
+      })
+      .addCase(resendOTPAsync.fulfilled, (state, action) => {
+        state.resendOTPStatus = "fulfilled";
+        state.successMessage = action.payload;
+      })
+      .addCase(resendOTPAsync.rejected, (state, action) => {
+        state.resendOTPStatus = "rejected";
+        state.resendOTPError = action.error;
       });
   },
 });
@@ -198,6 +226,8 @@ export const {
   clearVerifyCodeError,
   resetResetPasswordStatus,
   clearResetPasswordError,
+  resetResendOTPStatus,
+  clearResendOTPError,
 } = userSlice.actions;
 
 export default userSlice.reducer;

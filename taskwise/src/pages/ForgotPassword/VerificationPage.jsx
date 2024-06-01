@@ -12,6 +12,8 @@ import { useDispatch, useSelector } from "react-redux";
 import {
   verifyResetCodeAsync,
   resetVerifyCodeStatus,
+  resendOTPAsync,
+  resetResendOTPStatus,
 } from "../../features/user/userSlice";
 import { ToastContainer, toast } from "react-toastify";
 
@@ -106,10 +108,12 @@ const VerificationPage = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  // const successMessage = useSelector((state) => state.user.successMessage);
   const verifyCodeStatus = useSelector((state) => state.user.verifyCodeStatus);
   const verifyCodeError = useSelector((state) => state.user.verifyCodeError);
   const resetEmail = useSelector((state) => state.user.resetEmail);
+
+  const resendOTPStatus = useSelector((state) => state.user.resendOTPStatus);
+  const resendOTPError = useSelector((state) => state.user.resendOTPError);
 
   const [otp, setOtp] = useState(["", "", "", ""]);
   const [error, setError] = useState("");
@@ -117,18 +121,14 @@ const VerificationPage = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     const code = otp.join("");
-    if (!code.trim()) {
-      setError("Please enter the OTP");
+    if (otp.includes("")) {
+      setError("Please enter the full OTP");
       return;
     }
 
     setError("");
     dispatch(verifyResetCodeAsync({ email: resetEmail, code }));
-    // navigate("/forgotpassword/resetpassword");
   };
-
-  // eslint-disable-next-line
-  // const [email, setEmail] = useState("example@gmail.com");
 
   // Function to mask email
   const maskEmail = (email) => {
@@ -151,9 +151,13 @@ const VerificationPage = () => {
     }
   };
 
+  const handleResendOTP = () => {
+    dispatch(resendOTPAsync({ email: resetEmail }));
+  };
+
   useEffect(() => {
     if (verifyCodeStatus === "fulfilled") {
-      navigate("/forgotpassword/resetpassword", {
+      navigate("/resetpassword", {
         state: { email: resetEmail, code: otp.join("") },
       });
       dispatch(resetVerifyCodeStatus());
@@ -165,6 +169,16 @@ const VerificationPage = () => {
       toast.error(verifyCodeError.message);
     }
   }, [verifyCodeError]);
+
+  useEffect(() => {
+    if (resendOTPStatus === "fulfilled") {
+      toast.success("OTP has been resent to your email");
+      dispatch(resetResendOTPStatus());
+    } else if (resendOTPStatus === "rejected") {
+      toast.error(resendOTPError.message);
+      dispatch(resetResendOTPStatus());
+    }
+  }, [resendOTPStatus, resendOTPError, dispatch]);
 
   return (
     <ThemeProvider theme={theme}>
@@ -215,6 +229,8 @@ const VerificationPage = () => {
               onChange={(e) => handleOtpChange(index, e.target.value)}
               inputProps={{ maxLength: 1 }}
               variant="outlined"
+              error={!!error && otp.includes("")}
+              // helperText={!!error && otp.includes("") ? error : ""}
             />
           ))}
         </OtpContainer>
@@ -230,7 +246,9 @@ const VerificationPage = () => {
           <Typography variant="body2" sx={{ color: "#5b5858" }}>
             Didn't receive code?
           </Typography>
-          <ResendLink variant="body2">Re-send</ResendLink>
+          <ResendLink onClick={handleResendOTP} variant="body2">
+            Re-send
+          </ResendLink>
         </Box>
 
         <SubmitButton

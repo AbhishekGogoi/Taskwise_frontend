@@ -85,7 +85,6 @@ const ResetPasswordPage = () => {
   const dispatch = useDispatch();
   const location = useLocation();
 
-  // const successMessage = useSelector((state) => state.user.successMessage);
   const resetPasswordStatus = useSelector(
     (state) => state.user.resetPasswordStatus
   );
@@ -114,12 +113,11 @@ const ResetPasswordPage = () => {
     setError("");
     const newPassword = checkPassword;
     dispatch(resetPasswordAsync({ email, code, newPassword }));
-    // navigate("/forgotpassword/confirmation");
   };
 
   useEffect(() => {
     if (resetPasswordStatus === "fulfilled") {
-      navigate("/forgotpassword/confirmation");
+      navigate("/confirmation");
       dispatch(resetResetPasswordStatus());
     }
   }, [resetPasswordStatus, navigate, dispatch]);

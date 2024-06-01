@@ -39,7 +39,17 @@ export const forgotPassword = async (cred) => {
 // Verify reset code
 export const verifyResetCode = async (cred) => {
   try {
-    const res = await axiosi.post(`/auth/forgotpassword/verification`, cred);
+    const res = await axiosi.post(`/auth/verification`, cred);
+    return res.data;
+  } catch (error) {
+    throw error.response.data;
+  }
+};
+
+// Resend reset code
+export const resendOTP = async (cred) => {
+  try {
+    const res = await axiosi.post(`/auth/resendotp`, cred);
     return res.data;
   } catch (error) {
     throw error.response.data;
@@ -49,7 +59,7 @@ export const verifyResetCode = async (cred) => {
 // Reset password
 export const resetPassword = async (cred) => {
   try {
-    const res = await axiosi.post(`/auth/forgotpassword/resetpassword`, cred);
+    const res = await axiosi.post(`/auth/resetpassword`, cred);
     return res.data;
   } catch (error) {
     throw error.response.data;

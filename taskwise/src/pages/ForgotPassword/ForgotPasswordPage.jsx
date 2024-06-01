@@ -10,7 +10,6 @@ import forgotpasswordlogo from "../../assets/forgotpasswordlogo.jpeg";
 import { useDispatch, useSelector } from "react-redux";
 import {
   forgotPasswordAsync,
-  clearForgotPasswordError,
   resetForgotPasswordStatus,
 } from "../../features/user/userSlice";
 import { ToastContainer, toast } from "react-toastify";
@@ -133,12 +132,11 @@ const ForgotPasswordPage = () => {
 
     setError(""); // Clear any previous error
     dispatch(forgotPasswordAsync({ email }));
-    // navigate("/forgotpassword/verification");
   };
 
   useEffect(() => {
     if (forgotPasswordStatus === "fulfilled") {
-      navigate("/forgotpassword/verification");
+      navigate("/verification");
       dispatch(resetForgotPasswordStatus());
     }
   }, [forgotPasswordStatus, navigate, dispatch]);
