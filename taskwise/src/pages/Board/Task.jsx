@@ -16,11 +16,21 @@ function Task({ task }) {
     }),
   });
 
-  const formattedDate = new Intl.DateTimeFormat('en-GB', {
-    day: 'numeric',
-    month: 'long',
-    year: 'numeric'
-  }).format(new Date(task.dueDate));
+  let formattedDate;
+  if (task?.dueDate) {
+    try {
+      formattedDate = new Intl.DateTimeFormat('en-GB', {
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric'
+      }).format(new Date(task.dueDate));
+    } catch (error) {
+      console.error('Invalid date format:', task.dueDate);
+      formattedDate = 'Invalid date';
+    }
+  } else {
+    formattedDate = 'No due date';
+  }
 
   const handleCardClick = (e) => {
     // Only navigate if the click target is not the dropdown button
@@ -42,7 +52,7 @@ function Task({ task }) {
     }
   };
 
-  const chipProps = getChipProps(task.priority);
+  const chipProps = getChipProps(task?.priority);
 
   return (
     <Box>
