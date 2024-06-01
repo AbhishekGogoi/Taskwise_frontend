@@ -1,5 +1,7 @@
 import React, { useState, useRef } from 'react';
-import { Box, Grid, IconButton, Typography, Paper, TextField, Dialog, DialogContent, DialogTitle, Tabs, Tab } from '@mui/material';
+import {
+  Box, Grid, IconButton, Typography, Paper, TextField, Dialog, DialogContent, DialogTitle, Tabs, Tab, Card, CardContent, CardActions
+} from '@mui/material';
 import PersonAddAltSharpIcon from '@mui/icons-material/PersonAddAltSharp';
 import LinkSharpIcon from '@mui/icons-material/LinkSharp';
 import { styled } from '@mui/material/styles';
@@ -12,8 +14,8 @@ import CancelIcon from '@mui/icons-material/Cancel';
 import ChevronRightSharpIcon from '@mui/icons-material/ChevronRightSharp';
 import { ImageList, ImageListItem } from '@mui/material';
 import ImageOutlinedIcon from '@mui/icons-material/ImageOutlined';
-import LinkOutlinedIcon from '@mui/icons-material/LinkOutlined';
 import DescriptionOutlinedIcon from '@mui/icons-material/DescriptionOutlined';
+import CloseIcon from '@mui/icons-material/Close';
 
 const StyledPaper = styled(Paper)(({ theme }) => ({
   height: '400px',
@@ -52,26 +54,11 @@ function WorkspaceSettings({ workspace }) {
     'https://img.freepik.com/free-vector/hand-drawn-minimal-background_23-2149001650.jpg',
   ]);
 
-  // const [links, setLinks] = useState([
-  //   'https://example.com/link1',
-  //   'https://example.com/link2',
-  //   'https://example.com/link3',
-  // ]);
- const links = [
-    'https://example.com/link1',
-    'https://example.com/link2',
-    'https://example.com/link3',
-  ];
-  // const [docs, setDocs] = useState([
-  //   'https://example.com/doc1.pdf',
-  //   'https://example.com/doc2.pdf',
-  //   'https://example.com/doc3.pdf',
-  // ]);
-  const docs= [
+  const [docs, setDocs] = useState([
     'https://example.com/doc1.pdf',
     'https://example.com/doc2.pdf',
     'https://example.com/doc3.pdf',
-  ];
+  ]);
 
   const fileInputRef = useRef(null);
 
@@ -120,6 +107,11 @@ function WorkspaceSettings({ workspace }) {
     setDialogTab(newValue);
   };
 
+  const handleRemoveDoc = (index) => {
+    const updatedDocs = docs.filter((_, docIndex) => docIndex !== index);
+    setDocs(updatedDocs);
+  };
+
   return (
     <Grid container spacing={2}>
       <Grid item xs={12} md={6}>
@@ -163,17 +155,17 @@ function WorkspaceSettings({ workspace }) {
           </Box>
           <Box sx={{ mt: 2, display: 'flex', alignItems: 'center' }}>
             <Typography sx={{ fontSize: 15, fontWeight: 'bold' }}>
-              Media, Links and Docs
+              Media and Docs
             </Typography>
             <IconButton
               color="primary"
               onClick={() => handleDialogOpen()}
-              disabled={mediaImages.length === 0 && links.length === 0 && docs.length === 0}
+              disabled={mediaImages.length === 0 && docs.length === 0}
             >
               <ChevronRightSharpIcon sx={{ color: "#000000", fontSize: 25 }} />
             </IconButton>
           </Box>
-          {(mediaImages.length <= 0 && docs.length <= 0 && links.length <= 0) && (
+          {(mediaImages.length <= 0 && docs.length <= 0) && (
             <Typography sx={{ p: 2, textAlign: 'left', color: '#888' }}>No data available</Typography>
           )}
         </StyledPaper>
@@ -212,21 +204,13 @@ function WorkspaceSettings({ workspace }) {
         <DialogTitle>{dialogTitle}</DialogTitle>
         <DialogContent>
           <Grid container spacing={2} alignItems="center">
-          <Grid item xs={12}>
+            <Grid item xs={12}>
               <Tabs value={dialogTab} onChange={handleTabChange} variant="fullWidth">
                 <Tab
                   label={
                     <TabLabelWrapper>
                       <ImageOutlinedIcon  sx={{p: 1}} />
                       <span>Media</span>
-                    </TabLabelWrapper>
-                  }
-                />
-                <Tab
-                  label={
-                    <TabLabelWrapper>
-                      <LinkOutlinedIcon  sx={{p: 1}} />
-                      <span>Links</span>
                     </TabLabelWrapper>
                   }
                 />
@@ -255,25 +239,21 @@ function WorkspaceSettings({ workspace }) {
                 )
               )}
               {dialogTab === 1 && (
-                links.length > 0 ? (
-                  <Box sx={{ p: 2 }}>
-                    {links.map((link, index) => (
-                      <Typography key={index}>
-                        <a href={link} target="_blank" rel="noopener noreferrer">{link}</a>
-                      </Typography>
-                    ))}
-                  </Box>
-                ) : (
-                  <Typography sx={{ p: 2, textAlign: 'left', color: '#888' }}>No links available</Typography>
-                )
-              )}
-              {dialogTab === 2 && (
                 docs.length > 0 ? (
                   <Box sx={{ p: 2 }}>
                     {docs.map((doc, index) => (
-                      <Typography key={index}>
-                        <a href={doc} target="_blank" rel="noopener noreferrer">{doc}</a>
-                      </Typography>
+                      <Card key={index} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 1 }}>
+                        <CardContent>
+                          <Typography>
+                            <a href={doc} target="_blank" rel="noopener noreferrer">{doc}</a>
+                          </Typography>
+                        </CardContent>
+                        <CardActions>
+                          <IconButton onClick={() => handleRemoveDoc(index)}>
+                            <CloseIcon />
+                          </IconButton>
+                        </CardActions>
+                      </Card>
                     ))}
                   </Box>
                 ) : (
