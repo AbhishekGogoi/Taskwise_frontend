@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Container,
@@ -10,6 +10,9 @@ import {
   Link,
 } from "@mui/material";
 import { Email, Lock } from "@mui/icons-material";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import Joi from "joi";
 import { styled } from "@mui/system";
 import googleiconnew from "../../assets/googleiconnew.png";
 import TaskWiseLogo from "../../assets/TaskWiseLogo.png";
@@ -121,31 +124,85 @@ const StyledButton = styled(Button)({
 
 // Component
 const LoginPage = () => {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [errors, setErrors] = useState({});
+
   const navigate = useNavigate();
-  const dispatch=useDispatch()
+  const dispatch = useDispatch();
+  // const location = useLocation();
+
+  const loggedInUser = useSelector((state) => state.user.loggedInUser);
+  const loginError = useSelector((state) => state.user.loginError);
+  // console.log(loginError?.message);
+
+  const schema = Joi.object({
+    email: Joi.string()
+      .email({ tlds: { allow: false } })
+      .required()
+      .messages({
+        "string.empty": "Email is required",
+        "string.email": "Email must be a valid email",
+      }),
+    password: Joi.string()
+      .pattern(
+        new RegExp(
+          "^[a-zA-Z0-9!@#\\$%\\^&\\*\\(\\)_\\+\\-=[\\]{};:'\",<>\\.\\?/`~]{7,}$"
+        )
+      )
+      .required()
+      .messages({
+        "string.empty": "Password is required",
+        "string.pattern.base":
+          "Password must be at least 7 characters and contain only letters, numbers, and special characters",
+      }),
+  });
+
+  const handleLogin = (e) => {
+    e.preventDefault();
+    const { error } = schema.validate(
+      { email, password },
+      { abortEarly: false }
+    );
+
+    if (error) {
+      const validationErrors = {};
+      error.details.forEach((detail) => {
+        validationErrors[detail.path[0]] = detail.message;
+      });
+      setErrors(validationErrors);
+      return;
+    }
+
+    setErrors({});
+    dispatch(loginAsync({ email, password }));
+  };
+
+  useEffect(() => {
+    if (loginError) {
+      toast.error(loginError.message);
+    }
+  }, [loginError]);
+
+  useEffect(() => {
+    if (loggedInUser) {
+      navigate("/projects");
+    }
+  }, [loggedInUser, navigate]);
+
+  const handleSignUpClick = () => {
+    navigate("/signup"); // Navigate to signup page
+  };
+
   const handleForgotPasswordClick = () => {
     navigate("/forgotpassword"); // Navigate to forgot password page
   };
 
-  //redux
-  const handleLogin=()=>{
-        dispatch(loginAsync({
-          "email": "test@gmail.com",
-          "password": "Test123"
-        }))
-  }
-  const loggedInUser=useSelector((state)=>state.user.loggedInUser)
-  
-  useEffect(()=>{
-    if(loggedInUser){
-       navigate('/projects')
-    }
-  },[loggedInUser,navigate])
-
-
-
-  const handleSignUpClick = () => {
-    navigate("/signup"); // Navigate to signup page
+  const googleAuth = () => {
+    window.open(
+      `${process.env.REACT_APP_API_URL}/auth/google/callback`,
+      "_self"
+    );
   };
 
   return (
@@ -184,6 +241,10 @@ const LoginPage = () => {
               </InputAdornment>
             ),
           }}
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          error={!!errors.email}
+          helperText={errors.email}
         />
         <TextField // Password field with icon
           variant="outlined"
@@ -202,6 +263,10 @@ const LoginPage = () => {
               </InputAdornment>
             ),
           }}
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          error={!!errors.password}
+          helperText={errors.password}
         />
         <StyledButton // Login button style adjustments
           type="submit"
@@ -237,6 +302,7 @@ const LoginPage = () => {
               alt="Google"
             />
           }
+          onClick={googleAuth}
         >
           Sign in with Google
         </StyledGoogleButton>
@@ -263,6 +329,7 @@ const LoginPage = () => {
           Sign Up
         </StyledSignUpLink>
       </Box>
+      <ToastContainer />
     </StyledContainer>
   );
 };

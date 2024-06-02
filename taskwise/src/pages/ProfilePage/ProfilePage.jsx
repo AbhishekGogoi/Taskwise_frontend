@@ -7,8 +7,10 @@ import {
   Avatar,
   Grid,
   Stack,
+  Modal,
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
+import ChangePasswordModal from "../../components/ChangePasswordModal";
 
 const Container = styled(Box)({
   display: "flex",
@@ -80,6 +82,23 @@ const PageWrapper = styled(Box)({
 });
 
 const ProfileSettingsPage = () => {
+  const [changePasswordModalOpen, setChangePasswordModalOpen] = useState(false);
+
+  const handleOpenChangePasswordModal = () => {
+    setChangePasswordModalOpen(true);
+  };
+
+  const handleCloseChangePasswordModal = () => {
+    setChangePasswordModalOpen(false);
+  };
+
+  const handleUpdatePassword = (newFormData) => {
+    // Handle actual password update logic here (e.g., API calls, validation)
+    console.log("New password data:", newFormData);
+    // After successful update:
+    handleCloseChangePasswordModal();
+  };
+
   const [isEditing, setIsEditing] = useState({ email: false, title: false });
   const [email, setEmail] = useState("smith@gmail.com");
   const [title, setTitle] = useState("Product Designer");
@@ -203,10 +222,25 @@ const ProfileSettingsPage = () => {
             of your account. Make sure you remember your current password to
             prove that the person who changed the password was actually you.
           </Typography>
-          <Button variant="contained" color="primary" sx={{ mt: 2 }}>
+          <Button
+            variant="contained"
+            color="primary"
+            sx={{ mt: 2 }}
+            onClick={handleOpenChangePasswordModal}
+          >
             Change Password
           </Button>
         </ChangePasswordContainer>
+        <Modal
+          open={changePasswordModalOpen}
+          onClose={handleCloseChangePasswordModal}
+          aria-labelledby="change-password-modal-title"
+        >
+          <ChangePasswordModal
+            handleClose={handleCloseChangePasswordModal}
+            onUpdatePassword={handleUpdatePassword}
+          />
+        </Modal>
       </Container>
     </PageWrapper>
   );

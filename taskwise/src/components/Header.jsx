@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
@@ -16,6 +16,8 @@ import { Link } from "react-router-dom";
 import MenuIcon from "@mui/icons-material/Menu";
 import LogoutModal from "./LogoutModal";
 import Modal from "@mui/material/Modal";
+import { useDispatch, useSelector } from "react-redux";
+import { logoutAsync } from "../features/user/userSlice";
 
 const settings = ["Settings", "Logout"];
 
@@ -23,6 +25,10 @@ function Header({ isSmallScreen, toggleDrawer }) {
   const [anchorElUser, setAnchorElUser] = useState(null);
   const [openLogoutModal, setOpenLogoutModal] = useState(false);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  const { status, loggedInUser } = useSelector((state) => state.user);
+  console.log(loggedInUser);
 
   const handleOpenUserMenu = (event) => {
     setAnchorElUser(event.currentTarget);
@@ -41,10 +47,20 @@ function Header({ isSmallScreen, toggleDrawer }) {
     setOpenLogoutModal(false);
   };
 
-  const handleLogoutConfirm = () => {
-    setOpenLogoutModal(false);
-    navigate("/"); // Navigate to the landing page
+  const handleSettingsClick = () => {
+    handleCloseUserMenu();
+    navigate("/settings");
   };
+
+  const handleLogoutConfirm = () => {
+    dispatch(logoutAsync());
+  };
+
+  useEffect(() => {
+    if (loggedInUser === null) {
+      navigate("/");
+    }
+  }, [status, loggedInUser, navigate]);
 
   return (
     <>
@@ -130,6 +146,8 @@ function Header({ isSmallScreen, toggleDrawer }) {
                   onClick={
                     setting === "Logout"
                       ? handleLogoutClick
+                      : setting === "Settings"
+                      ? handleSettingsClick
                       : handleCloseUserMenu
                   }
                 >

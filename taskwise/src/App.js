@@ -40,9 +40,9 @@ function AppLayout() {
     "/login",
     "/signup",
     "/forgotpassword",
-    "/forgotpassword/verification",
-    "/forgotpassword/resetpassword",
-    "/forgotpassword/confirmation",
+    "/verification",
+    "/resetpassword",
+    "/confirmation",
   ].includes(location.pathname);
   const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -87,18 +87,9 @@ function AppLayout() {
             <Route path="/login" element={<LoginPage />} />
             <Route path="/signup" element={<SignupPage />} />
             <Route path="/forgotpassword" element={<ForgotPasswordPage />} />
-            <Route
-              path="/forgotpassword/verification"
-              element={<VerificationPage />}
-            />
-            <Route
-              path="/forgotpassword/resetpassword"
-              element={<ResetPasswordPage />}
-            />
-            <Route
-              path="/forgotpassword/confirmation"
-              element={<ConfirmationPage />}
-            />
+            <Route path="/verification" element={<VerificationPage />} />
+            <Route path="/resetpassword" element={<ResetPasswordPage />} />
+            <Route path="/confirmation" element={<ConfirmationPage />} />
             <Route path="/projects" element={<ProjectPage />} />
             <Route path="/projects/:id" element={<Board />} />
             <Route path="/projects/:id/new-task" element={<NewTaskPage />} />
