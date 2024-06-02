@@ -14,7 +14,7 @@ import PropTypes from "prop-types";
 import ProjectThumbnail from "../pages/Project/ProjectThumbnail"; // Import the ThumbnailComponent
 import { useDispatch, useSelector } from "react-redux";
 import { addProjectAsync } from "../features/project/projectSlice";
-import { fetchWorkspaceByUserIDAsync } from "../features/workspace/workspaceSlice";
+import { fetchWorkspaceByUserIDAsync, uploadFileAsync } from "../features/workspace/workspaceSlice";
 import { useEffect } from "react";
 
 const style = {
@@ -39,8 +39,11 @@ const NewProjectModel = ({ handleClose }) => {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [errors, setErrors] = useState({});
+
   const Data = useSelector((state) => state?.workspace?.workspaces);
   const uniqueWorkspaces = {};
+  const defaultImage = 'https://taskwiseai-s3.s3.ap-south-1.amazonaws.com/1717225670701-sample-one.jpg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAW3MEDJLIRCUPEROY%2F20240601%2Fap-south-1%2Fs3%2Faws4_request&X-Amz-Date=20240601T070750Z&X-Amz-Expires=3600&X-Amz-Signature=ea21669e6ae66f6d912079548d409b76215448ba616de7135999478f47a2e099&X-Amz-SignedHeaders=host';
+  const [imageUrl, setImageUrl] = useState(defaultImage);
   useEffect(() => {
     dispatch(fetchWorkspaceByUserIDAsync(creatorUserID))
   }, [])
@@ -60,6 +63,7 @@ const NewProjectModel = ({ handleClose }) => {
   console.log(result, "result")
   const handleFileUploadClick = () => {
     fileInputRef.current.click();
+
   };
   const validateForm = () => {
     const newErrors = {};
@@ -78,6 +82,7 @@ const NewProjectModel = ({ handleClose }) => {
         "name": name,
         "description": description,
         "workspaceID": workspace,
+        "imgUrl":imageUrl,
         "creatorUserID": creatorUserID,
       }
       dispatch(addProjectAsync(projectdata))
@@ -85,7 +90,7 @@ const NewProjectModel = ({ handleClose }) => {
     }
 
   }
-  const handleFileChange = (event) => {
+  const handleFileChange = async (event) => {
     const file = event.target.files[0];
     if (file) {
       const reader = new FileReader();
@@ -93,6 +98,15 @@ const NewProjectModel = ({ handleClose }) => {
         setSelectedImage(reader.result);
       };
       reader.readAsDataURL(file);
+      const formData = new FormData();
+      formData.append('file', file);
+      
+      try {
+        const response = await dispatch(uploadFileAsync(formData));
+        setImageUrl(response.payload.presignedUrl);
+      } catch (error) {
+        console.error('Error uploading image:', error);
+      }
     }
   };
 
