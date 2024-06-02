@@ -1,20 +1,20 @@
 import React from 'react';
-import { Grid, Paper } from '@mui/material';
+import { Box, Grid, Typography } from '@mui/material';
 import WorkspaceMembers from './WorkspaceMembers';
-import WorkspaceTaskPage from './WorkspaceTaskPage';
 
-function WorkspaceTasks() {
+function WorkspaceTasks({ workspace }) {
   return (
-    <Grid container spacing={2} sx={{ height: '100%' }}>
-      <Grid item xs={12} md={9} sx={{ height: '100%' }}>
-        <Paper elevation={3} sx={{ height: '100%' }}>
-          <WorkspaceTaskPage />
-        </Paper>
+    <Grid container spacing={3}>
+      <Grid item xs={12} md={9}>
+        <Grid container spacing={3}>
+          <Box sx={{p:4}}>
+            <Typography variant="h4">Workspace Tasks</Typography>
+            <Typography variant="body1">Manage your workspace tasks here.</Typography>
+          </Box>
+        </Grid>
       </Grid>
-      <Grid item xs={12} md={3} sx={{ height: '100%' }}>
-        <Paper elevation={3} sx={{ height: '97%' }}>
-          <WorkspaceMembers height="95%" width="90%" />
-        </Paper>
+      <Grid item xs={12} md={3}>
+        <WorkspaceMembers />
       </Grid>
     </Grid>
   );

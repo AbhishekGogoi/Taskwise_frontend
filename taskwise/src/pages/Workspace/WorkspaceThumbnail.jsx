@@ -2,7 +2,7 @@ import React from 'react';
 import Box from '@mui/material/Box';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 
-const Thumbnail = ({ selectedImage, handleFileUploadClick, width, height }) => {
+const WorkspaceThumbnail = ({ selectedImage, handleFileUploadClick, width, height }) => {
   return (
     <Box
       sx={{
@@ -27,4 +27,4 @@ const Thumbnail = ({ selectedImage, handleFileUploadClick, width, height }) => {
   );
 };
 
-export default Thumbnail;
+export default WorkspaceThumbnail;

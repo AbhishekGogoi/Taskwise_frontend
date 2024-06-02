@@ -1,11 +1,12 @@
-import React, { useState } from 'react';
-import { List, ListItem, ListItemAvatar, Avatar, ListItemText, IconButton, Typography, Box, Paper, Modal } from '@mui/material';
+import React from 'react';
+import { List, ListItem, ListItemAvatar, Avatar, ListItemText, IconButton, Typography, Box, Paper } from '@mui/material';
 import PersonAddAltSharpIcon from '@mui/icons-material/PersonAddAltSharp';
 import { styled } from '@mui/material/styles';
 import MemberData from '../../data/members.json';
-import AddMemberToWorkspaceModel from './AddMemberToWorkspaceModel';  // Adjust the path as needed
 
 const StyledPaper = styled(Paper)(({ theme }) => ({
+  height: '400px',
+  width: '90%',
   padding: theme.spacing(2),
   overflowY: 'auto',
   '&::-webkit-scrollbar': {
@@ -22,12 +23,7 @@ const StyledPaper = styled(Paper)(({ theme }) => ({
   },
 }));
 
-function WorkspaceMembers({ height, width }) {
-  const [open, setOpen] = useState(false);
-
-  const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
-
+function WorkspaceMembers() {
   const memberList = MemberData.length === 0 ? (
     <Typography sx={{ textAlign: 'center', paddingTop: 2 }}>
       Please add members
@@ -46,26 +42,16 @@ function WorkspaceMembers({ height, width }) {
   );
 
   return (
-    <StyledPaper sx={{ height: height, width: width }}>
+    <StyledPaper>
       <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderRadius: 2 }}>
         <Typography sx={{ paddingTop: 0.5, paddingLeft: 1, fontSize: 20, fontWeight: 'bold' }}>
           Members
         </Typography>
-        <IconButton color="primary" onClick={handleOpen}>
+        <IconButton color="primary">
           <PersonAddAltSharpIcon sx={{ color: "#000000" }} />
         </IconButton>
       </Box>
       {memberList}
-      <Modal
-        open={open}
-        onClose={handleClose}
-        aria-labelledby="add-member-modal-title"
-        aria-describedby="add-member-modal-description"
-      >
-        <Box>
-          <AddMemberToWorkspaceModel handleClose={handleClose} />
-        </Box>
-      </Modal>
     </StyledPaper>
   );
 }

@@ -12,8 +12,6 @@ import FormControl from "@mui/material/FormControl";
 import InputLabel from "@mui/material/InputLabel";
 import PropTypes from "prop-types";
 import ProjectThumbnail from "../pages/Project/ProjectThumbnail"; // Import the ThumbnailComponent
-import { useDispatch, useSelector } from "react-redux";
-import { addProjectAsync } from "../features/project/projectSlice";
 
 const style = {
   position: "absolute",
@@ -29,43 +27,14 @@ const style = {
 };
 
 const NewProjectModel = ({ handleClose }) => {
-  const dispatch=useDispatch();
-  const creatorUserID=useSelector((state)=>state?.user?.loggedInUser?.user?._id);
   const [selectedImage, setSelectedImage] = useState(null);
-  const [workspace, setWorkspace] = useState("Updated Workspace");
+  const [workspace, setWorkspace] = useState("");
   const fileInputRef = useRef(null);
-  const [name,setName]=useState("");
-  const [description,setDescription]=useState("");
-  const [errors, setErrors] = useState({});
-  const workspaceData=useSelector((state)=>state?.workspace?.workspaces);
-  console.log(workspaceData)
+
   const handleFileUploadClick = () => {
     fileInputRef.current.click();
   };
-  const validateForm =()=>{
-    const newErrors = {};
-    if (!name) {
-      newErrors.name = 'Project Name is required';
-    }
-    if (!workspace) {
-      newErrors.workspace = 'Assign Workspace is required';
-    }
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  }
-  const handleCreate=()=>{
-    if(validateForm()){
-      const projectdata={
-        "name":name,
-        "description":description,
-        "workspaceName":workspace,
-        "creatorUserID":creatorUserID
-      }
-      dispatch(addProjectAsync(projectdata))
-      handleClose()
-    }
-    
-  }
+
   const handleFileChange = (event) => {
     const file = event.target.files[0];
     if (file) {
@@ -79,16 +48,6 @@ const NewProjectModel = ({ handleClose }) => {
 
   const handleWorkspaceChange = (event) => {
     setWorkspace(event.target.value);
-    if (event.target.value) {
-      setErrors((prevErrors) => ({ ...prevErrors, workspace: null }));
-    }
-  };
-
-  const handleNameChange = (event) => {
-    setName(event.target.value);
-    if (event.target.value) {
-      setErrors((prevErrors) => ({ ...prevErrors, name: null }));
-    }
   };
 
   return (
@@ -151,10 +110,6 @@ const NewProjectModel = ({ handleClose }) => {
         fullWidth
         margin="normal"
         style={{ marginBottom: "20px", backgroundColor: "white" }}
-        value={name}
-        onChange={handleNameChange}
-        error={!!errors.name}
-        helperText={errors.name}
       />
       <TextField
         id="project-description"
@@ -162,10 +117,8 @@ const NewProjectModel = ({ handleClose }) => {
         fullWidth
         margin="normal"
         style={{ marginBottom: "20px", backgroundColor: "white" }}
-        value={description}
-        onChange={(e)=>setDescription(e.target.value)}
       />
-      <FormControl fullWidth margin="normal" style={{ marginBottom: "40px" }} error={!!errors.workspace}>
+      <FormControl fullWidth margin="normal" style={{ marginBottom: "40px" }}>
         <InputLabel id="assign-workspace-label">Assign Workspace</InputLabel>
         <Select
           labelId="assign-workspace-label"
@@ -177,18 +130,17 @@ const NewProjectModel = ({ handleClose }) => {
           <MenuItem value="">
             <em>None</em>
           </MenuItem>
-          <MenuItem value="Updated Workspace">Workspace 1</MenuItem>
-          <MenuItem value="Updated Workspace">Workspace 2</MenuItem>
-          <MenuItem value="Updated Workspace">Workspace 3</MenuItem>
+          <MenuItem value="workspace1">Workspace 1</MenuItem>
+          <MenuItem value="workspace2">Workspace 2</MenuItem>
+          <MenuItem value="workspace3">Workspace 3</MenuItem>
         </Select>
-        {!!errors.workspace && <Typography color="error">{errors.workspace}</Typography>}
       </FormControl>
       <Button
         variant="contained"
         color="primary"
         fullWidth
         sx={{ textTransform: "none" }}
-        onClick={handleCreate}
+        onClick={handleClose}
       >
         Create Project
       </Button>

@@ -9,12 +9,12 @@ import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
 import { Grid } from '@mui/material';
 import WorkspaceCard from './WorkspaceCard';
+//import WorkspaceData from '../../data/workspaces.json';
 import AddIcon from '@mui/icons-material/Add';
 import NewWorkspaceModel from './NewWorkspaceModel';
 import Modal from '@mui/material/Modal';
-import { useDispatch, useSelector } from "react-redux";
-import { fetchWorkspaceByUserIDAsync } from '../../features/workspace/workspaceSlice';
-import { useNavigate } from 'react-router-dom';
+import { useDispatch,useSelector } from "react-redux";
+import { fetchWorkspaceAsync } from '../../features/workspace/workspaceSlice';
 
 const SearchIconWrapper = styled('div')(({ theme }) => ({
   padding: theme.spacing(0, 2),
@@ -51,7 +51,6 @@ const Search = styled('div')(({ theme }) => ({
     width: '300px',
   },
 }));
-
 const CustomBox = styled(Box)(({ theme }) => ({
   width: '100%',
   height: 'calc(100vh - 160px)',
@@ -66,6 +65,7 @@ const CustomBox = styled(Box)(({ theme }) => ({
 
 function WorkspacePage() {
   const [openModal, setOpenModal] = useState(false);
+
   const handleNewWorkspaceClick = () => {
     setOpenModal(true);
   };
@@ -73,19 +73,12 @@ function WorkspacePage() {
   const handleCloseModal = () => {
     setOpenModal(false);
   };
-
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
-  const WorkspaceData = useSelector((state) => state.workspace.workspaces);
-  const userId = useSelector((state) => state?.user?.loggedInUser?.user?._id);
-
-  useEffect(() => {
-    dispatch(fetchWorkspaceByUserIDAsync(userId));
-  }, [dispatch, userId]);
-
-  const handleWorkspaceCreated = () => {
-    dispatch(fetchWorkspaceByUserIDAsync(userId));
-  };
+  //redux
+ const dispatch=useDispatch();
+ const WorkspaceData=useSelector((state)=>state.workspace.workspaces)
+ useEffect(()=>{
+    dispatch(fetchWorkspaceAsync())
+ },[dispatch])
 
   return (
     <Box
@@ -106,6 +99,7 @@ function WorkspacePage() {
           height: 100,
         }}
       >
+
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <Typography variant="body1" component="div" sx={{ p: 2, fontWeight: 'bold' }}>
             Workspaces
@@ -135,7 +129,7 @@ function WorkspacePage() {
         <Grid container spacing={3} alignItems="center">
           {WorkspaceData.map((workspace) => (
             <Grid item key={workspace.id} xs={6} sm={6} md={3} lg={3} xl={2}>
-              <WorkspaceCard workspace={workspace} onClick={() => navigate(`/workspaces/${workspace.id}`)} />
+              <WorkspaceCard workspace={workspace} />
             </Grid>
           ))}
         </Grid>
@@ -146,7 +140,7 @@ function WorkspacePage() {
         aria-labelledby="workspace-model-title"
         aria-describedby="workspace-model-description"
       >
-        <NewWorkspaceModel handleClose={handleCloseModal} onWorkspaceCreated={handleWorkspaceCreated} />
+      <NewWorkspaceModel handleClose={handleCloseModal} />
       </Modal>
     </Box>
   );

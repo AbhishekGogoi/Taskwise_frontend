@@ -10,9 +10,6 @@ import { styled } from "@mui/material/styles";
 import InputBase from "@mui/material/InputBase";
 import Divider from "@mui/material/Divider";
 import { Button } from "@mui/material";
-import { useSelector,useDispatch } from "react-redux";
-import { useEffect } from "react";
-import { fetchProjectByIdAsync } from "../../features/project/projectSlice";
 
 const SearchIconWrapper = styled("div")(({ theme }) => ({
   padding: theme.spacing(0, 2),
@@ -54,17 +51,6 @@ const Search = styled("div")(({ theme }) => ({
 function Board() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const dispatch=useDispatch();
-  useEffect(() => {
-    if (id) {
-      dispatch(fetchProjectByIdAsync(id));
-    }
-  }, [dispatch, id]);
-  // console.log(id)
-  const initialBoardData = useSelector((state) => state.project.selectedProject);
-  console.log(initialBoardData)
-
-
   const handleClick = () => {
     navigate(`/projects/${id}/new-task`);
   };
@@ -214,9 +200,6 @@ function Board() {
             width: '100%',
             maxWidth: '1600px', 
             padding: 2,
-            '&::-webkit-scrollbar': {
-              display: 'none', 
-            },
         }}>
         <Grid container spacing={2} direction="row" wrap="nowrap" sx={{marginTopt:"3"}} alignItems="flex-start">
           {initialData.order.map((columnId) => {

@@ -1,14 +1,12 @@
-import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import React, { useState } from 'react';
 import { Box, Paper, Typography, InputBase, Divider, Tabs, Tab, Button } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import SearchIcon from '@mui/icons-material/Search';
 import AddIcon from '@mui/icons-material/Add';
+import SmartToyOutlinedIcon from '@mui/icons-material/SmartToyOutlined';
 import WorkspaceTasks from './WorkspaceTasks';
 import WorkspaceSettings from './WorkspaceSettings';
 import WorkspaceProjectCard from './WorkspaceProjectCard';
-import { useSelector, useDispatch } from 'react-redux';
-import { fetchWorkspaceByIdAsync } from '../../features/workspace/workspaceSlice';
 
 const SearchIconWrapper = styled('div')(({ theme }) => ({
   padding: theme.spacing(0, 2),
@@ -58,35 +56,12 @@ const CustomBox = styled(Box)(({ theme }) => ({
   'scrollbar-width': 'none',
 }));
 
-function WorkspaceDetails() {
-  const { id } = useParams();
-  const dispatch = useDispatch();
-  
-  const workspace = useSelector((state) => {
-    const workspaces = state.workspace.workspaces;
-    if (Array.isArray(workspaces)) {
-      return workspaces.find((workspace) => workspace.id === id);
-    } else {
-      console.error('Workspaces is not an array', workspaces);
-      return null;
-    }
-  });
-
+function WorkspaceDetails({ workspace }) {
   const [selectedTab, setSelectedTab] = useState(0);
-
-  useEffect(() => {
-    if (id) {
-      dispatch(fetchWorkspaceByIdAsync(id));
-    }
-  }, [dispatch, id]);
 
   const handleTabChange = (event, newValue) => {
     setSelectedTab(newValue);
   };
-
-  if (!workspace) {
-    return <Typography>Loading...</Typography>;
-  }
 
   return (
     <Box
@@ -121,7 +96,7 @@ function WorkspaceDetails() {
                 </Typography>
                 <Box>
                   <Typography gutterBottom variant="h6" component="div" sx={{ fontSize: '1rem' }}>
-                    {workspace.name}
+                    Workspace A
                   </Typography>
                 </Box>
               </Box>
@@ -164,20 +139,30 @@ function WorkspaceDetails() {
               }
             />
           </Tabs>
-          <Button 
-            variant="contained" 
-            size="small" 
-            startIcon={<AddIcon />}
-            sx={{ fontSize: '0.70rem', padding: '4px 8px', mr: 2 }}
-          >
-            New Project
-          </Button>
+          <Box sx={{ display: 'flex', gap: 1 }}>
+            <Button
+              alignItems="center" 
+              variant="contained" 
+              size="small" 
+              startIcon={<SmartToyOutlinedIcon sx={{ padding: 0.2 }} />}
+              sx={{ fontSize: '0.90rem', padding: '4px 8px', textTransform: 'none' }}>
+                Create with AI
+            </Button>
+            <Button 
+              alignItems="center"
+              variant="contained" 
+              size="small" 
+              startIcon={<AddIcon/>}
+              sx={{ fontSize: '0.90rem', padding: '4px 8px', marginRight: 1.8, textTransform: 'none' }}>
+                New Project
+            </Button>
+          </Box>
         </Box>
       </Paper>
       <CustomBox>
-        {selectedTab === 0 && <WorkspaceProjectCard workspaceId={workspace.id} />}
-        {selectedTab === 1 && <WorkspaceTasks />}
-        {selectedTab === 2 && <WorkspaceSettings />}
+        {selectedTab === 0 && (<WorkspaceProjectCard workspace={workspace}/>)}
+        {selectedTab === 1 && <WorkspaceTasks workspace={workspace} />}
+        {selectedTab === 2 && <WorkspaceSettings workspace={workspace} />}
       </CustomBox>
     </Box>
   );

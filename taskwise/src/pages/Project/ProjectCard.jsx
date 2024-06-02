@@ -5,8 +5,8 @@ function ProjectCard({project}) {
     const navigate=useNavigate();
     return (
         <Card 
-            sx={{ maxWidth: 240,cursor:"pointer" }}
-            onClick={()=>navigate(`/projects/${project.id}`)}   
+            sx={{ maxWidth: 240 }}
+            onClick={()=>navigate(`/projects/${project.id}`)}
         >
             <CardMedia
                 component="img"
