@@ -1,5 +1,6 @@
 import { createAsyncThunk , createSlice } from "@reduxjs/toolkit";
-import { fetchProjects, fetchProjectById, addProject } from "./projectApi";
+import { fetchWorkspaceMembers,fetchProjects, fetchProjectById, addProject, addTask, moveTask,addColumn, editColumn, editTask } from "./projectApi";
+
 
 const initialState={
     projects:[],
@@ -8,7 +9,14 @@ const initialState={
     selectedProject:null,
     status:"idle",
     errors:null,
-    sucessMessage:null
+    sucessMessage:null,
+    taskAddStatus:"idle",
+    taskMoveStatus:"idle",
+    columnAddStatus:"idle",
+    columnEditStatus:"idle",
+    taskEditStatus:"idle",
+    workspaceMembers:null,
+    workspaceMembersFetchStatus:"idle"
 }
 
 export const fetchProjectAsync=createAsyncThunk("projects/fetchProjects",async(userId)=>{
@@ -25,6 +33,39 @@ export const addProjectAsync=createAsyncThunk("projects/addProjectAsync",async(d
     const addedProject=await addProject(data)
     return addedProject
 })
+
+export const addTaskAsync=createAsyncThunk("projects/addTaskAsync",async({task,id})=>{
+    const addedTask=await addTask(task,id)
+    return addedTask
+})
+
+export const moveTaskAsync=createAsyncThunk("projects/moveTaskAsync",async({ data, idObject })=>{
+    const movedTask=await moveTask(data,idObject)
+    return movedTask
+})
+
+export const addColumnAsync=createAsyncThunk("projects/addColumnAsync",async({data,id})=>{
+    const addedColumn=await addColumn(data,id);
+    return addedColumn
+})
+
+export const editColumnAsync=createAsyncThunk("projects/editColumnAsync",async({data,idObject})=>{
+    const editedColumn=await editColumn(data,idObject);
+    return editedColumn
+})
+
+export const editTaskAsync=createAsyncThunk("projects/editTaskAsync",async({data,idObject})=>{
+    const editedTask=await editTask(data,idObject);
+    return editedTask
+})
+
+export const fetchWorkspaceMembersAsync = createAsyncThunk('projects/fetchWorkspaceMembers', async (workspaceId) => {
+    const workspaces = await fetchWorkspaceMembers(workspaceId);
+    return workspaces;
+  }
+);
+
+
 const projectSlice=createSlice({
     name:"projectSlice",
     initialState:initialState,
@@ -40,6 +81,18 @@ const projectSlice=createSlice({
         },
         resetProjectFetchStatus:(state)=>{
             state.projectFetchStatus='idle'
+        },
+        resetTaskAddStatus: (state) => {
+            state.taskAddStatus = 'idle';
+        },
+        resetProjectAddStatus:(state) => {
+            state.projectAddStatus="idle"
+        },
+        resetColumnAddStatus:(state) => {
+            state.columnAddStatus="idle"
+        },
+        resetColumnEditStatus:(state)=>{
+            state.columnEditStatus="idle"
         }
     },
     extraReducers:(builder)=>{
@@ -77,6 +130,68 @@ const projectSlice=createSlice({
                 state.projectAddStatus="rejected"
                 state.errors=action.error
             })
+            .addCase(addTaskAsync.pending,(state,action)=>{
+                state.taskAddStatus="pending"
+            })
+            .addCase(addTaskAsync.fulfilled,(state,action)=>{
+                state.taskAddStatus="fulfilled"
+                state.selectedProject.tasks.push(action.payload)
+            })
+            .addCase(addTaskAsync.rejected,(state,action)=>{
+                state.taskAddStatus="rejected"
+                state.errors=action.error
+            })
+            .addCase(moveTaskAsync.pending,(state,action)=>{
+                state.taskMoveStatus="pending"
+                state.projectFetchStatus="loading"
+            })
+            .addCase(moveTaskAsync.fulfilled,(state,action)=>{
+                state.taskMoveStatus="fulfilled"
+                state.projectFetchStatus="idle"
+                //state.selectedProject=action.payload
+            })
+            .addCase(moveTaskAsync.rejected,(state,action)=>{
+                state.taskMoveStatus="rejected"
+            })
+            .addCase(addColumnAsync.pending,(state,action)=>{
+                state.columnAddStatus="pending"
+            })
+            .addCase(addColumnAsync.fulfilled,(state,action)=>{
+                state.columnAddStatus="fulfilled"
+                state.selectedProject=action.payload
+            })
+            .addCase(addColumnAsync.rejected,(state,action)=>{
+                state.columnAddStatus="rejected"
+            })
+            .addCase(editColumnAsync.pending,(state,action)=>{
+                state.columnEditStatus="pending"
+            })
+            .addCase(editColumnAsync.fulfilled,(state,action)=>{
+                state.columnEditStatus="fulfilled"
+            })
+            .addCase(editColumnAsync.rejected,(state,action)=>{
+                state.columnEditStatus="rejected"
+            })
+            .addCase(editTaskAsync.pending,(state,action)=>{
+                state.taskEditStatus="pending"
+            })
+            .addCase(editTaskAsync.fulfilled,(state,action)=>{
+                state.taskEditStatus="fulfilled";
+                state.selectedProject=action.payload;
+            })
+            .addCase(editTaskAsync.rejected,(state,action)=>{
+                state.taskEditStatus="rejected"
+            })
+            .addCase(fetchWorkspaceMembersAsync.pending,(state)=>{
+                state.workspaceMembersFetchStatus="loading"
+            })
+            .addCase(fetchWorkspaceMembersAsync.fulfilled,(state,action)=>{
+                state.workspaceMembersFetchStatus="fulfilled"
+                state.workspaceMembers=action.payload
+            })
+            .addCase(fetchWorkspaceMembersAsync.rejected,(state,action)=>{
+                state.workspaceMembersFetchStatus="rejected"
+            })
     }
 })
 
@@ -84,7 +199,11 @@ export const {
     clearProjectErrors,
     clearProjectSuccessMessage,
     resetProjectStatus,
-    resetProjectFetchStatus
+    resetProjectFetchStatus,
+    resetTaskAddStatus,
+    resetProjectAddStatus,
+    resetColumnAddStatus,
+    resetColumnEditStatus
 } = projectSlice.actions;
 
 export default projectSlice.reducer;
