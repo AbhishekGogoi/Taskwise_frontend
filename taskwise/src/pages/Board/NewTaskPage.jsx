@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { Grid, TextField, Button, Box, Typography, IconButton, Paper, MenuItem, Select,FormControl, FormHelperText } from '@mui/material';
+import { Grid, TextField, Button, Box, Typography, IconButton, Paper, MenuItem, Select, FormControl, FormHelperText } from '@mui/material';
 import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
-import { addTaskAsync, resetTaskAddStatus } from '../../features/project/projectSlice';
+import { addTaskAsync, fetchWorkspaceMembersAsync } from '../../features/project/projectSlice';
 import { useDispatch } from 'react-redux';
 import { useSelector } from 'react-redux';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+
 
 function NewTaskPage() {
     const [title, setTitle] = useState('');
@@ -21,11 +22,17 @@ function NewTaskPage() {
     const dispatch = useDispatch();
     const { id } = useParams();
     //const colId = useSelector((state) => state?.project?.selectedProject?.order[0])
-    const coldata = useSelector((state) => state?.project?.selectedProject?.columns)
-    const titlesAndIds = coldata.map(item => ({
+    const coldata = useSelector((state) => state?.project?.selectedProject?.columns);
+    const workspaceId = useSelector((state) => state?.project?.selectedProject?.workspaceId)
+    const titlesAndIds = coldata?.map(item => ({
         title: item.title,
         id: item._id
     }));
+    const membersData = useSelector((state) => state?.project?.workspaceMembers?.data);
+    const users = membersData.map(item => item.user);
+    const [options] = useState(users);
+    //console.log(membersData, "membersdata")
+    //const [options, setOptions] = useState(membersData.map(item => item.user));
     const handleStatusChange = (event) => {
         setStatus(event.target.value);
         setErrors(prevErrors => ({ ...prevErrors, status: '' }));
@@ -41,7 +48,7 @@ function NewTaskPage() {
     };
 
     const validateFields = () => {
-        const newErrors = { title: '', description: '', priority: '', status: ''  };
+        const newErrors = { title: '', description: '', priority: '', status: '' };
         let hasError = false;
 
         if (!title.trim()) {
@@ -106,12 +113,8 @@ function NewTaskPage() {
     };
     const taskAddStatus = useSelector((state) => state.project.taskAddStatus);
     useEffect(() => {
-        if (taskAddStatus === "rejected") {
-            toast.error("Failed to add task.");
-            dispatch(resetTaskAddStatus());
-        }
-    }, [taskAddStatus, dispatch]);
-
+        dispatch(fetchWorkspaceMembersAsync(workspaceId))
+    }, []);
     return (
         <Box
             sx={{
@@ -234,9 +237,11 @@ function NewTaskPage() {
                                             <MenuItem value="" disabled>
                                                 Select
                                             </MenuItem>
-                                            <MenuItem value="Option 1">Option 1</MenuItem>
-                                            <MenuItem value="Option 2">Option 2</MenuItem>
-                                            <MenuItem value="Option 3">Option 3</MenuItem>
+                                            {options.map((option) => (
+                                                <MenuItem key={option.id} value={option.id}>
+                                                    {option.email} 
+                                                </MenuItem>
+                                            ))}
                                         </Select>
                                     </Box>
                                 </Grid>
@@ -246,7 +251,7 @@ function NewTaskPage() {
                                         Priority
                                     </Typography>
                                     <Box sx={{ display: 'flex', alignItems: 'center', flexGrow: 1, ml: 6 }}>
-                                    <FormControl sx={{ width: '100%', maxWidth: 200 }} error={!!errors.priority}>
+                                        <FormControl sx={{ width: '100%', maxWidth: 200 }} error={!!errors.priority}>
                                             <Select
                                                 value={priority}
                                                 onChange={handlePriorityChange}
@@ -283,7 +288,7 @@ function NewTaskPage() {
                                             Status
                                         </Typography>
                                         <Box sx={{ display: 'flex', alignItems: 'center', flexGrow: 1, ml: 5 }}>
-                                        <FormControl sx={{ width: '100%', maxWidth: 200 }} error={!!errors.status}>
+                                            <FormControl sx={{ width: '100%', maxWidth: 200 }} error={!!errors.status}>
                                                 <Select
                                                     value={status}
                                                     onChange={handleStatusChange}
@@ -294,7 +299,7 @@ function NewTaskPage() {
                                                     <MenuItem value="" disabled>
                                                         Set Status
                                                     </MenuItem>
-                                                    {titlesAndIds.map(item => (
+                                                    {titlesAndIds?.map(item => (
                                                         <MenuItem key={item.id} value={item.id}>
                                                             {item.title}
                                                         </MenuItem>
@@ -333,7 +338,7 @@ function NewTaskPage() {
                                             backgroundColor: '#d0d0d0',
                                         },
                                     }}
-                                    onClick={()=>navigate(-1)}
+                                    onClick={() => navigate(-1)}
                                 >
                                     Cancel
                                 </Button>
