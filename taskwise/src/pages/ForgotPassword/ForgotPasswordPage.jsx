@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
@@ -7,6 +7,12 @@ import Typography from "@mui/material/Typography";
 import { styled, ThemeProvider, createTheme } from "@mui/material/styles";
 import TaskWiseLogo from "../../assets/TaskWiseLogo.png";
 import forgotpasswordlogo from "../../assets/forgotpasswordlogo.jpeg";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  forgotPasswordAsync,
+  resetForgotPasswordStatus,
+} from "../../features/user/userSlice";
+import { ToastContainer, toast } from "react-toastify";
 
 const theme = createTheme();
 
@@ -93,6 +99,20 @@ const CopyrightText = styled(Typography)(({ theme }) => ({
 
 const ForgotPasswordPage = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  // const successMessage = useSelector((state) => state.user.successMessage);
+  // const forgotPasswordError = useSelector(
+  //   (state) => state.user.forgotPasswordError
+  // );
+
+  const forgotPasswordStatus = useSelector(
+    (state) => state.user.forgotPasswordStatus
+  );
+  const forgotPasswordError = useSelector(
+    (state) => state.user.forgotPasswordError
+  );
+
   const [email, setEmail] = useState(""); // State for email
   const [error, setError] = useState(""); // State for error message
 
@@ -110,9 +130,22 @@ const ForgotPasswordPage = () => {
       return;
     }
 
-    // If valid, proceed to VerificationPage (replace with actual logic)
-    navigate("/forgotpassword/verification");
+    setError(""); // Clear any previous error
+    dispatch(forgotPasswordAsync({ email }));
   };
+
+  useEffect(() => {
+    if (forgotPasswordStatus === "fulfilled") {
+      navigate("/verification");
+      dispatch(resetForgotPasswordStatus());
+    }
+  }, [forgotPasswordStatus, navigate, dispatch]);
+
+  useEffect(() => {
+    if (forgotPasswordError) {
+      toast.error(forgotPasswordError.message);
+    }
+  }, [forgotPasswordError]);
 
   return (
     <ThemeProvider theme={theme}>
@@ -155,7 +188,7 @@ const ForgotPasswordPage = () => {
           <Title variant="h5">Forgot Password?</Title>
         </Box>
 
-        <Form onSubmit={handleSubmit}>
+        <Form>
           <Typography variant="body2" sx={{ color: "#5b5858" }}>
             Don't worry! It happens. Please enter your email id, we will send
             the OTP
@@ -176,6 +209,7 @@ const ForgotPasswordPage = () => {
             variant="contained"
             color="primary"
             fullWidth
+            onClick={handleSubmit}
           >
             Continue
           </SubmitButton>
@@ -184,6 +218,7 @@ const ForgotPasswordPage = () => {
       <CopyrightText>
         Copyright © 2024. TaskWise All rights reserved.
       </CopyrightText>
+      <ToastContainer />
     </ThemeProvider>
   );
 };
