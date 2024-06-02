@@ -1,6 +1,7 @@
 import React, { useState, useRef } from 'react';
 import {
-  Box, Grid, IconButton, Typography, Paper, TextField, Dialog, DialogContent, DialogTitle, Tabs, Tab, Card, CardContent, CardActions
+  Box, Grid, IconButton, Typography, Paper, TextField, Dialog, DialogContent, DialogTitle, Tabs, Tab, Card, CardContent, CardActions,
+  ImageList, ImageListItem, Modal
 } from '@mui/material';
 import PersonAddAltSharpIcon from '@mui/icons-material/PersonAddAltSharp';
 import LinkSharpIcon from '@mui/icons-material/LinkSharp';
@@ -12,10 +13,12 @@ import ModeEditSharpIcon from '@mui/icons-material/ModeEditSharp';
 import SaveIcon from '@mui/icons-material/Save';
 import CancelIcon from '@mui/icons-material/Cancel';
 import ChevronRightSharpIcon from '@mui/icons-material/ChevronRightSharp';
-import { ImageList, ImageListItem } from '@mui/material';
 import ImageOutlinedIcon from '@mui/icons-material/ImageOutlined';
 import DescriptionOutlinedIcon from '@mui/icons-material/DescriptionOutlined';
 import CloseIcon from '@mui/icons-material/Close';
+import ExitWorkspaceModal from './Models/ExitWorkspaceModal';
+import AddMemberToWorkspaceModel from './Models/AddMemberModel';
+import ShareJoiningLinkModel from './Models/ShareJoiningLinkModel';
 
 const StyledPaper = styled(Paper)(({ theme }) => ({
   height: '400px',
@@ -59,6 +62,21 @@ function WorkspaceSettings({ workspace }) {
     'https://example.com/doc2.pdf',
     'https://example.com/doc3.pdf',
   ]);
+
+  const [open, setOpen] = useState(false);
+
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
+
+  const [openShareModel, setOpenShareModel] = useState(false);
+
+  const handleOpenShareModel = () => setOpenShareModel(true);
+  const handleCloseShareModel = () => setOpenShareModel(false);
+
+  const [openExitModal, setOpenExitModal] = useState(false);
+
+  const handleOpenExitModal = () => setOpenExitModal(true);
+  const handleCloseExitModal = () => setOpenExitModal(false);
 
   const fileInputRef = useRef(null);
 
@@ -173,15 +191,15 @@ function WorkspaceSettings({ workspace }) {
       <Grid item xs={12} md={6}>
         <StyledPaper>
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
-            <IconButton color="primary">
-              <PersonAddAltSharpIcon sx={{ color: "#000000", fontSize: 25 }} />
+            <IconButton color="primary" onClick={handleOpen}>
+              <PersonAddAltSharpIcon sx={{ color: "#000000" }} />
             </IconButton>
             <Typography sx={{ paddingTop: 0.5, paddingLeft: 1, fontSize: 15, fontWeight: 'bold' }}>
               Add Member
             </Typography>
           </Box>
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
-            <IconButton color="primary">
+            <IconButton onClick={handleOpenShareModel}>
               <LinkSharpIcon sx={{ color: "#000000", fontSize: 25, transform: 'rotate(135deg)' }} />
             </IconButton>
             <Typography sx={{ paddingBottom: 0.2, paddingLeft: 1, fontSize: 15, fontWeight: 'bold' }}>
@@ -192,15 +210,58 @@ function WorkspaceSettings({ workspace }) {
             <WorkspaceSettingsMembers />
           </Box>
           <Box sx={{ display: 'flex', alignItems: 'center', marginTop: 6 }}>
-            <LogoutIcon sx={{ fontSize: 30, color: "#000000" }} />
+            <IconButton onClick={handleOpenExitModal}>
+              <LogoutIcon sx={{ fontSize: 30, color: "#000000" }} />
+            </IconButton>
             <Typography sx={{ paddingBottom: 0.2, paddingLeft: 1, fontSize: 15, fontWeight: 'bold' }}>
               Exit Workspace
             </Typography>
           </Box>
+          <Modal
+            open={open}
+            onClose={handleClose}
+            aria-labelledby="add-member-modal-title"
+            aria-describedby="add-member-modal-description"
+          >
+            <Box>
+              <AddMemberToWorkspaceModel handleClose={handleClose} />
+            </Box>
+          </Modal>
+            <Modal
+              open={openShareModel}
+              onClose={handleCloseShareModel}
+              aria-labelledby="add-member-modal-title"
+              aria-describedby="add-member-modal-description"
+            >
+              <Box>
+                <ShareJoiningLinkModel handleClose={handleCloseShareModel} />
+              </Box>
+            </Modal>
+          <Modal
+            open={openExitModal}
+            onClose={handleCloseExitModal}
+            aria-labelledby="exit-workspace-modal-title"
+            aria-describedby="exit-workspace-modal-description"
+          >
+            <Box
+              sx={{
+                position: 'absolute',
+                top: '50%',
+                left: '50%',
+                transform: 'translate(-50%, -50%)',
+                bgcolor: 'background.paper',
+                boxShadow: 24,
+                p: 4,
+                width: '400px',
+              }}
+            >
+              <ExitWorkspaceModal handleClose={handleCloseExitModal} />
+            </Box>
+          </Modal>
         </StyledPaper>
       </Grid>
 
-      <Dialog open={openDialog} onClose={handleDialogClose} maxWidth="md" fullWidth sx={{height: "400px"}}>
+      <Dialog open={openDialog} onClose={handleDialogClose} maxWidth="md" fullWidth>
         <DialogTitle>{dialogTitle}</DialogTitle>
         <DialogContent>
           <Grid container spacing={2} alignItems="center">
@@ -209,7 +270,7 @@ function WorkspaceSettings({ workspace }) {
                 <Tab
                   label={
                     <TabLabelWrapper>
-                      <ImageOutlinedIcon  sx={{p: 1}} />
+                      <ImageOutlinedIcon sx={{ p: 1 }} />
                       <span>Media</span>
                     </TabLabelWrapper>
                   }
@@ -217,7 +278,7 @@ function WorkspaceSettings({ workspace }) {
                 <Tab
                   label={
                     <TabLabelWrapper>
-                      <DescriptionOutlinedIcon  sx={{p: 1}} />
+                      <DescriptionOutlinedIcon sx={{ p: 1 }} />
                       <span>Docs</span>
                     </TabLabelWrapper>
                   }
@@ -264,7 +325,6 @@ function WorkspaceSettings({ workspace }) {
           </Grid>
         </DialogContent>
       </Dialog>
-
     </Grid>
   );
 }

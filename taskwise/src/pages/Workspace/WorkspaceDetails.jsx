@@ -8,7 +8,10 @@ import WorkspaceTasks from './WorkspaceTasks';
 import WorkspaceSettings from './WorkspaceSettings';
 import WorkspaceProjectCard from './WorkspaceProjectCard';
 import { useSelector, useDispatch } from 'react-redux';
-import { fetchWorkspaceByIdAsync } from '../../features/workspace/workspaceSlice';
+import { fetchWorkspaceByIdAsync, 
+         fetchWorkspaceProjectsAsync,
+         fetchWorkspaceTasksAsync,
+         fetchWorkspaceMembersAsync } from '../../features/workspace/workspaceSlice';
 
 const SearchIconWrapper = styled('div')(({ theme }) => ({
   padding: theme.spacing(0, 2),
@@ -62,21 +65,20 @@ function WorkspaceDetails() {
   const { id } = useParams();
   const dispatch = useDispatch();
   
-  const workspace = useSelector((state) => {
-    const workspaces = state.workspace.workspaces;
-    if (Array.isArray(workspaces)) {
-      return workspaces.find((workspace) => workspace.id === id);
-    } else {
-      console.error('Workspaces is not an array', workspaces);
-      return null;
-    }
-  });
+  const workspace = useSelector((state) => state.workspace.workspaces.find((workspace) => workspace.id === id));
+
+  const projectData = useSelector((state) => state.workspace.selectedProjects);
+  const tasksData = useSelector((state) => state.workspace.selectedTasks);
+  const membersData = useSelector((state) => state.workspace.selectedMembers);
 
   const [selectedTab, setSelectedTab] = useState(0);
 
   useEffect(() => {
     if (id) {
       dispatch(fetchWorkspaceByIdAsync(id));
+      dispatch(fetchWorkspaceProjectsAsync(id));
+      dispatch(fetchWorkspaceTasksAsync(id));
+      dispatch(fetchWorkspaceMembersAsync(id));
     }
   }, [dispatch, id]);
 
@@ -175,8 +177,8 @@ function WorkspaceDetails() {
         </Box>
       </Paper>
       <CustomBox>
-        {selectedTab === 0 && <WorkspaceProjectCard workspaceId={workspace.id} />}
-        {selectedTab === 1 && <WorkspaceTasks />}
+        {selectedTab === 0 && <WorkspaceProjectCard projectData={projectData} membersData={membersData}/>}
+        {selectedTab === 1 && <WorkspaceTasks tasksData={tasksData} membersData={membersData}/>}
         {selectedTab === 2 && <WorkspaceSettings />}
       </CustomBox>
     </Box>

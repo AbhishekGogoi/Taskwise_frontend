@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import { List, ListItem, ListItemAvatar, Avatar, ListItemText, IconButton, Typography, Box, Paper, Modal } from '@mui/material';
 import PersonAddAltSharpIcon from '@mui/icons-material/PersonAddAltSharp';
 import { styled } from '@mui/material/styles';
-import MemberData from '../../data/members.json';
-import AddMemberToWorkspaceModel from './AddMemberToWorkspaceModel';  // Adjust the path as needed
+// import MemberData from '../../data/members.json';
+import AddMemberToWorkspaceModel from './Models/AddMemberModel';
 
 const StyledPaper = styled(Paper)(({ theme }) => ({
   padding: theme.spacing(2),
@@ -22,24 +22,24 @@ const StyledPaper = styled(Paper)(({ theme }) => ({
   },
 }));
 
-function WorkspaceMembers({ height, width }) {
+function WorkspaceMembers({ height, width, membersData }) {
   const [open, setOpen] = useState(false);
 
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
-  const memberList = MemberData.length === 0 ? (
+  const memberList = membersData.length === 0 ? (
     <Typography sx={{ textAlign: 'center', paddingTop: 2 }}>
       Please add members
     </Typography>
   ) : (
     <List>
-      {MemberData.map((member) => (
+      {membersData.map((member) => (
         <ListItem key={member.id}>
           <ListItemAvatar>
-            <Avatar alt={member.name} src={member.img} />
+            <Avatar alt={member.name} src={member.user.imgUrl} />
           </ListItemAvatar>
-          <ListItemText primary={member.name} />
+          <ListItemText primary={member.user.email} />
         </ListItem>
       ))}
     </List>

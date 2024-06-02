@@ -5,10 +5,11 @@ import "@ag-grid-community/styles/ag-theme-alpine.css";
 import { ModuleRegistry } from "@ag-grid-community/core";
 import { ClientSideRowModelModule } from "@ag-grid-community/client-side-row-model";
 import { styled } from "@mui/material/styles";
-import tasksData from "../../data/tasks.json";
 
+// Register the necessary modules with AG Grid
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
+// Styled container for the AG Grid
 const StyledAgGridContainer = styled("div")(({ theme }) => ({
   display: "flex",
   justifyContent: "center",
@@ -17,25 +18,23 @@ const StyledAgGridContainer = styled("div")(({ theme }) => ({
   width: "100%",
 }));
 
-const WorkspaceTaskPage = () => {
+// Main component to display the tasks data
+const WorkspaceTaskPage = ({ tasksData }) => {
   const gridStyle = useMemo(() => ({ height: "100%", width: "100%" }), []);
 
+  // Set the row data using the provided tasksData
   const [rowData] = useState(tasksData);
 
+  // Define the column definitions to match the structure of the tasks data
   const [colDefs] = useState([
-    { field: "Task", flex: 2, sortable: true, filter: "agTextColumnFilter" },
-    { field: "DueDate", flex: 1, sortable: true, filter: "agTextColumnFilter" },
-    {
-      field: "Priority",
-      flex: 1,
-      sortable: true,
-      filter: "agTextColumnFilter",
-      cellRenderer: "PriorityCellRenderer"
-    },
-    { field: "Status", flex: 1, sortable: true, filter: "agTextColumnFilter" },
-    { field: "Project", flex: 1, sortable: true, filter: "agTextColumnFilter" },
+    { field: "name", headerName: "Task", flex: 1, sortable: true, filter: "agTextColumnFilter" },
+    { field: "dueDate", headerName: "Due Date", flex: 1, sortable: true, filter: "agTextColumnFilter" },
+    { field: "priority", headerName: "Priority", flex: 1, sortable: true, filter: "agTextColumnFilter" },
+    // { field: "status", headerName: "Satus", flex: 1, sortable: true, filter: "agTextColumnFilter" },
+    { field: "project", headerName: "Project", flex: 1, sortable: true, filter: "agTextColumnFilter" },
   ]);
 
+  // Default column properties
   const defaultColDef = useMemo(() => ({
     filter: true,
     floatingFilter: true,
