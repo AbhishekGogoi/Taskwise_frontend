@@ -151,10 +151,11 @@ function ProjectPage() {
     dispatch(fetchProjectAsync(userId))
   }, [dispatch, userId]);
   useEffect(() => {
-    if (projectAddStatus == "fulfilled") {
+    if (projectAddStatus === "fulfilled") {
       toast.success("Project created successfully!");
       dispatch(resetProjectAddStatus());
     }
+    // eslint-disable-next-line
   }, [projectAddStatus])
   const handleOpenModal = () => {
     setModalOpen(true);

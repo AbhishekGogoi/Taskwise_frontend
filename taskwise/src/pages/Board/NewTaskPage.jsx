@@ -20,7 +20,7 @@ function NewTaskPage() {
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const { id } = useParams();
-    const colId = useSelector((state) => state?.project?.selectedProject?.order[0])
+    //const colId = useSelector((state) => state?.project?.selectedProject?.order[0])
     const coldata = useSelector((state) => state?.project?.selectedProject?.columns)
     const titlesAndIds = coldata.map(item => ({
         title: item.title,
@@ -106,7 +106,7 @@ function NewTaskPage() {
     };
     const taskAddStatus = useSelector((state) => state.project.taskAddStatus);
     useEffect(() => {
-        if (taskAddStatus == "rejected") {
+        if (taskAddStatus === "rejected") {
             toast.error("Failed to add task.");
             dispatch(resetTaskAddStatus());
         }

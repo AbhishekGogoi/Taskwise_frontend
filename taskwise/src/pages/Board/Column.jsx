@@ -7,7 +7,7 @@ import { useState } from "react";
 import SaveIcon from '@mui/icons-material/Save';
 import CancelIcon from '@mui/icons-material/Cancel';
 import { useDispatch, useSelector } from "react-redux";
-import { editColumnAsync, resetColumnEditStatus } from "../../features/project/projectSlice";
+import { editColumnAsync } from "../../features/project/projectSlice";
 import { useParams } from "react-router-dom";
 function Column({ column, tasks, onDrop }) {
   const [isEditing, setIsEditing] = useState(false);

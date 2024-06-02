@@ -14,7 +14,7 @@ import {
 } from "@mui/material";
 import { toast, ToastContainer } from "react-toastify";
 import AddOutlinedIcon from "@mui/icons-material/AddOutlined";
-import { editTaskAsync, updateTaskAsync } from "../../features/project/projectSlice"; // Import the update task action
+import { editTaskAsync } from "../../features/project/projectSlice"; // Import the update task action
 
 const TaskDetailsPage = () => {
   const navigate = useNavigate();
@@ -30,17 +30,17 @@ const TaskDetailsPage = () => {
     dueDate: "",
   });
 
-  const coldata = useSelector(
-    (state) => state.project?.selectedProject?.columns
-  );
+  // const coldata = useSelector(
+  //   (state) => state.project?.selectedProject?.columns
+  // );
   const pid=useSelector(
     (state) => state?.project?.selectedProject?.id
   );
   console.log(pid,"pid")
-  const titlesAndIds = coldata?.map((item) => ({
-    title: item.title,
-    id: item._id,
-  }));
+  // const titlesAndIds = coldata?.map((item) => ({
+  //   title: item.title,
+  //   id: item._id,
+  // }));
 
   const selectedProject = useSelector((state) => state.project.selectedProject);
   const taskData = selectedProject ? selectedProject.tasks : [];
