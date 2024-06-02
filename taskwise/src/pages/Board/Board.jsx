@@ -12,10 +12,11 @@ import Divider from "@mui/material/Divider";
 import { Button } from "@mui/material";
 import { useSelector, useDispatch } from "react-redux";
 import { useEffect } from "react";
-import { fetchProjectByIdAsync, resetTaskAddStatus, moveTaskAsync, resetColumnAddStatus } from "../../features/project/projectSlice";
+import { fetchProjectByIdAsync, resetTaskAddStatus, moveTaskAsync, resetColumnAddStatus, fetchWorkspaceMembersAsync } from "../../features/project/projectSlice";
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import AddColumnModal from "./AddColumnModal";
+
 
 
 const SearchIconWrapper = styled("div")(({ theme }) => ({
@@ -65,13 +66,16 @@ function Board() {
     //console.log("useEffect for dispatch")
     if (id) {
       dispatch(fetchProjectByIdAsync(id));
+      dispatch(fetchWorkspaceMembersAsync(workspaceId))
     }
   }, [dispatch, id]);
+ 
   // console.log(id)
   const initialData = useSelector((state) => state.project.selectedProject);
   const columnAddStatus = useSelector((state)=>state.project.columnAddStatus)
   const taskAddStatus = useSelector((state) => state.project.taskAddStatus);
   const projectFetchStatus = useSelector((state) => state.project.projectFetchStatus);
+  const workspaceId=initialData?.workspaceId;
   const [order, setOrder] = useState(null)
   const [dataTask, setDataTask] = useState(null)
   const handleClick = () => {

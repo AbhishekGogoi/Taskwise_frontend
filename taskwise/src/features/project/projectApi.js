@@ -76,3 +76,11 @@ export const editTask=async(data,idObject)=>{
     }
 }
 
+export const fetchWorkspaceMembers=async(workspaceId)=>{
+    try{
+        const res=await axiosi.get(`/workspaces/${workspaceId}/members`);
+        return {data:res.data}
+    }catch(error){
+        throw error.response.data
+    }
+  }

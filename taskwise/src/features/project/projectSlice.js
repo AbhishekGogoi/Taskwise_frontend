@@ -1,5 +1,5 @@
 import { createAsyncThunk , createSlice } from "@reduxjs/toolkit";
-import { fetchProjects, fetchProjectById, addProject, addTask, moveTask,addColumn, editColumn, editTask } from "./projectApi";
+import { fetchWorkspaceMembers,fetchProjects, fetchProjectById, addProject, addTask, moveTask,addColumn, editColumn, editTask } from "./projectApi";
 
 
 const initialState={
@@ -14,7 +14,9 @@ const initialState={
     taskMoveStatus:"idle",
     columnAddStatus:"idle",
     columnEditStatus:"idle",
-    taskEditStatus:"idle"
+    taskEditStatus:"idle",
+    workspaceMembers:null,
+    workspaceMembersFetchStatus:"idle"
 }
 
 export const fetchProjectAsync=createAsyncThunk("projects/fetchProjects",async(userId)=>{
@@ -56,6 +58,13 @@ export const editTaskAsync=createAsyncThunk("projects/editTaskAsync",async({data
     const editedTask=await editTask(data,idObject);
     return editedTask
 })
+
+export const fetchWorkspaceMembersAsync = createAsyncThunk('projects/fetchWorkspaceMembers', async (workspaceId) => {
+    const workspaces = await fetchWorkspaceMembers(workspaceId);
+    return workspaces;
+  }
+);
+
 
 const projectSlice=createSlice({
     name:"projectSlice",
@@ -172,6 +181,16 @@ const projectSlice=createSlice({
             })
             .addCase(editTaskAsync.rejected,(state,action)=>{
                 state.taskEditStatus="rejected"
+            })
+            .addCase(fetchWorkspaceMembersAsync.pending,(state)=>{
+                state.workspaceMembersFetchStatus="loading"
+            })
+            .addCase(fetchWorkspaceMembersAsync.fulfilled,(state,action)=>{
+                state.workspaceMembersFetchStatus="fulfilled"
+                state.workspaceMembers=action.payload
+            })
+            .addCase(fetchWorkspaceMembersAsync.rejected,(state,action)=>{
+                state.workspaceMembersFetchStatus="rejected"
             })
     }
 })
