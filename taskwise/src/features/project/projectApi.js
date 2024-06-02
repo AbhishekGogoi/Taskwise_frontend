@@ -25,3 +25,61 @@ export const addProject=async(data)=>{
         throw error.response.data
     }
 }
+
+export const addTask=async(task,id)=>{
+    console.log(task,id,"project slice")
+    try{
+        const res=await axiosi.post(`/projects/${id}/tasks`,task);
+        return res.data
+    }catch(error){
+        throw error.response.data
+    }
+}
+
+export const moveTask=async(data,idObject)=>{
+    const { id, taskId } = idObject;
+    try{
+        const res=await axiosi.put(`/projects/${id}/tasks/${taskId}/move`,data)
+        return res.data
+    }catch(error){
+        throw error.response.data
+    }
+}
+
+export const addColumn=async(data,id)=>{
+    try{
+        const res=await axiosi.post(`/projects/${id}/columns`,data);
+        return res.data
+    }catch(error){
+        throw error.response.data
+    }
+}
+export const editColumn=async(data,idObject)=>{
+    try{
+        const { id, columnId } = idObject;
+        const res=await axiosi.put(`/projects/${id}/columns/${columnId}`,data);
+        return res.data
+    }catch(error){
+        throw error.response.data
+    }
+}
+
+export const editTask=async(data,idObject)=>{
+    try{
+        const { id, taskId } = idObject;
+        console.log(data,"editdata")
+        const res=await axiosi.put(`/projects/${id}/tasks/${taskId}`,data);
+        return res.data
+    }catch(error){
+        throw error.response.data
+    }
+}
+
+export const fetchWorkspaceMembers=async(workspaceId)=>{
+    try{
+        const res=await axiosi.get(`/workspaces/${workspaceId}/members`);
+        return {data:res.data}
+    }catch(error){
+        throw error.response.data
+    }
+  }

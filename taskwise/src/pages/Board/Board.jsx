@@ -1,18 +1,23 @@
 import React from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { DndProvider } from "react-dnd";
+import { DndProvider} from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import Column from "./Column";
 import { useState } from "react";
-import { Box, Paper, Typography, Grid } from "@mui/material";
+import { Box, Paper, Typography, Grid, Stack } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import { styled } from "@mui/material/styles";
 import InputBase from "@mui/material/InputBase";
 import Divider from "@mui/material/Divider";
 import { Button } from "@mui/material";
-import { useSelector,useDispatch } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { useEffect } from "react";
-import { fetchProjectByIdAsync } from "../../features/project/projectSlice";
+import { fetchProjectByIdAsync, resetTaskAddStatus, moveTaskAsync, resetColumnAddStatus, fetchWorkspaceMembersAsync } from "../../features/project/projectSlice";
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import AddColumnModal from "./AddColumnModal";
+
+
 
 const SearchIconWrapper = styled("div")(({ theme }) => ({
   padding: theme.spacing(0, 2),
@@ -54,60 +59,147 @@ const Search = styled("div")(({ theme }) => ({
 function Board() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const dispatch=useDispatch();
+  const dispatch = useDispatch();
+  const [searchTerm, setSearchTerm] = useState("");
+
   useEffect(() => {
+    //console.log("useEffect for dispatch")
     if (id) {
       dispatch(fetchProjectByIdAsync(id));
+      dispatch(fetchWorkspaceMembersAsync(workspaceId))
     }
+      // eslint-disable-next-line
   }, [dispatch, id]);
+ 
   // console.log(id)
-  const initialBoardData = useSelector((state) => state.project.selectedProject);
-  console.log(initialBoardData)
-
-
+  const initialData = useSelector((state) => state.project.selectedProject);
+  const columnAddStatus = useSelector((state)=>state.project.columnAddStatus)
+  const taskAddStatus = useSelector((state) => state.project.taskAddStatus);
+  const projectFetchStatus = useSelector((state) => state.project.projectFetchStatus);
+  const workspaceId=initialData?.workspaceId;
+  const [order, setOrder] = useState(null)
+  const [dataTask, setDataTask] = useState(null)
   const handleClick = () => {
     navigate(`/projects/${id}/new-task`);
   };
   const project = {
     img: "https://img.freepik.com/free-vector/hand-drawn-minimal-background_23-2149001650.jpg?t=st=1716280160~exp=1716280760~hmac=f254cfeda21a263638253b9f6f0c0c9028bac218840dea34d6de5739054a4a96",
   };
-  const initialData = {
-    order: [1, 2, 3, 4, 5, 6],
-    columns: {
-      1: { id: 1, title: "To Do", taskIds: [1, 2] },
-      2: { id: 2, title: "In Progress", taskIds: [3] },
-      3: { id: 3, title: "Done", taskIds: [4] },
-      4: { id: 4, title: "Review", taskIds: [5, 6] },
-      5: { id: 5, title: "QA", taskIds: [7] },
-      6: { id: 6, title: "Deploy", taskIds: [8] },
-    },
-    tasks: {
-      1: { id: 1, content: "Take out the garbage" },
-      2: { id: 2, content: "Watch my favorite show" },
-      3: { id: 3, content: "Charge my phone" },
-      4: { id: 4, content: "Cook dinner" },
-      5: { id: 5, content: "Finish report" },
-      6: { id: 6, content: "Clean the house" },
-      7: { id: 7, content: "Go for a run" },
-      8: { id: 8, content: "Attend meeting" },
-    },
+  // const initialData = {
+  //   order: [1, 2, 3, 4, 5, 6],
+  //   columns: [
+  //     1: { id: 1, title: "To Do", taskIds: [1, 2] },
+  //     2: { id: 2, title: "In Progress", taskIds: [3] },
+  //     3: { id: 3, title: "Done", taskIds: [4] },
+  //     4: { id: 4, title: "Review", taskIds: [5, 6] },
+  //     5: { id: 5, title: "QA", taskIds: [7] },
+  //     6: { id: 6, title: "Deploy", taskIds: [8] },
+  //   ],
+  //   tasks: {
+  //     1: { id: 1, content: "Take out the garbage" },
+  //     2: { id: 2, content: "Watch my favorite show" },
+  //     3: { id: 3, content: "Charge my phone" },
+  //     4: { id: 4, content: "Cook dinner" },
+  //     5: { id: 5, content: "Finish report" },
+  //     6: { id: 6, content: "Clean the house" },
+  //     7: { id: 7, content: "Go for a run" },
+  //     8: { id: 8, content: "Attend meeting" },
+  //   },
+  // };
+
+  const [columns, setColumns] = useState({});
+  const [isAddColumnModalOpen, setIsAddColumnModalOpen] = useState(false);
+  const handleOpenAddColumnModal = () => {
+    setIsAddColumnModalOpen(true);
   };
-  const [columns, setColumns] = useState(initialData.columns);
+
+  const handleCloseAddColumnModal = () => {
+    setIsAddColumnModalOpen(false);
+  };
+
+  // const handleAddColumn = (newColumnName) => {
+  //   // Implement the logic to add a new column
+  //   // For example, you might want to update the state or dispatch an action
+  //   console.log("New column added:", newColumnName);
+  // };
+
+  useEffect(() => {
+    if(columnAddStatus==="fulfilled"){
+      toast.success("Column added successfully!");
+    }
+    if(columnAddStatus==="rejected"){
+      toast.error("Column not added!");
+    }
+    dispatch(resetColumnAddStatus())
+    if (initialData) {
+      setColumns(initialData?.columns);
+      setOrder(initialData?.order);
+      setDataTask(initialData?.tasks);
+    }
+      // eslint-disable-next-line
+  }, [initialData]);
 
   const handleDrop = (taskId, newColumnId) => {
-    console.log("handleDrop", taskId, newColumnId);
-    const updatedColumns = { ...columns };
-    // Remove task from current column
-    Object.keys(updatedColumns).forEach((columnId) => {
-      updatedColumns[columnId].taskIds = updatedColumns[
-        columnId
-      ].taskIds.filter((id) => id !== taskId);
-    });
-    // Add task to the target column
-    updatedColumns[newColumnId].taskIds.push(taskId);
-    setColumns(updatedColumns);
+    //console.log("handleDrop", taskId, newColumnId);
+    // Clone the columns state
+    const updatedColumns = JSON.parse(JSON.stringify(columns));
+    //console.log("updatedcolumn", columns);
+
+    // Find the previous column where the task was located
+    const previousColumn = updatedColumns.find((column) =>
+      column.taskIds.includes(taskId)
+    );
+
+    if (previousColumn) {
+      // Remove the taskId from the taskIds array of the previous column
+      previousColumn.taskIds = previousColumn.taskIds.filter(
+        (id) => id !== taskId
+      );
+    } else {
+      //console.error(`Previous column for task ${taskId} not found.`);
+    }
+
+    // Find the target column where the task will be moved
+    const targetColumn = updatedColumns.find(
+      (column) => column._id === newColumnId
+    );
+
+    if (targetColumn) {
+      // Add the taskId to the taskIds array of the target column
+      targetColumn.taskIds.push(taskId);
+    } else {
+      console.error(`Target column with ID ${newColumnId} not found.`);
+    }
+    console.log(previousColumn._id, "previouscolumn")
+    const data = {
+      "sourceColumnId": previousColumn._id,
+      "destinationColumnId": newColumnId
+    }
+    const idObject = { id: id, taskId };
+    dispatch(moveTaskAsync({ data, idObject }));
+
+    // Update the state with the modified columns
+    setColumns([...updatedColumns]);
+
+    // Log the updated columns for debugging
     console.log("updatedcolumns", updatedColumns);
   };
+
+  useEffect(() => {
+    if (taskAddStatus === "fulfilled") {
+      toast.success("Task added successfully!");
+      dispatch(resetTaskAddStatus());
+    }
+  }, [taskAddStatus, dispatch]);
+  if (projectFetchStatus === "loading") {
+    return <div className="loading">Loading...</div>
+  }
+
+  const handleSearchChange = (event) => {
+    setSearchTerm(event.target.value);
+  };
+
+
   return (
     <DndProvider backend={HTML5Backend}>
       <Box
@@ -121,11 +213,12 @@ function Board() {
           },
         }}
       >
+        <ToastContainer />
         <Paper
           elevation={3}
           sx={{
             height: 120,
-            maxWidth:"100%"
+            maxWidth: "100%"
           }}
         >
           <Box
@@ -163,7 +256,7 @@ function Board() {
                     component="div"
                     sx={{ fontSize: "1rem", pt: 0.5 }}
                   >
-                    Book App
+                    {initialData?.name}
                   </Typography>
                 </Box>
               </Box>
@@ -176,6 +269,8 @@ function Board() {
                 <StyledInputBase
                   placeholder="Search…"
                   inputProps={{ "aria-label": "search" }}
+                  value={searchTerm}
+                  onChange={handleSearchChange}
                 />
               </Search>
             </Box>
@@ -190,7 +285,7 @@ function Board() {
               textAlign: "center",
             }}
           >
-            <Button
+            {/* <Button
               variant="contained"
               size="small"
               sx={{
@@ -205,34 +300,69 @@ function Board() {
               onClick={handleClick}
             >
               Add new task
-            </Button>
+            </Button> */}
+            <Stack spacing={2} direction="row" sx={{ pr: 2 }}>
+              <Button
+                variant="contained"
+                size="small"
+                sx={{ fontSize: "0.70rem", padding: "4px 8px" }}
+                onClick={handleOpenAddColumnModal}
+              >
+                Add new column
+              </Button>
+              <Button
+                variant="contained"
+                size="small"
+                sx={{ fontSize: "0.70rem", padding: "4px 8px" }}
+                onClick={handleClick}
+              >
+                Add new task
+              </Button>
+            </Stack>
+
           </Box>
         </Paper>
         <Box sx={{
-            display: 'flex',
-            overflow: 'auto',
-            width: '100%',
-            maxWidth: '1600px', 
-            padding: 2,
-            '&::-webkit-scrollbar': {
-              display: 'none', 
-            },
+          display: 'flex',
+          overflow: 'auto',
+          width: '100%',
+          maxWidth: '1600px',
+          padding: 2,
+          '&::-webkit-scrollbar': {
+            display: 'none',
+          },
         }}>
-        <Grid container spacing={2} direction="row" wrap="nowrap" sx={{marginTopt:"3"}} alignItems="flex-start">
-          {initialData.order.map((columnId) => {
-            const column = columns[columnId];
-            const tasks = column.taskIds.map(
-              (taskId) => initialData.tasks[taskId]
-            );
-            return (
-              <Grid key={column.id}>
-                <Column column={column} tasks={tasks} onDrop={handleDrop} />
-              </Grid>
-            );
-          })}
-        </Grid>
+          <Grid container spacing={2} direction="row" wrap="nowrap" sx={{ marginTopt: "3" }} alignItems="flex-start">
+            {order?.map((columnId) => {
+              const column = columns?.find((col) => col._id === columnId);
+              const tasks = column?.taskIds?.map((taskId) => {
+                const task = dataTask?.find((task) => task._id === taskId);
+                if (!task) {
+                  console.warn(`Task with ID ${taskId} not found`);
+                }
+                return task;
+              }).filter(Boolean);
+              //console.log(column, tasks)
+              const filteredTasks = tasks?.filter(task => 
+                (task.content && task.content.toLowerCase().includes(searchTerm.toLowerCase())) || 
+                (task.title && task.title.toLowerCase().includes(searchTerm.toLowerCase()))
+              );
+              return (
+                <Grid key={column?.id}>
+                  <Column column={column} tasks={filteredTasks} onDrop={handleDrop} />
+                </Grid>
+              );
+            })}
+          </Grid>
         </Box>
       </Box>
+      <AddColumnModal
+        open={isAddColumnModalOpen}
+        onClose={handleCloseAddColumnModal}
+        //onAddColumn={handleAddColumn}
+        id={id}
+      />
+
     </DndProvider>
   );
 }
