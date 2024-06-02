@@ -1,7 +1,6 @@
 import React from 'react';
 import { List, ListItem, ListItemAvatar, Avatar, ListItemText, Typography, Box, Paper } from '@mui/material';
 import { styled } from '@mui/material/styles';
-import MemberData from '../../data/members.json';
 
 const StyledPaper = styled(Paper)(({ theme }) => ({
   height: '200px', // Adjust as needed
@@ -22,27 +21,36 @@ const StyledPaper = styled(Paper)(({ theme }) => ({
   },
 }));
 
-function WorkspaceSettingsMembers() {
-  const memberCount = MemberData.length;
+function WorkspaceSettingsMembers({membersData}) {
+  // Sort members by role, prioritizing admins
+  const sortedMembers = [...membersData].sort((a, b) => {
+    if (a.role === 'admin' && b.role !== 'admin') return -1;
+    if (a.role !== 'admin' && b.role === 'admin') return 1;
+    return 0;
+  });
+
+  const memberCount = sortedMembers.length;
   const memberList = memberCount === 0 ? (
     <Typography sx={{ textAlign: 'center', paddingTop: 2 }}>
       Please add members
     </Typography>
   ) : (
     <List sx={{ width: '100%' }}>
-      {MemberData.map((member) => (
+      {sortedMembers.map((member) => (
         <ListItem key={member.id} sx={{ justifyContent: 'space-evenly'}}>
           <ListItemAvatar>
-            <Avatar alt={member.name} src={member.img} sx={{ fontWeight: 10 }} />
+            <Avatar alt={member.user.email} src={member.user.imgUrl} sx={{ fontWeight: 10 }} />
           </ListItemAvatar>
           <ListItemText
-            primary={member.name}
+            primary={member.user.email}
             sx={{ fontSize: 12, display: 'flex', justifyContent: 'space-between' }}
           />
-          <ListItemText
-            primary={member.role}
-            sx={{ fontSize: 12, display: 'flex', justifyContent: 'end' }}
-          />
+          {member.role !== 'Member' && (
+            <ListItemText
+              primary={member.role}
+              sx={{ fontSize: 12, display: 'flex', justifyContent: 'end' }}
+            />
+          )}
         </ListItem>
       ))}
     </List>

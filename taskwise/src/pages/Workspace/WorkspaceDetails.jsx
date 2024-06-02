@@ -8,10 +8,12 @@ import WorkspaceTasks from './WorkspaceTasks';
 import WorkspaceSettings from './WorkspaceSettings';
 import WorkspaceProjectCard from './WorkspaceProjectCard';
 import { useSelector, useDispatch } from 'react-redux';
-import { fetchWorkspaceByIdAsync, 
-         fetchWorkspaceProjectsAsync,
-         fetchWorkspaceTasksAsync,
-         fetchWorkspaceMembersAsync } from '../../features/workspace/workspaceSlice';
+import {
+  fetchWorkspaceByIdAsync,
+  fetchWorkspaceProjectsAsync,
+  fetchWorkspaceTasksAsync,
+  fetchWorkspaceMembersAsync
+} from '../../features/workspace/workspaceSlice';
 
 const SearchIconWrapper = styled('div')(({ theme }) => ({
   padding: theme.spacing(0, 2),
@@ -64,9 +66,8 @@ const CustomBox = styled(Box)(({ theme }) => ({
 function WorkspaceDetails() {
   const { id } = useParams();
   const dispatch = useDispatch();
-  
-  const workspace = useSelector((state) => state.workspace.workspaces.find((workspace) => workspace.id === id));
 
+  const workspace = useSelector((state) => state.workspace.workspaces.find((workspace) => workspace.id === id));
   const projectData = useSelector((state) => state.workspace.selectedProjects);
   const tasksData = useSelector((state) => state.workspace.selectedTasks);
   const membersData = useSelector((state) => state.workspace.selectedMembers);
@@ -114,7 +115,7 @@ function WorkspaceDetails() {
       >
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
-            <img src="https://images.unsplash.com/photo-1506744038136-46273834b3fb" alt="Workspace" 
+            <img src={workspace.imgUrl} alt="Workspace"
                  style={{ borderRadius: '8px', width: '50px', height: "44px", padding: "12px" }} />
             <Box>
               <Box sx={{ display: "flex", flexDirection: "column" }}>
@@ -144,21 +145,21 @@ function WorkspaceDetails() {
         <Divider />
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
           <Tabs value={selectedTab} onChange={handleTabChange} aria-label="workspace tabs">
-            <Tab 
+            <Tab
               label={
                 <Typography sx={{ textTransform: 'none', fontWeight: 'bold' }}>
                   Projects
                 </Typography>
               }
             />
-            <Tab 
+            <Tab
               label={
                 <Typography sx={{ textTransform: 'none', fontWeight: 'bold' }}>
                   Tasks
                 </Typography>
               }
             />
-            <Tab 
+            <Tab
               label={
                 <Typography sx={{ textTransform: 'none', fontWeight: 'bold' }}>
                   Settings
@@ -166,9 +167,9 @@ function WorkspaceDetails() {
               }
             />
           </Tabs>
-          <Button 
-            variant="contained" 
-            size="small" 
+          <Button
+            variant="contained"
+            size="small"
             startIcon={<AddIcon />}
             sx={{ fontSize: '0.70rem', padding: '4px 8px', mr: 2 }}
           >
@@ -177,9 +178,9 @@ function WorkspaceDetails() {
         </Box>
       </Paper>
       <CustomBox>
-        {selectedTab === 0 && <WorkspaceProjectCard projectData={projectData} membersData={membersData}/>}
-        {selectedTab === 1 && <WorkspaceTasks tasksData={tasksData} membersData={membersData}/>}
-        {selectedTab === 2 && <WorkspaceSettings />}
+        {selectedTab === 0 && <WorkspaceProjectCard projectData={projectData} membersData={membersData} />}
+        {selectedTab === 1 && <WorkspaceTasks tasksData={tasksData} membersData={membersData} />}
+        {selectedTab === 2 && <WorkspaceSettings workspace={workspace} membersData={membersData}/>}
       </CustomBox>
     </Box>
   );

@@ -45,9 +45,9 @@ const TabLabelWrapper = styled('div')({
   alignItems: 'center',
 });
 
-function WorkspaceSettings({ workspace }) {
-  const [selectedImage, setSelectedImage] = useState("https://images.unsplash.com/photo-1506744038136-46273834b3fb");
-  const [workspaceText, setWorkspaceText] = useState("Workspace A");
+function WorkspaceSettings({ workspace, membersData }) {
+  const [selectedImage, setSelectedImage] = useState(workspace.imgUrl);
+  const [workspaceText, setWorkspaceText] = useState(workspace.name);
   const [isEditing, setIsEditing] = useState(false);
   const [openDialog, setOpenDialog] = useState(false);
   const [dialogTitle, setDialogTitle] = useState("");
@@ -207,7 +207,7 @@ function WorkspaceSettings({ workspace }) {
             </Typography>
           </Box>
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
-            <WorkspaceSettingsMembers />
+            <WorkspaceSettingsMembers membersData={membersData}/>
           </Box>
           <Box sx={{ display: 'flex', alignItems: 'center', marginTop: 6 }}>
             <IconButton onClick={handleOpenExitModal}>
