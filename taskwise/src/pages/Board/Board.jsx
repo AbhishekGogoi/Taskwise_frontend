@@ -1,6 +1,6 @@
 import React from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { DndProvider, useDrop } from "react-dnd";
+import { DndProvider} from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import Column from "./Column";
 import { useState } from "react";
@@ -68,6 +68,7 @@ function Board() {
       dispatch(fetchProjectByIdAsync(id));
       dispatch(fetchWorkspaceMembersAsync(workspaceId))
     }
+      // eslint-disable-next-line
   }, [dispatch, id]);
  
   // console.log(id)
@@ -123,10 +124,10 @@ function Board() {
   // };
 
   useEffect(() => {
-    if(columnAddStatus=="fulfilled"){
+    if(columnAddStatus==="fulfilled"){
       toast.success("Column added successfully!");
     }
-    if(columnAddStatus=="rejected"){
+    if(columnAddStatus==="rejected"){
       toast.error("Column not added!");
     }
     dispatch(resetColumnAddStatus())
@@ -135,6 +136,7 @@ function Board() {
       setOrder(initialData?.order);
       setDataTask(initialData?.tasks);
     }
+      // eslint-disable-next-line
   }, [initialData]);
 
   const handleDrop = (taskId, newColumnId) => {
@@ -184,12 +186,12 @@ function Board() {
   };
 
   useEffect(() => {
-    if (taskAddStatus == "fulfilled") {
+    if (taskAddStatus === "fulfilled") {
       toast.success("Task added successfully!");
       dispatch(resetTaskAddStatus());
     }
   }, [taskAddStatus, dispatch]);
-  if (projectFetchStatus == "loading") {
+  if (projectFetchStatus === "loading") {
     return <div className="loading">Loading...</div>
   }
 

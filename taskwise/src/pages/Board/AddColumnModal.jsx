@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, TextField, Button } from "@mui/material";
+import { Dialog, DialogActions, DialogContent, DialogTitle, TextField, Button } from "@mui/material";
 import { useDispatch } from "react-redux";
 import { addColumnAsync } from "../../features/project/projectSlice";
 
