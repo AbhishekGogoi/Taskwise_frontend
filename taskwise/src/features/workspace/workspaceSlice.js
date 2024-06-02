@@ -4,12 +4,19 @@ import { createWorkspace,
          fetchWorkspaceById,
          fetchWorkspaceProjects,
          fetchWorkspaceMembers,
+         fetchWorkspaceTasks,
          uploadFile } from "./workspaceApi";
 
 const initialState = {
   workspaces: [],
   workspaceFetchStatus: 'idle',
   selectedWorkspaces: null,
+  selectedProjects: [],
+  selectedTasks: [],
+  selectedMembers: [],
+  projectsFetchStatus: 'idle',
+  tasksFetchStatus: 'idle',
+  membersFetchStatus: 'idle',
   status: "idle",
   errors: null,
   successMessage: null
@@ -25,9 +32,19 @@ export const fetchWorkspaceByIdAsync = createAsyncThunk("workspaces/fetchWorkspa
   return workspaces;
 });
 
-export const fetchWorkspaceProjectsAsync = createAsyncThunk('workspace/fetchWorkspaceProjects', async (workspaceId) => {
-    const workspaces = await fetchWorkspaceProjects(workspaceId);
-    return workspaces;
+export const fetchWorkspaceProjectsAsync = createAsyncThunk(
+  'workspace/fetchWorkspaceProjects',
+  async (workspaceId) => {
+    const selectedProjects = await fetchWorkspaceProjects(workspaceId);
+    return selectedProjects;
+  }
+);
+
+export const fetchWorkspaceTasksAsync = createAsyncThunk(
+  'workspace/fetchWorkspaceTasksAsync',
+  async (workspaceId) => {
+    const selectedMembers = await fetchWorkspaceTasks(workspaceId);
+    return selectedMembers;
   }
 );
 
@@ -89,35 +106,38 @@ const workspaceSlice = createSlice({
         state.workspaceFetchStatus = "rejected";
         state.errors = action.error;
       })
-      .addCase(fetchWorkspaceProjectsAsync.pending, (state) => {
-        state.workspaceFetchStatus = 'loading';
+      .addCase(fetchWorkspaceProjectsAsync.pending,(state)=>{
+          state.projectsFetchStatus="loading"
       })
-      .addCase(fetchWorkspaceProjectsAsync.fulfilled, (state, action) => {
-        const { id, projects } = action.payload;
-        const workspace = state.workspaces.find(ws => ws.id === id);
-        if (workspace) {
-            workspace.projects = projects;
-        }
-        state.workspaceFetchStatus = 'fulfilled'; // Reset fetch status
+      .addCase(fetchWorkspaceProjectsAsync.fulfilled,(state,action)=>{
+          state.projectsFetchStatus="fulfilled"
+          state.selectedProjects=action.payload.data
       })
-      .addCase(fetchWorkspaceProjectsAsync.rejected, (state, action) => {
-        state.workspaceFetchStatus = "rejected";
-        state.errors = action.error;
+      .addCase(fetchWorkspaceProjectsAsync.rejected,(state,action)=>{
+          state.projectsFetchStatus="rejected"
+          state.errors=action.error
       })
-      .addCase(fetchWorkspaceMembersAsync.pending, (state) => {
-        state.workspaceFetchStatus = 'loading';
+      .addCase(fetchWorkspaceTasksAsync.pending,(state)=>{
+          state.tasksFetchStatus="loading"
       })
-      .addCase(fetchWorkspaceMembersAsync.fulfilled, (state, action) => {
-        const { id, members } = action.payload;
-        const workspace = state.workspaces.find(ws => ws.id === id);
-        if (workspace) {
-            workspace.members = members;
-        }
-        state.workspaceFetchStatus = 'fulfilled'; // Reset fetch status
+      .addCase(fetchWorkspaceTasksAsync.fulfilled,(state,action)=>{
+          state.tasksFetchStatus="fulfilled"
+          state.selectedTasks=action.payload.data
       })
-      .addCase(fetchWorkspaceMembersAsync.rejected, (state, action) => {
-        state.workspaceFetchStatus = "rejected";
-        state.errors = action.error;
+      .addCase(fetchWorkspaceTasksAsync.rejected,(state,action)=>{
+          state.tasksFetchStatus="rejected"
+          state.errors=action.error
+      })
+      .addCase(fetchWorkspaceMembersAsync.pending,(state)=>{
+          state.membersFetchStatus="loading"
+      })
+      .addCase(fetchWorkspaceMembersAsync.fulfilled,(state,action)=>{
+          state.membersFetchStatus="fulfilled"
+          state.selectedMembers=action.payload.data
+      })
+      .addCase(fetchWorkspaceMembersAsync.rejected,(state,action)=>{
+          state.membersFetchStatus="rejected"
+          state.errors=action.error
       })
       .addCase(fetchWorkspaceByUserIDAsync.pending, (state) => {
         state.workspaceFetchStatus = 'loading';

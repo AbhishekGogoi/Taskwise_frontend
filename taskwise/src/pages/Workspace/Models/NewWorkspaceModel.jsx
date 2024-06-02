@@ -7,9 +7,9 @@ import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
 import Chip from '@mui/material/Chip';
 import PropTypes from 'prop-types';
-import Thumbnail from '../../components/Thumbnail';
+import Thumbnail from '../../../components/Thumbnail';
 import { useDispatch, useSelector } from "react-redux";
-import { createWorkspaceAsync, uploadFileAsync } from "../../features/workspace/workspaceSlice";
+import { createWorkspaceAsync, uploadFileAsync } from "../../../features/workspace/workspaceSlice";
 import ModeEditSharpIcon from '@mui/icons-material/ModeEditSharp';
 
 const style = {
@@ -36,7 +36,7 @@ const NewWorkspaceModel = ({ handleClose, onWorkspaceCreated }) => {
   const [description, setDescription] = useState('');
   const [members, setMembers] = useState([]);
   const [inputValue, setInputValue] = useState('');
-  const [imageUrl, setImageUrl] = useState('');
+  const [imageUrl, setImageUrl] = useState(defaultImage);
   const [nameError, setNameError] = useState('');
   const [membersError, setMembersError] = useState('');
   const fileInputRef = useRef(null);
@@ -120,7 +120,7 @@ const NewWorkspaceModel = ({ handleClose, onWorkspaceCreated }) => {
         Thumbnail
       </Typography>
       <Box sx={{ display: 'flex', justifyContent: 'left', alignItems: 'left', marginBottom: '20px' }}>
-        <Thumbnail selectedImage={imageUrl || defaultImage} handleFileUploadClick={handleFileUploadClick} width={80} height={80} />
+        <Thumbnail selectedImage={defaultImage} handleFileUploadClick={handleFileUploadClick} width={80} height={80} />
         <IconButton onClick={handleFileUploadClick}>
           <ModeEditSharpIcon sx={{ color: "#000000" }} />
         </IconButton>

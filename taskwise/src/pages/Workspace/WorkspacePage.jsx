@@ -10,7 +10,7 @@ import Button from '@mui/material/Button';
 import { Grid } from '@mui/material';
 import WorkspaceCard from './WorkspaceCard';
 import AddIcon from '@mui/icons-material/Add';
-import NewWorkspaceModel from './NewWorkspaceModel';
+import NewWorkspaceModel from './Models/NewWorkspaceModel';
 import Modal from '@mui/material/Modal';
 import { useDispatch, useSelector } from "react-redux";
 import { fetchWorkspaceByUserIDAsync } from '../../features/workspace/workspaceSlice';
