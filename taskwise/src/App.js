@@ -40,9 +40,9 @@ function AppLayout() {
     "/login",
     "/signup",
     "/forgotpassword",
-    "/forgotpassword/verification",
-    "/forgotpassword/resetpassword",
-    "/forgotpassword/confirmation",
+    "/verification",
+    "/resetpassword",
+    "/confirmation",
   ].includes(location.pathname);
   const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
   const [drawerOpen, setDrawerOpen] = useState(false);
