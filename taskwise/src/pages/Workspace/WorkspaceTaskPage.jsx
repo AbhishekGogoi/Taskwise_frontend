@@ -5,6 +5,7 @@ import "@ag-grid-community/styles/ag-theme-alpine.css";
 import { ModuleRegistry } from "@ag-grid-community/core";
 import { ClientSideRowModelModule } from "@ag-grid-community/client-side-row-model";
 import { styled } from "@mui/material/styles";
+import { format } from 'date-fns';
 
 // Register the necessary modules with AG Grid
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
@@ -27,13 +28,44 @@ const WorkspaceTaskPage = ({ tasksData }) => {
 
   // Define the column definitions to match the structure of the tasks data
   const [colDefs] = useState([
-    { field: "name", headerName: "Task", flex: 1, sortable: true, filter: "agTextColumnFilter" },
-    { field: "dueDate", headerName: "Due Date", flex: 1, sortable: true, filter: "agTextColumnFilter" },
-    { field: "priority", headerName: "Priority", flex: 1, sortable: true, filter: "agTextColumnFilter" },
-    // { field: "status", headerName: "Satus", flex: 1, sortable: true, filter: "agTextColumnFilter" },
-    { field: "project", headerName: "Project", flex: 1, sortable: true, filter: "agTextColumnFilter" },
+    { 
+      field: "name", 
+      headerName: "Task", 
+      flex: 1, 
+      sortable: true, 
+      filter: "agTextColumnFilter" 
+    },
+    { 
+      field: "dueDate", 
+      headerName: "Due Date", 
+      flex: 1, 
+      sortable: true, 
+      filter: "agTextColumnFilter",
+      valueFormatter: params => formatDate(params.value) // Use a custom formatter function
+    },
+    { 
+      field: "priority", 
+      headerName: "Priority", 
+      flex: 1, 
+      sortable: true, 
+      filter: "agTextColumnFilter" 
+    },
+    { 
+      field: "project", 
+      headerName: "Project", 
+      flex: 1, 
+      sortable: true, 
+      filter: "agTextColumnFilter" 
+    },
   ]);
 
+  // Custom function to format date into a readable format
+  const formatDate = (dateString) => {
+    if (!dateString) return ''; 
+    const date = new Date(dateString);
+    return format(date, 'dd MMM yy'); 
+  };
+  
   // Default column properties
   const defaultColDef = useMemo(() => ({
     filter: true,
