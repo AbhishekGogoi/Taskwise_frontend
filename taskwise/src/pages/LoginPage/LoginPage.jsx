@@ -147,14 +147,14 @@ const LoginPage = () => {
     password: Joi.string()
       .pattern(
         new RegExp(
-          "^[a-zA-Z0-9!@#\\$%\\^&\\*\\(\\)_\\+\\-=[\\]{};:'\",<>\\.\\?/`~]{8,}$"
+          "^[a-zA-Z0-9!@#\\$%\\^&\\*\\(\\)_\\+\\-=[\\]{};:'\",<>\\.\\?/`~]{7,}$"
         )
       )
       .required()
       .messages({
         "string.empty": "Password is required",
         "string.pattern.base":
-          "Password must be at least 8 characters and contain only letters, numbers, and special characters",
+          "Password must be at least 7 characters and contain only letters, numbers, and special characters",
       }),
   });
 
