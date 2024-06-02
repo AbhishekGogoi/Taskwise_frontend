@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
@@ -7,6 +7,13 @@ import Typography from "@mui/material/Typography";
 import { styled, ThemeProvider, createTheme } from "@mui/material/styles";
 import TaskWiseLogo from "../../assets/TaskWiseLogo.png";
 import forgotpasswordlogo from "../../assets/forgotpasswordlogo.jpeg";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  resetPasswordAsync,
+  resetResetPasswordStatus,
+} from "../../features/user/userSlice";
+import { ToastContainer, toast } from "react-toastify";
+import { useLocation } from "react-router-dom";
 
 const theme = createTheme();
 
@@ -75,26 +82,51 @@ const CopyrightText = styled(Typography)(({ theme }) => ({
 
 const ResetPasswordPage = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const location = useLocation();
 
-  const [newPassword, setNewPassword] = useState("");
+  const resetPasswordStatus = useSelector(
+    (state) => state.user.resetPasswordStatus
+  );
+  const resetPasswordError = useSelector(
+    (state) => state.user.resetPasswordError
+  );
+
+  const [checkPassword, setCheckPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState(""); // State for error message
+
+  const { email, code } = location.state || {};
 
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    if (!newPassword.trim() || !confirmPassword.trim()) {
+    if (!checkPassword.trim() || !confirmPassword.trim()) {
       setError("Please fill out both password fields.");
       return;
     }
-    if (newPassword !== confirmPassword) {
+    if (checkPassword !== confirmPassword) {
       setError("Passwords do not match.");
       return;
     }
 
-    // If valid, proceed to ConfirmationPage
-    navigate("/forgotpassword/confirmation");
+    setError("");
+    const newPassword = checkPassword;
+    dispatch(resetPasswordAsync({ email, code, newPassword }));
   };
+
+  useEffect(() => {
+    if (resetPasswordStatus === "fulfilled") {
+      navigate("/confirmation");
+      dispatch(resetResetPasswordStatus());
+    }
+  }, [resetPasswordStatus, navigate, dispatch]);
+
+  useEffect(() => {
+    if (resetPasswordError) {
+      toast.error(resetPasswordError.message);
+    }
+  }, [resetPasswordError]);
 
   return (
     <ThemeProvider theme={theme}>
@@ -129,14 +161,14 @@ const ResetPasswordPage = () => {
         >
           Reset Password...
         </Typography>
-        <Form onSubmit={handleSubmit}>
+        <Form>
           <StyledTextField
-            label="New Password"
+            label="Check Password"
             type="password"
             variant="outlined"
             margin="normal"
-            value={newPassword}
-            onChange={(e) => setNewPassword(e.target.value)}
+            value={checkPassword}
+            onChange={(e) => setCheckPassword(e.target.value)}
             error={!!error} // Show error border if there's an error
             helperText={error} // Display error message
           />
@@ -155,6 +187,7 @@ const ResetPasswordPage = () => {
             variant="contained"
             color="primary"
             fullWidth
+            onClick={handleSubmit}
           >
             Update
           </SubmitButton>
@@ -163,6 +196,7 @@ const ResetPasswordPage = () => {
       <CopyrightText>
         Copyright © 2024. TaskWise All rights reserved.
       </CopyrightText>
+      <ToastContainer />
     </ThemeProvider>
   );
 };
