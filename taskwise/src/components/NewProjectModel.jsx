@@ -14,6 +14,8 @@ import PropTypes from "prop-types";
 import ProjectThumbnail from "../pages/Project/ProjectThumbnail"; // Import the ThumbnailComponent
 import { useDispatch, useSelector } from "react-redux";
 import { addProjectAsync } from "../features/project/projectSlice";
+import { fetchWorkspaceByUserIDAsync } from "../features/workspace/workspaceSlice";
+import { useEffect } from "react";
 
 const style = {
   position: "absolute",
@@ -37,15 +39,19 @@ const NewProjectModel = ({ handleClose }) => {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [errors, setErrors] = useState({});
-  const Data = useSelector((state) => state?.project?.projects);
+  const Data = useSelector((state) => state?.workspace?.workspaces);
   const uniqueWorkspaces = {};
+  useEffect(() => {
+    dispatch(fetchWorkspaceByUserIDAsync(creatorUserID))
+  }, [])
+  console.log(Data, "workspaces")
+  // Data.forEach(project => {
+  //   const { workspaceName, workspaceId } = project;
+  //   if (!uniqueWorkspaces[workspaceId]) {
+  //     uniqueWorkspaces[workspaceId] = workspaceName;
+  //   }
+  // });
 
-  Data.forEach(project => {
-    const { workspaceName, workspaceId } = project;
-    if (!uniqueWorkspaces[workspaceId]) {
-      uniqueWorkspaces[workspaceId] = workspaceName;
-    }
-  });
 
   const result = Object.keys(uniqueWorkspaces).map(workspaceId => ({
     workspaceId,
@@ -190,10 +196,9 @@ const NewProjectModel = ({ handleClose }) => {
           <MenuItem value="">
             <em>None</em>
           </MenuItem>
-          {console.log(uniqueWorkspaces)}
-          {Object.entries(uniqueWorkspaces).map(([workspaceId, workspaceName]) => (
-            <MenuItem key={workspaceId} value={workspaceId}>
-              {workspaceName}
+          {Data.map((workspace) => (
+            <MenuItem key={workspace.id} value={workspace.id}>
+              {workspace.name}
             </MenuItem>
           ))}
         </Select>
