@@ -1,5 +1,7 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { signupAsync } from "../../features/user/userSlice";
 import {
   Container,
   Box,
@@ -11,6 +13,9 @@ import {
 } from "@mui/material";
 import { Email, Lock, Person } from "@mui/icons-material"; // Import Person icon for username
 import { styled } from "@mui/system";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import Joi from "joi";
 import googleiconnew from "../../assets/googleiconnew.png";
 import TaskWiseLogo from "../../assets/TaskWiseLogo.png";
 
@@ -106,7 +111,88 @@ const StyledButton = styled(Button)({
 
 // Component
 const SignupPage = () => {
+  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [errors, setErrors] = useState({});
+
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  const signupStatus = useSelector((state) => state.user.signupStatus);
+  const signupError = useSelector((state) => state.user.signupError);
+  // console.log(signupError?.message);
+
+  const schema = Joi.object({
+    username: Joi.string().min(3).required().messages({
+      "string.empty": "Username is required",
+      "string.min": "Username must be at least 3 characters",
+    }),
+    email: Joi.string()
+      .email({ tlds: { allow: false } })
+      .required()
+      .messages({
+        "string.empty": "Email is required",
+        "string.email": "Email must be a valid email",
+      }),
+    password: Joi.string()
+      .pattern(
+        new RegExp(
+          "^[a-zA-Z0-9!@#\\$%\\^&\\*\\(\\)_\\+\\-=[\\]{};:'\",<>\\.\\?/`~]{8,}$"
+        )
+      )
+      .required()
+      .messages({
+        "string.empty": "Password is required",
+        "string.pattern.base":
+          "Password must be at least 8 characters and contain only letters, numbers, and special characters",
+      }),
+    confirmPassword: Joi.any().valid(Joi.ref("password")).required().messages({
+      "any.only": "Passwords do not match",
+    }),
+  });
+
+  // const handleSignup = (e) => {
+  //   e.preventDefault();
+  //   if (password !== confirmPassword) {
+  //     alert("Passwords do not match");
+  //     return;
+  //   }
+  //   dispatch(signupAsync({ username, email, password }));
+  // };
+
+  const handleSignup = (e) => {
+    e.preventDefault();
+    const { error } = schema.validate(
+      { username, email, password, confirmPassword },
+      { abortEarly: false }
+    );
+
+    if (error) {
+      const validationErrors = {};
+      error.details.forEach((detail) => {
+        validationErrors[detail.path[0]] = detail.message;
+      });
+      setErrors(validationErrors);
+      return;
+    }
+
+    setErrors({});
+    dispatch(signupAsync({ username, email, password })); // Exclude confirmPassword
+  };
+
+  useEffect(() => {
+    if (signupError) {
+      toast.error(signupError.message);
+    }
+  }, [signupError]);
+
+  useEffect(() => {
+    if (signupStatus === "fullfilled") {
+      navigate("/projects");
+    }
+  }, [signupStatus, navigate]);
 
   const handleLoginClick = () => {
     navigate("/login");
@@ -148,6 +234,10 @@ const SignupPage = () => {
               </InputAdornment>
             ),
           }}
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+          error={!!errors.username}
+          helperText={errors.username}
         />
         <TextField // Email field with icon
           variant="outlined"
@@ -165,6 +255,10 @@ const SignupPage = () => {
               </InputAdornment>
             ),
           }}
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          error={!!errors.email}
+          helperText={errors.email}
         />
         <TextField // Password field with icon
           variant="outlined"
@@ -183,6 +277,10 @@ const SignupPage = () => {
               </InputAdornment>
             ),
           }}
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          error={!!errors.password}
+          helperText={errors.password}
         />
         <TextField // Confirm Password field with icon
           variant="outlined"
@@ -201,6 +299,10 @@ const SignupPage = () => {
               </InputAdornment>
             ),
           }}
+          value={confirmPassword}
+          onChange={(e) => setConfirmPassword(e.target.value)}
+          error={!!errors.confirmPassword}
+          helperText={errors.confirmPassword}
         />
         <StyledButton // Sign Up button style adjustments
           type="submit"
@@ -211,6 +313,7 @@ const SignupPage = () => {
             backgroundColor: "#0062ff", // Example color
             "&:hover": { backgroundColor: "#303f9f" }, // Darker hover
           }}
+          onClick={handleSignup}
         >
           Sign Up
         </StyledButton>
@@ -253,6 +356,7 @@ const SignupPage = () => {
           Log In
         </StyledSignUpLink>
       </Box>
+      <ToastContainer />
     </StyledContainer>
   );
 };
