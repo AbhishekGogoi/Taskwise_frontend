@@ -16,7 +16,7 @@ function NewTaskPage() {
     const [dueDate, setDueDate] = useState('');
     const [priority, setPriority] = useState('');
     const [status, setStatus] = useState(null);
-    const [assignees, setAssignees] = useState([]);
+    const [assignees, setAssignees] = useState(null);
     const [errors, setErrors] = useState({ title: '', description: '' });
     const navigate = useNavigate();
     const dispatch = useDispatch();
@@ -29,9 +29,9 @@ function NewTaskPage() {
         id: item._id
     }));
     const membersData = useSelector((state) => state?.project?.workspaceMembers?.data);
-    const users = membersData.map(item => item.user);
+    const users = membersData?.map(item => item.user);
     const [options] = useState(users);
-    //console.log(membersData, "membersdata")
+    console.log(users, "membersdata")
     //const [options, setOptions] = useState(membersData.map(item => item.user));
     const handleStatusChange = (event) => {
         setStatus(event.target.value);
@@ -76,6 +76,10 @@ function NewTaskPage() {
     };
 
     const handleCreateTask = () => {
+        // const assigne=users?.filter((item)=>item.email===assignees)
+        // console.log(assigne,"assigne")
+        // console.log(user,"selected assignee")
+        const user = users?.find(user => user.email === assignees);
         if (validateFields()) {
 
             const task = {
@@ -83,8 +87,8 @@ function NewTaskPage() {
                 content: description,
                 columnId: status,
                 dueDate: dueDate,
-                priority: priority
-                // assigneeUserID,
+                priority: priority,
+                assigneeUserID:user.id,
                 // attachments,
             };
             dispatch(addTaskAsync({ task, id }));
@@ -220,14 +224,8 @@ function NewTaskPage() {
                                     </Typography>
                                     <Box sx={{ display: 'flex', alignItems: 'center', flexGrow: 1, ml: 4 }}>
                                         <Select
-                                            multiple
                                             value={assignees}
                                             onChange={handleAssigneesChange}
-                                            renderValue={(selected) => (
-                                                <div>
-                                                    {selected.join(', ')}
-                                                </div>
-                                            )}
                                             sx={{
                                                 height: 32,
                                                 width: '100%',
@@ -237,8 +235,8 @@ function NewTaskPage() {
                                             <MenuItem value="" disabled>
                                                 Select
                                             </MenuItem>
-                                            {options.map((option) => (
-                                                <MenuItem key={option.id} value={option.id}>
+                                            {options?.map((option) => (
+                                                <MenuItem key={option.id} value={option.email}>
                                                     {option.email} 
                                                 </MenuItem>
                                             ))}
