@@ -44,6 +44,7 @@ function AppLayout() {
     "/verification",
     "/resetpassword",
     "/confirmation",
+    "/firstpage",
   ].includes(location.pathname);
   const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
   const [drawerOpen, setDrawerOpen] = useState(false);
