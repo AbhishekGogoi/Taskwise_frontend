@@ -6,6 +6,8 @@ import { addTaskAsync, fetchWorkspaceMembersAsync } from '../../features/project
 import { useDispatch } from 'react-redux';
 import { useSelector } from 'react-redux';
 import { Skeleton } from '@mui/material';
+import DeleteIcon from "@mui/icons-material/Delete";
+import { useRef } from 'react';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -82,7 +84,23 @@ function NewTaskPage() {
         const newComment = event.target.value;
         setCurrentComment(newComment);
     };
+    const fileInputRef = useRef(null);
+    const [files, setFiles] = useState([]);
 
+    const handleUploadClick = () => {
+        fileInputRef.current.click();
+    };
+    const handleFileChange = (event) => {
+        const newFiles = Array.from(event.target.files).map((file) => ({
+            url: URL.createObjectURL(file),
+            type: file.type,
+            name: file.name,
+        }));
+        setFiles((prevFiles) => [...prevFiles, ...newFiles]);
+    };
+    const handleDelete = (index) => {
+        setFiles((prevFiles) => prevFiles.filter((file, i) => i !== index));
+    };
 
 
     const handleCreateTask = () => {
@@ -100,7 +118,7 @@ function NewTaskPage() {
                 priority: priority,
                 assigneeUserID: user.id,
                 comments: [{ id: user.id, comment: currentComment }],
-                createdBy:userId
+                createdBy: userId
                 // attachments,
             };
             dispatch(addTaskAsync({ task, id }));
@@ -325,16 +343,69 @@ function NewTaskPage() {
                                     </Box>
                                 </Grid>
 
-                                <Grid item xs={12} sx={{ display: 'flex', alignItems: 'center' }}>
-                                    <Typography variant="h6" gutterBottom sx={{ fontWeight: '700', mb: 1, fontSize: "1rem" }}>
-                                        Attachments
-                                    </Typography>
-                                    <Box sx={{ ml: '3rem' }}>
-                                        <IconButton>
-                                            <AddOutlinedIcon />
-                                        </IconButton>
+                                <Grid container spacing={2} sx={{ mt: 2, ml: 2 }}>
+                                    <Grid
+                                        item
+                                        xs={12}
+                                        sx={{ display: "flex", alignItems: "center" }}
+                                    >
+                                        <Typography
+                                            variant="h6"
+                                            gutterBottom
+                                            sx={{ fontWeight: "700", mb: 1, fontSize: "1rem" }}
+                                        >
+                                            Attachments
+                                        </Typography>
+                                        <Box sx={{ ml: "3rem" }}>
+                                            <IconButton onClick={handleUploadClick}>
+                                                <AddOutlinedIcon />
+                                            </IconButton>
+                                            <input
+                                                type="file"
+                                                ref={fileInputRef}
+                                                style={{ display: "none" }}
+                                                onChange={handleFileChange}
+                                                accept="image/*,application/pdf"
+                                                multiple
+                                            />
+                                        </Box>
+                                    </Grid>
+                                    <Box sx={{
+                                        maxHeight: "400px", overflow: "scroll", '&::-webkit-scrollbar': {
+                                            display: 'none',
+                                        },
+                                    }}>
+                                        {files.map((file, index) => (
+                                            <Grid item xs={12} key={index} sx={{ mt: 2, ml: 3 }}>
+                                                <Box sx={{ display: "flex", alignItems: "center" }}>
+                                                    {file.type.startsWith("image/") ? (
+                                                        <img
+                                                            src={file.url}
+                                                            alt={file.name}
+                                                            style={{
+                                                                maxWidth: "50%",
+                                                                height: "auto",
+                                                                marginRight: "1rem",
+                                                            }}
+                                                        />
+                                                    ) : (
+                                                        <embed
+                                                            src={file.url}
+                                                            type="application/pdf"
+                                                            width="50%"
+                                                            height="300px"
+                                                            style={{ marginRight: "1rem" }}
+                                                        />
+                                                    )}
+                                                    <IconButton onClick={() => handleDelete(index)}>
+                                                        <DeleteIcon />
+                                                    </IconButton>
+                                                </Box>
+                                            </Grid>
+                                        ))}
                                     </Box>
                                 </Grid>
+
                             </Grid>
                         </Grid>
                     </Grid>
