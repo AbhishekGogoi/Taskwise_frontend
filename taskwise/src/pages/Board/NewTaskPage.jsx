@@ -5,6 +5,7 @@ import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
 import { addTaskAsync, fetchWorkspaceMembersAsync } from '../../features/project/projectSlice';
 import { useDispatch } from 'react-redux';
 import { useSelector } from 'react-redux';
+import { Skeleton } from '@mui/material';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -223,24 +224,28 @@ function NewTaskPage() {
                                         Assign to
                                     </Typography>
                                     <Box sx={{ display: 'flex', alignItems: 'center', flexGrow: 1, ml: 4 }}>
-                                        <Select
-                                            value={assignees}
-                                            onChange={handleAssigneesChange}
-                                            sx={{
-                                                height: 32,
-                                                width: '100%',
-                                                maxWidth: 200,
-                                            }}
-                                        >
-                                            <MenuItem value="" disabled>
-                                                Select
-                                            </MenuItem>
-                                            {options?.map((option) => (
-                                                <MenuItem key={option.id} value={option.email}>
-                                                    {option.email} 
+                                    {options ? (
+                                            <Select
+                                                value={assignees}
+                                                onChange={handleAssigneesChange}
+                                                sx={{
+                                                    height: 32,
+                                                    width: '100%',
+                                                    maxWidth: 200,
+                                                }}
+                                            >
+                                                <MenuItem value="" disabled>
+                                                    Select
                                                 </MenuItem>
-                                            ))}
-                                        </Select>
+                                                {options.map((option) => (
+                                                    <MenuItem key={option.id} value={option.email}>
+                                                        {option.email} 
+                                                    </MenuItem>
+                                                ))}
+                                            </Select>
+                                        ) : (
+                                            <Skeleton variant="rectangular" width={200} height={32} />
+                                        )}
                                     </Box>
                                 </Grid>
 
