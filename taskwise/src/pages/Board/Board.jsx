@@ -124,6 +124,7 @@ function Board() {
   // };
 
   useEffect(() => {
+    console.log("initial Data changed useeffect")
     if(columnAddStatus==="fulfilled"){
       toast.success("Column added successfully!");
     }
@@ -170,7 +171,7 @@ function Board() {
     } else {
       console.error(`Target column with ID ${newColumnId} not found.`);
     }
-    console.log(previousColumn._id, "previouscolumn")
+    //console.log(previousColumn._id, "previouscolumn")
     const data = {
       "sourceColumnId": previousColumn._id,
       "destinationColumnId": newColumnId
@@ -182,7 +183,7 @@ function Board() {
     setColumns([...updatedColumns]);
 
     // Log the updated columns for debugging
-    console.log("updatedcolumns", updatedColumns);
+    //console.log("updatedcolumns", updatedColumns);
   };
 
   useEffect(() => {
@@ -190,7 +191,11 @@ function Board() {
       toast.success("Task added successfully!");
       dispatch(resetTaskAddStatus());
     }
-  }, [taskAddStatus, dispatch]);
+    if (taskAddStatus === "rejected") {
+      toast.error("Failed to add task.");
+      dispatch(resetTaskAddStatus());
+    }
+  }, [taskAddStatus, dispatch,id]);
   if (projectFetchStatus === "loading") {
     return <div className="loading">Loading...</div>
   }

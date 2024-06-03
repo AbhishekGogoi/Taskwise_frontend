@@ -1,31 +1,43 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { Grid, TextField, Button, Box, Typography, IconButton, Paper, MenuItem, Select,FormControl, FormHelperText } from '@mui/material';
+import { Grid, TextField, Button, Box, Typography, IconButton, Paper, MenuItem, Select, FormControl, FormHelperText } from '@mui/material';
 import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
-import { addTaskAsync, resetTaskAddStatus } from '../../features/project/projectSlice';
+import { addTaskAsync, fetchWorkspaceMembersAsync } from '../../features/project/projectSlice';
 import { useDispatch } from 'react-redux';
 import { useSelector } from 'react-redux';
-import { toast, ToastContainer } from 'react-toastify';
+import { Skeleton } from '@mui/material';
+import DeleteIcon from "@mui/icons-material/Delete";
+import { useRef } from 'react';
+import {  ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { uploadFileAsync } from '../../features/workspace/workspaceSlice';
 
 function NewTaskPage() {
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
-    const [comment, setComment] = useState('');
+    //const [comments, setComments] = useState([]);
+    const [currentComment, setCurrentComment] = useState('');
     const [dueDate, setDueDate] = useState('');
     const [priority, setPriority] = useState('');
     const [status, setStatus] = useState(null);
-    const [assignees, setAssignees] = useState([]);
+    const [assignees, setAssignees] = useState(null);
     const [errors, setErrors] = useState({ title: '', description: '' });
     const navigate = useNavigate();
     const dispatch = useDispatch();
+    const userId = useSelector((state) => state?.user?.loggedInUser?.user?._id);
     const { id } = useParams();
     //const colId = useSelector((state) => state?.project?.selectedProject?.order[0])
-    const coldata = useSelector((state) => state?.project?.selectedProject?.columns)
-    const titlesAndIds = coldata.map(item => ({
+    const coldata = useSelector((state) => state?.project?.selectedProject?.columns);
+    const workspaceId = useSelector((state) => state?.project?.selectedProject?.workspaceId)
+    const titlesAndIds = coldata?.map(item => ({
         title: item.title,
         id: item._id
     }));
+    const membersData = useSelector((state) => state?.project?.workspaceMembers?.data);
+    const users = membersData?.map(item => item.user);
+    const [options] = useState(users);
+    console.log(users, "membersdata")
+    //const [options, setOptions] = useState(membersData.map(item => item.user));
     const handleStatusChange = (event) => {
         setStatus(event.target.value);
         setErrors(prevErrors => ({ ...prevErrors, status: '' }));
@@ -41,7 +53,7 @@ function NewTaskPage() {
     };
 
     const validateFields = () => {
-        const newErrors = { title: '', description: '', priority: '', status: ''  };
+        const newErrors = { title: '', description: '', priority: '', status: '' };
         let hasError = false;
 
         if (!title.trim()) {
@@ -68,7 +80,46 @@ function NewTaskPage() {
         return !hasError;
     };
 
+    const handleCommentChange = (event) => {
+        const newComment = event.target.value;
+        setCurrentComment(newComment);
+    };
+    const fileInputRef = useRef(null);
+    const [files, setFiles] = useState([]);
+    const [uploadedFileUrls, setUploadedFileUrls] = useState([]);
+
+    const handleUploadClick = () => {
+        fileInputRef.current.click();
+    };
+    const handleFileChange = async (event) => {
+        const newFiles = Array.from(event.target.files).map((file) => ({
+            url: URL.createObjectURL(file),
+            type: file.type,
+            name: file.name,
+        }));
+        setFiles((prevFiles) => [...prevFiles, ...newFiles]);
+
+
+        const file = event.target.files[0];
+        if (file) {
+            const formData = new FormData();
+            formData.append('file', file);
+            const response = await dispatch(uploadFileAsync(formData));
+            const newFileUrls=response.payload.presignedUrl;
+            setUploadedFileUrls((prevUrls) => [...prevUrls, newFileUrls]);
+        }
+    };
+    const handleDelete = (index) => {
+        setFiles((prevFiles) => prevFiles.filter((file, i) => i !== index));
+        setUploadedFileUrls((prevUrls) => prevUrls.filter((url, i) => i !== index));
+    };
+
+
     const handleCreateTask = () => {
+        // const assigne=users?.filter((item)=>item.email===assignees)
+        // console.log(assigne,"assigne")
+        console.log(files, "selected files")
+        const user = users?.find(user => user.email === assignees);
         if (validateFields()) {
 
             const task = {
@@ -76,9 +127,11 @@ function NewTaskPage() {
                 content: description,
                 columnId: status,
                 dueDate: dueDate,
-                priority: priority
-                // assigneeUserID,
-                // attachments,
+                priority: priority,
+                assigneeUserID: user?.id,
+                comments: [{ id: user?.id, comment: currentComment }],
+                createdBy: userId,
+                attachments:uploadedFileUrls
             };
             dispatch(addTaskAsync({ task, id }));
             if (taskAddStatus !== "rejected") {
@@ -106,12 +159,9 @@ function NewTaskPage() {
     };
     const taskAddStatus = useSelector((state) => state.project.taskAddStatus);
     useEffect(() => {
-        if (taskAddStatus === "rejected") {
-            toast.error("Failed to add task.");
-            dispatch(resetTaskAddStatus());
-        }
-    }, [taskAddStatus, dispatch]);
-
+        dispatch(fetchWorkspaceMembersAsync(workspaceId))
+        // eslint-disable-next-line
+    }, []);
     return (
         <Box
             sx={{
@@ -185,10 +235,10 @@ function NewTaskPage() {
                                 variant="outlined"
                                 fullWidth
                                 placeholder="Ask a question or add a comment"
-                                value={comment}
-                                onChange={(e) => setComment(e.target.value)}
+                                value={currentComment}
+                                onChange={handleCommentChange}
                                 sx={{
-                                    mb: 4
+                                    mb: 2
                                 }}
                             />
 
@@ -216,28 +266,28 @@ function NewTaskPage() {
                                         Assign to
                                     </Typography>
                                     <Box sx={{ display: 'flex', alignItems: 'center', flexGrow: 1, ml: 4 }}>
-                                        <Select
-                                            multiple
-                                            value={assignees}
-                                            onChange={handleAssigneesChange}
-                                            renderValue={(selected) => (
-                                                <div>
-                                                    {selected.join(', ')}
-                                                </div>
-                                            )}
-                                            sx={{
-                                                height: 32,
-                                                width: '100%',
-                                                maxWidth: 200,
-                                            }}
-                                        >
-                                            <MenuItem value="" disabled>
-                                                Select
-                                            </MenuItem>
-                                            <MenuItem value="Option 1">Option 1</MenuItem>
-                                            <MenuItem value="Option 2">Option 2</MenuItem>
-                                            <MenuItem value="Option 3">Option 3</MenuItem>
-                                        </Select>
+                                        {options ? (
+                                            <Select
+                                                value={assignees}
+                                                onChange={handleAssigneesChange}
+                                                sx={{
+                                                    height: 32,
+                                                    width: '100%',
+                                                    maxWidth: 200,
+                                                }}
+                                            >
+                                                <MenuItem value="" disabled>
+                                                    Select
+                                                </MenuItem>
+                                                {options.map((option) => (
+                                                    <MenuItem key={option.id} value={option.email}>
+                                                        {option.email}
+                                                    </MenuItem>
+                                                ))}
+                                            </Select>
+                                        ) : (
+                                            <Skeleton variant="rectangular" width={200} height={32} />
+                                        )}
                                     </Box>
                                 </Grid>
 
@@ -246,7 +296,7 @@ function NewTaskPage() {
                                         Priority
                                     </Typography>
                                     <Box sx={{ display: 'flex', alignItems: 'center', flexGrow: 1, ml: 6 }}>
-                                    <FormControl sx={{ width: '100%', maxWidth: 200 }} error={!!errors.priority}>
+                                        <FormControl sx={{ width: '100%', maxWidth: 200 }} error={!!errors.priority}>
                                             <Select
                                                 value={priority}
                                                 onChange={handlePriorityChange}
@@ -283,7 +333,7 @@ function NewTaskPage() {
                                             Status
                                         </Typography>
                                         <Box sx={{ display: 'flex', alignItems: 'center', flexGrow: 1, ml: 5 }}>
-                                        <FormControl sx={{ width: '100%', maxWidth: 200 }} error={!!errors.status}>
+                                            <FormControl sx={{ width: '100%', maxWidth: 200 }} error={!!errors.status}>
                                                 <Select
                                                     value={status}
                                                     onChange={handleStatusChange}
@@ -294,7 +344,7 @@ function NewTaskPage() {
                                                     <MenuItem value="" disabled>
                                                         Set Status
                                                     </MenuItem>
-                                                    {titlesAndIds.map(item => (
+                                                    {titlesAndIds?.map(item => (
                                                         <MenuItem key={item.id} value={item.id}>
                                                             {item.title}
                                                         </MenuItem>
@@ -306,16 +356,69 @@ function NewTaskPage() {
                                     </Box>
                                 </Grid>
 
-                                <Grid item xs={12} sx={{ display: 'flex', alignItems: 'center' }}>
-                                    <Typography variant="h6" gutterBottom sx={{ fontWeight: '700', mb: 1, fontSize: "1rem" }}>
-                                        Attachments
-                                    </Typography>
-                                    <Box sx={{ ml: '3rem' }}>
-                                        <IconButton>
-                                            <AddOutlinedIcon />
-                                        </IconButton>
+                                <Grid container spacing={2} sx={{ mt: 2, ml: 2 }}>
+                                    <Grid
+                                        item
+                                        xs={12}
+                                        sx={{ display: "flex", alignItems: "center" }}
+                                    >
+                                        <Typography
+                                            variant="h6"
+                                            gutterBottom
+                                            sx={{ fontWeight: "700", mb: 1, fontSize: "1rem" }}
+                                        >
+                                            Attachments
+                                        </Typography>
+                                        <Box sx={{ ml: "3rem" }}>
+                                            <IconButton onClick={handleUploadClick}>
+                                                <AddOutlinedIcon />
+                                            </IconButton>
+                                            <input
+                                                type="file"
+                                                ref={fileInputRef}
+                                                style={{ display: "none" }}
+                                                onChange={handleFileChange}
+                                                accept="image/*,application/pdf"
+                                                multiple
+                                            />
+                                        </Box>
+                                    </Grid>
+                                    <Box sx={{
+                                        maxHeight: "400px", overflow: "scroll", '&::-webkit-scrollbar': {
+                                            display: 'none',
+                                        },
+                                    }}>
+                                        {files.map((file, index) => (
+                                            <Grid item xs={12} key={index} sx={{ mt: 2, ml: 3 }}>
+                                                <Box sx={{ display: "flex", alignItems: "center" }}>
+                                                    {file.type.startsWith("image/") ? (
+                                                        <img
+                                                            src={file.url}
+                                                            alt={file.name}
+                                                            style={{
+                                                                maxWidth: "50%",
+                                                                height: "auto",
+                                                                marginRight: "1rem",
+                                                            }}
+                                                        />
+                                                    ) : (
+                                                        <embed
+                                                            src={file.url}
+                                                            type="application/pdf"
+                                                            width="50%"
+                                                            height="300px"
+                                                            style={{ marginRight: "1rem" }}
+                                                        />
+                                                    )}
+                                                    <IconButton onClick={() => handleDelete(index)}>
+                                                        <DeleteIcon />
+                                                    </IconButton>
+                                                </Box>
+                                            </Grid>
+                                        ))}
                                     </Box>
                                 </Grid>
+
                             </Grid>
                         </Grid>
                     </Grid>
@@ -333,7 +436,7 @@ function NewTaskPage() {
                                             backgroundColor: '#d0d0d0',
                                         },
                                     }}
-                                    onClick={()=>navigate(-1)}
+                                    onClick={() => navigate(-1)}
                                 >
                                     Cancel
                                 </Button>
