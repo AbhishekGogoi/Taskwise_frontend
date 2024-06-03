@@ -8,14 +8,14 @@ import { useSelector } from 'react-redux';
 import { Skeleton } from '@mui/material';
 import DeleteIcon from "@mui/icons-material/Delete";
 import { useRef } from 'react';
-import { toast, ToastContainer } from 'react-toastify';
+import {  ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { uploadFileAsync } from '../../features/workspace/workspaceSlice';
 
 function NewTaskPage() {
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
-    const [comments, setComments] = useState([]);
+    //const [comments, setComments] = useState([]);
     const [currentComment, setCurrentComment] = useState('');
     const [dueDate, setDueDate] = useState('');
     const [priority, setPriority] = useState('');
@@ -160,6 +160,7 @@ function NewTaskPage() {
     const taskAddStatus = useSelector((state) => state.project.taskAddStatus);
     useEffect(() => {
         dispatch(fetchWorkspaceMembersAsync(workspaceId))
+        // eslint-disable-next-line
     }, []);
     return (
         <Box

@@ -46,7 +46,8 @@ const NewProjectModel = ({ handleClose }) => {
   const [imageUrl, setImageUrl] = useState(defaultImage);
   useEffect(() => {
     dispatch(fetchWorkspaceByUserIDAsync(creatorUserID))
-  }, [])
+    // eslint-disable-next-line
+  }, [creatorUserID])
   console.log(Data, "workspaces")
   // Data.forEach(project => {
   //   const { workspaceName, workspaceId } = project;
