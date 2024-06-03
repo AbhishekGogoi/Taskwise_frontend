@@ -13,7 +13,8 @@ import 'react-toastify/dist/ReactToastify.css';
 function NewTaskPage() {
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
-    const [comment, setComment] = useState('');
+    const [comments, setComments] = useState([]);
+    const [currentComment, setCurrentComment] = useState('');
     const [dueDate, setDueDate] = useState('');
     const [priority, setPriority] = useState('');
     const [status, setStatus] = useState(null);
@@ -76,6 +77,13 @@ function NewTaskPage() {
         return !hasError;
     };
 
+    const handleCommentChange = (event) => {
+        const newComment = event.target.value;
+        setCurrentComment(newComment);
+    };
+
+
+
     const handleCreateTask = () => {
         // const assigne=users?.filter((item)=>item.email===assignees)
         // console.log(assigne,"assigne")
@@ -89,7 +97,8 @@ function NewTaskPage() {
                 columnId: status,
                 dueDate: dueDate,
                 priority: priority,
-                assigneeUserID:user.id,
+                assigneeUserID: user.id,
+                comments: [currentComment],
                 // attachments,
             };
             dispatch(addTaskAsync({ task, id }));
@@ -193,10 +202,10 @@ function NewTaskPage() {
                                 variant="outlined"
                                 fullWidth
                                 placeholder="Ask a question or add a comment"
-                                value={comment}
-                                onChange={(e) => setComment(e.target.value)}
+                                value={currentComment}
+                                onChange={handleCommentChange}
                                 sx={{
-                                    mb: 4
+                                    mb: 2
                                 }}
                             />
 
@@ -224,7 +233,7 @@ function NewTaskPage() {
                                         Assign to
                                     </Typography>
                                     <Box sx={{ display: 'flex', alignItems: 'center', flexGrow: 1, ml: 4 }}>
-                                    {options ? (
+                                        {options ? (
                                             <Select
                                                 value={assignees}
                                                 onChange={handleAssigneesChange}
@@ -239,7 +248,7 @@ function NewTaskPage() {
                                                 </MenuItem>
                                                 {options.map((option) => (
                                                     <MenuItem key={option.id} value={option.email}>
-                                                        {option.email} 
+                                                        {option.email}
                                                     </MenuItem>
                                                 ))}
                                             </Select>
