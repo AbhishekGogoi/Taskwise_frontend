@@ -134,7 +134,6 @@ const LoginPage = () => {
 
   const loggedInUser = useSelector((state) => state.user.loggedInUser);
   const loginError = useSelector((state) => state.user.loginError);
-  // console.log(loginError?.message);
 
   const schema = Joi.object({
     email: Joi.string()

@@ -29,7 +29,6 @@ const initialState = {
   resetEmail: null,
   resendOTPStatus: "idle",
   resendOTPError: null,
-  firstTime: false, // Indicates if it's the user's first time
 };
 
 export const signupAsync = createAsyncThunk(
@@ -136,11 +135,9 @@ const userSlice = createSlice({
       const user = localStorage.getItem("user");
       const isAuthenticated =
         localStorage.getItem("isAuthenticated") === "true";
-      const firstTime = localStorage.getItem("firstTime") === "true"; // Rehydrate firstTime flag
       if (user) {
         state.isAuthenticated = isAuthenticated;
         state.loggedInUser = JSON.parse(user);
-        state.firstTime = firstTime; // Set firstTime from local storage
       }
       state.isAuthChecked = true;
     },
@@ -153,8 +150,6 @@ const userSlice = createSlice({
       .addCase(signupAsync.fulfilled, (state, action) => {
         state.signupStatus = "fulfilled";
         state.loggedInUser = action.payload;
-        state.firstTime = true; // Mark as first time user
-        localStorage.setItem("firstTime", true); // Save in local storage
       })
       .addCase(signupAsync.rejected, (state, action) => {
         state.signupStatus = "rejected";
@@ -170,8 +165,6 @@ const userSlice = createSlice({
         state.isAuthenticated = true;
         localStorage.setItem("user", JSON.stringify(action.payload));
         localStorage.setItem("isAuthenticated", true);
-        state.firstTime = false; // Reset firstTime on login
-        localStorage.setItem("firstTime", false); // Save in local storage
       })
       .addCase(loginAsync.rejected, (state, action) => {
         state.loginStatus = "rejected";
@@ -185,10 +178,8 @@ const userSlice = createSlice({
         state.loggedInUser = null;
         // for session management
         state.isAuthenticated = false;
-        state.firstTime = false; // Reset first time flag
         localStorage.removeItem("user");
         localStorage.removeItem("isAuthenticated");
-        localStorage.removeItem("firstTime"); // Remove first time from local storage
       })
       .addCase(logoutAsync.rejected, (state, action) => {
         state.status = "rejected";
@@ -244,11 +235,9 @@ const userSlice = createSlice({
         const user = localStorage.getItem("user");
         const isAuthenticated =
           localStorage.getItem("isAuthenticated") === "true";
-        const firstTime = localStorage.getItem("firstTime") === "true"; // Rehydrate firstTime flag
         if (user) {
           state.isAuthenticated = isAuthenticated;
           state.loggedInUser = JSON.parse(user);
-          state.firstTime = firstTime; // Set firstTime from local storage
         }
         state.isAuthChecked = true;
       });

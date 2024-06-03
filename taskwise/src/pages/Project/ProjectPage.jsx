@@ -12,9 +12,14 @@ import ProjectCard from "./ProjectCard";
 import NewProjectModel from "../../components/NewProjectModel";
 import Modal from "@mui/material/Modal";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchProjectAsync, resetProjectAddStatus } from "../../features/project/projectSlice";
-import { toast, ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import {
+  fetchProjectAsync,
+  resetProjectAddStatus,
+} from "../../features/project/projectSlice";
+import { fetchWorkspaceByUserIDAsync } from "../../features/workspace/workspaceSlice";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import FirstPage from "../../components/FirstPage";
 
 const SearchIconWrapper = styled("div")(({ theme }) => ({
   padding: theme.spacing(0, 2),
@@ -135,7 +140,12 @@ function ProjectPage() {
   const [isModalOpen, setModalOpen] = useState(false);
   const dispatch = useDispatch();
   const projectData = useSelector((state) => state.project.projects);
-  const projectAddStatus = useSelector((state) => state.project.projectAddStatus);
+  const projectAddStatus = useSelector(
+    (state) => state.project.projectAddStatus
+  );
+  const workspaces = useSelector((state) => state.workspace.workspaces);
+  console.log(workspaces);
+
   // console.log(projectData);
   const userId = useSelector((state) => state?.user?.loggedInUser?.user?._id);
   const [searchQuery, setSearchQuery] = useState("");
@@ -148,7 +158,8 @@ function ProjectPage() {
 
   //console.log(userId)
   useEffect(() => {
-    dispatch(fetchProjectAsync(userId))
+    dispatch(fetchProjectAsync(userId));
+    dispatch(fetchWorkspaceByUserIDAsync(userId));
   }, [dispatch, userId]);
   useEffect(() => {
     if (projectAddStatus === "fulfilled") {
@@ -156,7 +167,7 @@ function ProjectPage() {
       dispatch(resetProjectAddStatus());
     }
     // eslint-disable-next-line
-  }, [projectAddStatus])
+  }, [projectAddStatus]);
   const handleOpenModal = () => {
     setModalOpen(true);
   };
@@ -164,6 +175,10 @@ function ProjectPage() {
   const handleCloseModal = () => {
     setModalOpen(false);
   };
+
+  if (workspaces.length <= 0) {
+    return <FirstPage />;
+  }
 
   return (
     <Box

@@ -122,7 +122,6 @@ const SignupPage = () => {
 
   const signupStatus = useSelector((state) => state.user.signupStatus);
   const signupError = useSelector((state) => state.user.signupError);
-  const firstTime = useSelector((state) => state.user.firstTime);
 
   const schema = Joi.object({
     username: Joi.string().min(3).required().messages({
@@ -153,15 +152,6 @@ const SignupPage = () => {
     }),
   });
 
-  // const handleSignup = (e) => {
-  //   e.preventDefault();
-  //   if (password !== confirmPassword) {
-  //     alert("Passwords do not match");
-  //     return;
-  //   }
-  //   dispatch(signupAsync({ username, email, password }));
-  // };
-
   const handleSignup = (e) => {
     e.preventDefault();
     const { error } = schema.validate(
@@ -183,27 +173,16 @@ const SignupPage = () => {
   };
 
   useEffect(() => {
+    if (signupStatus === "fullfilled") {
+      navigate("/projects");
+    }
+  }, [signupStatus, navigate]);
+
+  useEffect(() => {
     if (signupError) {
       toast.error(signupError.message);
     }
   }, [signupError]);
-
-  // useEffect(() => {
-  //   if (signupStatus === "fullfilled") {
-  //     navigate("/projects");
-  //   }
-  // }, [signupStatus, navigate]);
-
-  useEffect(() => {
-    if (signupStatus === "fulfilled") {
-      if (firstTime) {
-        // localStorage.setItem("firstTime", "true");
-        navigate("/firstpage");
-      } else {
-        navigate("/projects");
-      }
-    }
-  }, [signupStatus, firstTime, navigate]);
 
   const handleLoginClick = () => {
     navigate("/login");

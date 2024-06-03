@@ -26,7 +26,6 @@ import VerificationPage from "./pages/ForgotPassword/VerificationPage";
 import ResetPasswordPage from "./pages/ForgotPassword/ResetPasswordPage";
 import ConfirmationPage from "./pages/ForgotPassword/ConfirmationPage";
 import ProfileSettingsPage from "./pages/ProfilePage/ProfilePage";
-import FirstPage from "./components/FirstPage";
 
 const theme = createTheme({
   typography: {
@@ -44,7 +43,6 @@ function AppLayout() {
     "/verification",
     "/resetpassword",
     "/confirmation",
-    "/firstpage",
   ].includes(location.pathname);
   const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -88,7 +86,6 @@ function AppLayout() {
             <Route path="/" element={<LandingPage />} />
             <Route path="/login" element={<LoginPage />} />
             <Route path="/signup" element={<SignupPage />} />
-            <Route path="/firstpage" element={<FirstPage />} />
             <Route path="/forgotpassword" element={<ForgotPasswordPage />} />
             <Route path="/verification" element={<VerificationPage />} />
             <Route path="/resetpassword" element={<ResetPasswordPage />} />
