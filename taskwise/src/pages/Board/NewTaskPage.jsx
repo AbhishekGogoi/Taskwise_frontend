@@ -22,6 +22,7 @@ function NewTaskPage() {
     const [errors, setErrors] = useState({ title: '', description: '' });
     const navigate = useNavigate();
     const dispatch = useDispatch();
+    const userId = useSelector((state) => state?.user?.loggedInUser?.user?._id);
     const { id } = useParams();
     //const colId = useSelector((state) => state?.project?.selectedProject?.order[0])
     const coldata = useSelector((state) => state?.project?.selectedProject?.columns);
@@ -98,7 +99,8 @@ function NewTaskPage() {
                 dueDate: dueDate,
                 priority: priority,
                 assigneeUserID: user.id,
-                comments: [currentComment],
+                comments: [{ id: user.id, comment: currentComment }],
+                createdBy:userId
                 // attachments,
             };
             dispatch(addTaskAsync({ task, id }));
