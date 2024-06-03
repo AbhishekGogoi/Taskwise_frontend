@@ -10,6 +10,7 @@ import { ModuleRegistry } from "@ag-grid-community/core";
 import { ClientSideRowModelModule } from "@ag-grid-community/client-side-row-model";
 import { styled } from "@mui/material/styles";
 import TaskModal from "../../components/TaskModal";
+import { format } from "date-fns";
 
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
@@ -32,7 +33,7 @@ const Toolbar = styled(Box)({
   paddingLeft: "8px",
 });
 
-const MyTaskPage = () => {
+const MyTaskPage = ({ tasksData }) => {
   const [selectedProject, setSelectedProject] = useState("");
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedTask, setSelectedTask] = useState(null);
@@ -55,178 +56,191 @@ const MyTaskPage = () => {
   const gridStyle = useMemo(() => ({ height: "100%", width: "100%" }), []);
 
   // eslint-disable-next-line
-  const [rowData, setRowData] = useState([
-    {
-      Task: "Design feedback on wireframe",
-      DueDate: "7 Oct",
-      Priority: "Hard",
-      Status: "Ongoing",
-      Workspace: "Book App",
-    },
-    {
-      Task: "Review UI elements",
-      DueDate: "8 Oct",
-      Priority: "Medium",
-      Status: "Pending",
-      Workspace: "Book App",
-    },
-    {
-      Task: "Update color scheme",
-      DueDate: "9 Oct",
-      Priority: "High",
-      Status: "Completed",
-      Workspace: "Book App",
-    },
-    {
-      Task: "Finalize typography",
-      DueDate: "10 Oct",
-      Priority: "Low",
-      Status: "Ongoing",
-      Workspace: "Book App",
-    },
-    {
-      Task: "Implement feedback",
-      DueDate: "11 Oct",
-      Priority: "High",
-      Status: "Pending",
-      Workspace: "Book App",
-    },
-    {
-      Task: "User testing",
-      DueDate: "12 Oct",
-      Priority: "Medium",
-      Status: "Ongoing",
-      Workspace: "Book App",
-    },
-    {
-      Task: "Fix bugs",
-      DueDate: "13 Oct",
-      Priority: "High",
-      Status: "Pending",
-      Workspace: "Book App",
-    },
-    {
-      Task: "Optimize performance",
-      DueDate: "14 Oct",
-      Priority: "Medium",
-      Status: "Ongoing",
-      Workspace: "Book App",
-    },
-    {
-      Task: "Create documentation",
-      DueDate: "15 Oct",
-      Priority: "Low",
-      Status: "Pending",
-      Workspace: "Book App",
-    },
-    {
-      Task: "Deploy app",
-      DueDate: "16 Oct",
-      Priority: "High",
-      Status: "Completed",
-      Workspace: "Book App",
-    },
-    {
-      Task: "Monitor app performance",
-      DueDate: "17 Oct",
-      Priority: "Medium",
-      Status: "Ongoing",
-      Workspace: "Book App",
-    },
-    {
-      Task: "Gather user feedback",
-      DueDate: "18 Oct",
-      Priority: "High",
-      Status: "Pending",
-      Workspace: "Book App",
-    },
-    {
-      Task: "Prepare for presentation",
-      DueDate: "19 Oct",
-      Priority: "Low",
-      Status: "Ongoing",
-      Workspace: "Book App",
-    },
-    {
-      Task: "Client meeting",
-      DueDate: "20 Oct",
-      Priority: "High",
-      Status: "Completed",
-      Workspace: "Book App",
-    },
-    {
-      Task: "Refactor code",
-      DueDate: "21 Oct",
-      Priority: "Medium",
-      Status: "Pending",
-      Workspace: "Book App",
-    },
-    {
-      Task: "Update project plan",
-      DueDate: "22 Oct",
-      Priority: "Low",
-      Status: "Ongoing",
-      Workspace: "Book App",
-    },
-    {
-      Task: "Backlog grooming",
-      DueDate: "23 Oct",
-      Priority: "Medium",
-      Status: "Pending",
-      Workspace: "Book App",
-    },
-    {
-      Task: "Sprint planning",
-      DueDate: "24 Oct",
-      Priority: "High",
-      Status: "Ongoing",
-      Workspace: "Book App",
-    },
-    {
-      Task: "Review design patterns",
-      DueDate: "25 Oct",
-      Priority: "Low",
-      Status: "Completed",
-      Workspace: "Book App",
-    },
-    {
-      Task: "Code review",
-      DueDate: "26 Oct",
-      Priority: "High",
-      Status: "Pending",
-      Workspace: "Book App",
-    },
-    {
-      Task: "Update README",
-      DueDate: "27 Oct",
-      Priority: "Medium",
-      Status: "Ongoing",
-      Workspace: "Book App",
-    },
-    {
-      Task: "Check cross-browser compatibility",
-      DueDate: "28 Oct",
-      Priority: "High",
-      Status: "Pending",
-      Workspace: "Book App",
-    },
-    {
-      Task: "Finalize release notes",
-      DueDate: "29 Oct",
-      Priority: "Low",
-      Status: "Completed",
-      Workspace: "Book App",
-    },
-  ]);
+  // const [rowData, setRowData] = useState([
+  //   {
+  //     Task: "Design feedback on wireframe",
+  //     DueDate: "7 Oct",
+  //     Priority: "Hard",
+  //     Status: "Ongoing",
+  //     Workspace: "Book App",
+  //   },
+  //   {
+  //     Task: "Review UI elements",
+  //     DueDate: "8 Oct",
+  //     Priority: "Medium",
+  //     Status: "Pending",
+  //     Workspace: "Book App",
+  //   },
+  //   {
+  //     Task: "Update color scheme",
+  //     DueDate: "9 Oct",
+  //     Priority: "High",
+  //     Status: "Completed",
+  //     Workspace: "Book App",
+  //   },
+  //   {
+  //     Task: "Finalize typography",
+  //     DueDate: "10 Oct",
+  //     Priority: "Low",
+  //     Status: "Ongoing",
+  //     Workspace: "Book App",
+  //   },
+  //   {
+  //     Task: "Implement feedback",
+  //     DueDate: "11 Oct",
+  //     Priority: "High",
+  //     Status: "Pending",
+  //     Workspace: "Book App",
+  //   },
+  //   {
+  //     Task: "User testing",
+  //     DueDate: "12 Oct",
+  //     Priority: "Medium",
+  //     Status: "Ongoing",
+  //     Workspace: "Book App",
+  //   },
+  //   {
+  //     Task: "Fix bugs",
+  //     DueDate: "13 Oct",
+  //     Priority: "High",
+  //     Status: "Pending",
+  //     Workspace: "Book App",
+  //   },
+  //   {
+  //     Task: "Optimize performance",
+  //     DueDate: "14 Oct",
+  //     Priority: "Medium",
+  //     Status: "Ongoing",
+  //     Workspace: "Book App",
+  //   },
+  //   {
+  //     Task: "Create documentation",
+  //     DueDate: "15 Oct",
+  //     Priority: "Low",
+  //     Status: "Pending",
+  //     Workspace: "Book App",
+  //   },
+  //   {
+  //     Task: "Deploy app",
+  //     DueDate: "16 Oct",
+  //     Priority: "High",
+  //     Status: "Completed",
+  //     Workspace: "Book App",
+  //   },
+  //   {
+  //     Task: "Monitor app performance",
+  //     DueDate: "17 Oct",
+  //     Priority: "Medium",
+  //     Status: "Ongoing",
+  //     Workspace: "Book App",
+  //   },
+  //   {
+  //     Task: "Gather user feedback",
+  //     DueDate: "18 Oct",
+  //     Priority: "High",
+  //     Status: "Pending",
+  //     Workspace: "Book App",
+  //   },
+  //   {
+  //     Task: "Prepare for presentation",
+  //     DueDate: "19 Oct",
+  //     Priority: "Low",
+  //     Status: "Ongoing",
+  //     Workspace: "Book App",
+  //   },
+  //   {
+  //     Task: "Client meeting",
+  //     DueDate: "20 Oct",
+  //     Priority: "High",
+  //     Status: "Completed",
+  //     Workspace: "Book App",
+  //   },
+  //   {
+  //     Task: "Refactor code",
+  //     DueDate: "21 Oct",
+  //     Priority: "Medium",
+  //     Status: "Pending",
+  //     Workspace: "Book App",
+  //   },
+  //   {
+  //     Task: "Update project plan",
+  //     DueDate: "22 Oct",
+  //     Priority: "Low",
+  //     Status: "Ongoing",
+  //     Workspace: "Book App",
+  //   },
+  //   {
+  //     Task: "Backlog grooming",
+  //     DueDate: "23 Oct",
+  //     Priority: "Medium",
+  //     Status: "Pending",
+  //     Workspace: "Book App",
+  //   },
+  //   {
+  //     Task: "Sprint planning",
+  //     DueDate: "24 Oct",
+  //     Priority: "High",
+  //     Status: "Ongoing",
+  //     Workspace: "Book App",
+  //   },
+  //   {
+  //     Task: "Review design patterns",
+  //     DueDate: "25 Oct",
+  //     Priority: "Low",
+  //     Status: "Completed",
+  //     Workspace: "Book App",
+  //   },
+  //   {
+  //     Task: "Code review",
+  //     DueDate: "26 Oct",
+  //     Priority: "High",
+  //     Status: "Pending",
+  //     Workspace: "Book App",
+  //   },
+  //   {
+  //     Task: "Update README",
+  //     DueDate: "27 Oct",
+  //     Priority: "Medium",
+  //     Status: "Ongoing",
+  //     Workspace: "Book App",
+  //   },
+  //   {
+  //     Task: "Check cross-browser compatibility",
+  //     DueDate: "28 Oct",
+  //     Priority: "High",
+  //     Status: "Pending",
+  //     Workspace: "Book App",
+  //   },
+  //   {
+  //     Task: "Finalize release notes",
+  //     DueDate: "29 Oct",
+  //     Priority: "Low",
+  //     Status: "Completed",
+  //     Workspace: "Book App",
+  //   },
+  // ]);
+
+  const [rowData] = useState(tasksData);
 
   // eslint-disable-next-line
   const [colDefs, setColDefs] = useState([
     { field: "Task", width: 350 },
-    { field: "DueDate", width: 100 },
-    { field: "Priority", width: 100 },
+    {
+      field: "DueDate",
+      width: 100,
+      valueFormatter: (params) => formatDate(params.value),
+    },
+    // { field: "Priority", width: 100 },
     { field: "Status", width: 100 },
     { field: "Workspace", width: 100 },
   ]);
+
+  // Custom function to format date into a readable format
+  const formatDate = (dateString) => {
+    if (!dateString) return "";
+    const date = new Date(dateString);
+    return format(date, "dd MMM yy");
+  };
 
   const defaultColDef = useMemo(() => {
     return {
