@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Box,
   List,
@@ -11,15 +11,44 @@ import Projects_white from "../assets/Projects_white.png";
 import WorkspaceIconWhite from "../assets/WorkspaceIconWhite.png";
 import MyTaskIconWhite from "../assets/MyTaskIconWhite.png";
 import CalendarWhite from "../assets/CalendarWhite.png";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import "./Sidebar.css";
 
 function Sidebar() {
-  const [selectedIndex, setSelectedIndex] = useState(0);
+  const location = useLocation();
+  const [selectedIndex, setSelectedIndex] = useState(() => {
+    switch (location.pathname) {
+      case "/projects":
+        return 0;
+      case "/workspaces":
+        return 1;
+      case "/my-tasks":
+        return 2;
+      case "/calendar":
+        return 3;
+      default:
+        return 0;
+    }
+  });
 
-  const handleListItemClick = (index) => {
-    setSelectedIndex(index);
-  };
+  useEffect(() => {
+    switch (location.pathname) {
+      case "/projects":
+        setSelectedIndex(0);
+        break;
+      case "/workspaces":
+        setSelectedIndex(1);
+        break;
+      case "/my-tasks":
+        setSelectedIndex(2);
+        break;
+      case "/calendar":
+        setSelectedIndex(3);
+        break;
+      default:
+        setSelectedIndex(0);
+    }
+  }, [location.pathname]);
 
   return (
     <Box className="sidebar">
@@ -31,7 +60,7 @@ function Sidebar() {
             className={`list-item-button ${
               selectedIndex === 0 ? "selected" : ""
             }`}
-            onClick={() => handleListItemClick(0)}
+            onClick={() => setSelectedIndex(0)}
           >
             <ListItemIcon>
               <img
@@ -53,7 +82,7 @@ function Sidebar() {
             className={`list-item-button ${
               selectedIndex === 1 ? "selected" : ""
             }`}
-            onClick={() => handleListItemClick(1)}
+            onClick={() => setSelectedIndex(1)}
           >
             <ListItemIcon>
               <img
@@ -75,7 +104,7 @@ function Sidebar() {
             className={`list-item-button ${
               selectedIndex === 2 ? "selected" : ""
             }`}
-            onClick={() => handleListItemClick(2)}
+            onClick={() => setSelectedIndex(2)}
           >
             <ListItemIcon>
               <img
@@ -97,7 +126,7 @@ function Sidebar() {
             className={`list-item-button ${
               selectedIndex === 3 ? "selected" : ""
             }`}
-            onClick={() => handleListItemClick(3)}
+            onClick={() => setSelectedIndex(3)}
           >
             <ListItemIcon>
               <img
