@@ -10,7 +10,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import { useRef } from 'react';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-
+import { uploadFileAsync } from '../../features/workspace/workspaceSlice';
 
 function NewTaskPage() {
     const [title, setTitle] = useState('');
@@ -86,27 +86,39 @@ function NewTaskPage() {
     };
     const fileInputRef = useRef(null);
     const [files, setFiles] = useState([]);
+    const [uploadedFileUrls, setUploadedFileUrls] = useState([]);
 
     const handleUploadClick = () => {
         fileInputRef.current.click();
     };
-    const handleFileChange = (event) => {
+    const handleFileChange = async (event) => {
         const newFiles = Array.from(event.target.files).map((file) => ({
             url: URL.createObjectURL(file),
             type: file.type,
             name: file.name,
         }));
         setFiles((prevFiles) => [...prevFiles, ...newFiles]);
+
+
+        const file = event.target.files[0];
+        if (file) {
+            const formData = new FormData();
+            formData.append('file', file);
+            const response = await dispatch(uploadFileAsync(formData));
+            const newFileUrls=response.payload.presignedUrl;
+            setUploadedFileUrls((prevUrls) => [...prevUrls, newFileUrls]);
+        }
     };
     const handleDelete = (index) => {
         setFiles((prevFiles) => prevFiles.filter((file, i) => i !== index));
+        setUploadedFileUrls((prevUrls) => prevUrls.filter((url, i) => i !== index));
     };
 
 
     const handleCreateTask = () => {
         // const assigne=users?.filter((item)=>item.email===assignees)
         // console.log(assigne,"assigne")
-        // console.log(user,"selected assignee")
+        console.log(files, "selected files")
         const user = users?.find(user => user.email === assignees);
         if (validateFields()) {
 
@@ -116,10 +128,10 @@ function NewTaskPage() {
                 columnId: status,
                 dueDate: dueDate,
                 priority: priority,
-                assigneeUserID: user.id,
-                comments: [{ id: user.id, comment: currentComment }],
-                createdBy: userId
-                // attachments,
+                assigneeUserID: user?.id,
+                comments: [{ id: user?.id, comment: currentComment }],
+                createdBy: userId,
+                attachments:uploadedFileUrls
             };
             dispatch(addTaskAsync({ task, id }));
             if (taskAddStatus !== "rejected") {
