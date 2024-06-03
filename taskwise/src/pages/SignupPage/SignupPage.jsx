@@ -122,7 +122,7 @@ const SignupPage = () => {
 
   const signupStatus = useSelector((state) => state.user.signupStatus);
   const signupError = useSelector((state) => state.user.signupError);
-  // console.log(signupError?.message);
+  const firstTime = useSelector((state) => state.user.firstTime);
 
   const schema = Joi.object({
     username: Joi.string().min(3).required().messages({
@@ -188,11 +188,22 @@ const SignupPage = () => {
     }
   }, [signupError]);
 
+  // useEffect(() => {
+  //   if (signupStatus === "fullfilled") {
+  //     navigate("/projects");
+  //   }
+  // }, [signupStatus, navigate]);
+
   useEffect(() => {
-    if (signupStatus === "fullfilled") {
-      navigate("/projects");
+    if (signupStatus === "fulfilled") {
+      if (firstTime) {
+        // localStorage.setItem("firstTime", "true");
+        navigate("/firstpage");
+      } else {
+        navigate("/projects");
+      }
     }
-  }, [signupStatus, navigate]);
+  }, [signupStatus, firstTime, navigate]);
 
   const handleLoginClick = () => {
     navigate("/login");
