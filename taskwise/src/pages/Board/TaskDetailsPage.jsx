@@ -268,30 +268,40 @@ const TaskDetailsPage = () => {
                   sx={{ fontWeight: "700", mb: 1, fontSize: "1rem" }}>
                   Comments ({taskDetails.comments.length})
                 </Typography>
-                {taskDetails.comments.map((comment, index) => (
-                  <Grid container spacing={2} key={index} sx={{ mb: 2 }}>
-                    <Grid item>
-                      <Avatar
-                        alt="Profile Image"
-                        src={ProfileImage}
-                        sx={{
-                          width: 30,
-                          height: 30,
-                        }}
-                      />
+                <Box
+                  sx={{
+                    maxHeight: '200px',
+                    overflowY: 'auto',
+                    border: '1px solid #ccc',
+                    padding: '8px',
+                    borderRadius: '4px'
+                  }}
+                >
+                  {taskDetails.comments.map((comment, index) => (
+                    <Grid container spacing={2} key={index} sx={{ mb: 2 }}>
+                      <Grid item>
+                        <Avatar
+                          alt="Profile Image"
+                          src={ProfileImage}
+                          sx={{
+                            width: 30,
+                            height: 30,
+                          }}
+                        />
+                      </Grid>
+                      <Grid item xs>
+                        <Box>
+                          <Typography sx={{ cursor: "pointer", fontWeight: 'bold' }}>
+                            <Tooltip title={comment?.user?.email}>
+                              {comment?.user?.username}
+                            </Tooltip>
+                          </Typography>
+                          <Typography>{comment?.comment}</Typography>
+                        </Box>
+                      </Grid>
                     </Grid>
-                    <Grid item xs>
-                      <Box>
-                        <Typography sx={{ cursor: "pointer", fontWeight: 'bold' }}>
-                          <Tooltip title={comment?.user?.email}>
-                            {comment?.user?.username}
-                          </Tooltip>
-                        </Typography>
-                        <Typography>{comment?.comment}</Typography>
-                      </Box>
-                    </Grid>
-                  </Grid>
-                ))}
+                  ))}
+                </Box>
               </Grid>
 
               <Grid item xs={12} md={6}>
