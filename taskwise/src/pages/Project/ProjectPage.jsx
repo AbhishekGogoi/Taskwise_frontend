@@ -142,6 +142,9 @@ function ProjectPage() {
   const projectAddStatus = useSelector(
     (state) => state.project.projectAddStatus
   );
+
+  const workspaces = useSelector((state) => state.workspace.workspaces);
+
   // console.log(projectData);
   const userId = useSelector((state) => state?.user?.loggedInUser?.user?._id);
   const [searchQuery, setSearchQuery] = useState("");
@@ -155,6 +158,7 @@ function ProjectPage() {
   //console.log(userId)
   useEffect(() => {
     dispatch(fetchProjectAsync(userId));
+    dispatch(fetchWorkspaceByUserIDAsync(userId));
   }, [dispatch, userId]);
   useEffect(() => {
     if (projectAddStatus === "fulfilled") {
@@ -170,6 +174,10 @@ function ProjectPage() {
   const handleCloseModal = () => {
     setModalOpen(false);
   };
+
+  if (workspaces.length <= 0) {
+    return <NoWorkspacePage />;
+  }
 
   return (
     <Box
