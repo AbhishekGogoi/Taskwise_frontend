@@ -12,9 +12,13 @@ import ProjectCard from "./ProjectCard";
 import NewProjectModel from "../../components/NewProjectModel";
 import Modal from "@mui/material/Modal";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchProjectAsync, resetProjectAddStatus } from "../../features/project/projectSlice";
-import { toast, ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import {
+  fetchProjectAsync,
+  resetProjectAddStatus,
+} from "../../features/project/projectSlice";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import NoWorkspacePage from "../../components/NoWorkspacePage";
 
 const SearchIconWrapper = styled("div")(({ theme }) => ({
   padding: theme.spacing(0, 2),
@@ -135,7 +139,9 @@ function ProjectPage() {
   const [isModalOpen, setModalOpen] = useState(false);
   const dispatch = useDispatch();
   const projectData = useSelector((state) => state.project.projects);
-  const projectAddStatus = useSelector((state) => state.project.projectAddStatus);
+  const projectAddStatus = useSelector(
+    (state) => state.project.projectAddStatus
+  );
   // console.log(projectData);
   const userId = useSelector((state) => state?.user?.loggedInUser?.user?._id);
   const [searchQuery, setSearchQuery] = useState("");
@@ -148,7 +154,7 @@ function ProjectPage() {
 
   //console.log(userId)
   useEffect(() => {
-    dispatch(fetchProjectAsync(userId))
+    dispatch(fetchProjectAsync(userId));
   }, [dispatch, userId]);
   useEffect(() => {
     if (projectAddStatus === "fulfilled") {
@@ -156,7 +162,7 @@ function ProjectPage() {
       dispatch(resetProjectAddStatus());
     }
     // eslint-disable-next-line
-  }, [projectAddStatus])
+  }, [projectAddStatus]);
   const handleOpenModal = () => {
     setModalOpen(true);
   };
