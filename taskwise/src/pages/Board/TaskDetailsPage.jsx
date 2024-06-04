@@ -31,6 +31,7 @@ const TaskDetailsPage = () => {
     assignees: "",
     priority: "",
     dueDate: "",
+    comments: [],
   });
 
 
@@ -39,13 +40,17 @@ const TaskDetailsPage = () => {
   );
 
   const selectedProject = useSelector((state) => state.project.selectedProject);
+  const userId = useSelector((state) => state?.user?.loggedInUser?.user);
   const taskData = selectedProject ? selectedProject.tasks : [];
   const membersData = useSelector((state) => state?.project?.workspaceMembers?.data);
   console.log(membersData, "members in task details")
   const filteredTask = taskData.find((eachData) => eachData._id === taskID);
   console.log(filteredTask, "filteredTask");
-
-
+  const [currentComment, setCurrentComment] = useState('');
+  const handleAddNewComment=(event)=>{
+        const newComment = event.target.value;
+        setCurrentComment(newComment);
+  }
 
 
 
@@ -57,6 +62,7 @@ const TaskDetailsPage = () => {
         assignees: filteredTask.assignees || "",
         priority: filteredTask.priority || "",
         dueDate: filteredTask.dueDate ? filteredTask.dueDate.split("T")[0] : "",
+        comments: filteredTask.comments || [],
       };
       setTaskDetails(details);
       setInitialTaskDetails(details); // Set the initial task details
@@ -70,6 +76,46 @@ const TaskDetailsPage = () => {
       [name]: value,
     }));
   };
+  // const findChangedFields = (initial, current) => {
+  //   const changedFields = {};
+  //   for (const key in initial) {
+  //     if (initial[key] !== current[key]) {
+  //       changedFields[key] = current[key];
+  //     }
+  //   }
+  //   return changedFields;
+  // };
+
+  // const handleSaveTask = () => {
+  //   let updatedTaskDetails = taskDetails;
+  //   if (currentComment.trim()) {
+  //     const newComment = {
+  //       user:userId,
+  //       comment: currentComment,
+  //     };
+  //     updatedTaskDetails = {
+  //       ...taskDetails,
+  //       comments: [...taskDetails.comments, newComment],
+  //     };
+  //     setCurrentComment('');
+  //   }
+
+  //   const data = findChangedFields(initialTaskDetails, updatedTaskDetails);
+  //   if (Object.keys(data).length > 0) {
+  //     console.log(data, "changedFields");
+  //     const idObject = {
+  //       taskId: taskID,
+  //       id: pid
+  //     }
+  //     //dispatch(updateTaskAsync({ taskDetails: changedFields, taskID }));
+  //     dispatch(editTaskAsync({ data, idObject }))
+  //     toast.success("Task updated successfully!");
+  //     navigate(-1)
+  //   } else {
+  //     toast.info("No changes to save.");
+  //   }
+  // };
+
   const findChangedFields = (initial, current) => {
     const changedFields = {};
     for (const key in initial) {
@@ -79,23 +125,44 @@ const TaskDetailsPage = () => {
     }
     return changedFields;
   };
-
+  
   const handleSaveTask = () => {
-    const data = findChangedFields(initialTaskDetails, taskDetails);
-    if (Object.keys(data).length > 0) {
+    let updatedTaskDetails = { ...taskDetails };
+  
+    if (currentComment.trim()) {
+      const newComment = {
+        user: userId,
+        comment: currentComment,
+      };
+      updatedTaskDetails = {
+        ...updatedTaskDetails,
+        comments: [...(updatedTaskDetails.comments || []), newComment],
+      };
+      setCurrentComment('');
+    }
+  
+    const data = findChangedFields(initialTaskDetails, updatedTaskDetails);
+  
+    if (Object.keys(data).length > 0 || currentComment.trim()) {
+      if (currentComment.trim() && !data.comments) {
+        data.comments = updatedTaskDetails.comments;
+      }
+  
       console.log(data, "changedFields");
       const idObject = {
         taskId: taskID,
-        id: pid
-      }
-      //dispatch(updateTaskAsync({ taskDetails: changedFields, taskID }));
-      dispatch(editTaskAsync({ data, idObject }))
+        id: pid,
+      };
+      dispatch(editTaskAsync({ data, idObject }));
       toast.success("Task updated successfully!");
-      navigate(-1)
+      navigate(-1);
     } else {
       toast.info("No changes to save.");
     }
   };
+  
+  
+
 
   return (
     <Box
@@ -166,6 +233,8 @@ const TaskDetailsPage = () => {
                   variant="outlined"
                   fullWidth
                   placeholder="Ask a question or add a comment"
+                  value={currentComment}
+                  onChange={handleAddNewComment}
                   sx={{
                     mb: 4,
                   }}
