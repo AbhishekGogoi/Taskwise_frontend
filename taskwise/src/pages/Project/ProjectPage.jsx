@@ -246,15 +246,30 @@ function ProjectPage() {
           </Search>
         </Box>
       </Paper>
-      <CustomBox>
-        <Grid container spacing={3} alignItems="center">
-          {filteredProjects?.map((project) => (
-            <Grid item key={project.id} xs={6} sm={6} md={3} lg={3} xl={2}>
-              <ProjectCard project={project} />
-            </Grid>
-          ))}
-        </Grid>
-      </CustomBox>
+      {projectData.length <= 0 ? (
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            height: "calc(100vh - 200px)", // Adjust height as needed
+          }}
+        >
+          <Typography variant="h6" color="textSecondary">
+            Create a Project to get started
+          </Typography>
+        </Box>
+      ) : (
+        <CustomBox>
+          <Grid container spacing={3} alignItems="center">
+            {filteredProjects?.map((project) => (
+              <Grid item key={project.id} xs={6} sm={6} md={3} lg={3} xl={2}>
+                <ProjectCard project={project} />
+              </Grid>
+            ))}
+          </Grid>
+        </CustomBox>
+      )}
       <Modal open={isModalOpen} onClose={handleCloseModal}>
         <Box>
           <NewProjectModel handleClose={handleCloseModal} />
