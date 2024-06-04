@@ -33,7 +33,7 @@ const TaskDetailsPage = () => {
     dueDate: "",
   });
 
- 
+
   const pid = useSelector(
     (state) => state?.project?.selectedProject?.id
   );
@@ -175,25 +175,31 @@ const TaskDetailsPage = () => {
                   xs={12}
                   sx={{ display: "flex", alignItems: "center" }}
                 >
-                  {filteredTask?.comments?.map((comment)=>(
-                  <Box sx={{ display: "flex" }}>
-                    <Avatar
-                      alt="Profile Image"
-                      src={ProfileImage}
-                      sx={{
-                        width: { xs: 15, md: 20, lg: 25, xl: 30 },
-                        height: { xs: 15, md: 20, lg: 25, xl: 30 },
-                      }}
-                    />
+                  {filteredTask?.comments?.map((comment) => (
+                    <Box sx={{ display: "flex" }}>
+                      <Avatar
+                        alt="Profile Image"
+                        src={ProfileImage}
+                        sx={{
+                          width: { xs: 15, md: 20, lg: 25, xl: 30 },
+                          height: { xs: 15, md: 20, lg: 25, xl: 30 },
+                        }}
+                      />
 
-                    <Box sx={{ ml: 3 }}>
-                      <Typography>{comment?.user?.username}</Typography>
-                      <Typography>{comment?.comment}</Typography>
+                      <Box sx={{ ml: 3 }}>
+                        <Typography sx={{ cursor: "pointer" }}>
+                          <Tooltip title={comment?.user?.email}>
+
+                            {comment?.user?.username}
+                          </Tooltip>
+
+                        </Typography>
+                        <Typography>{comment?.comment}</Typography>
+                      </Box>
                     </Box>
-                  </Box>
                   ))}
                 </Grid>
-               
+
               </Grid>
 
               <Grid item xs={12} md={6}>
@@ -320,21 +326,21 @@ const TaskDetailsPage = () => {
                       </Select> */}
                     </Box>
                   </Grid>
-                  <Box sx={{ mt: 3, mb: 4, ml:17 }}>
-                  <TextField
-                    label="Select due date"
-                    type="date"
-                    InputLabelProps={{ shrink: true }}
-                    name="dueDate"
-                    value={taskDetails?.dueDate}
-                    onChange={handleChange}
-                    sx={{
-                      height: 32,
-                      width: "100%",
-                      maxWidth: 200,
-                    }}
-                  />
-                </Box>
+                  <Box sx={{ mt: 3, mb: 4, ml: 17 }}>
+                    <TextField
+                      label="Select due date"
+                      type="date"
+                      InputLabelProps={{ shrink: true }}
+                      name="dueDate"
+                      value={taskDetails?.dueDate}
+                      onChange={handleChange}
+                      sx={{
+                        height: 32,
+                        width: "100%",
+                        maxWidth: 200,
+                      }}
+                    />
+                  </Box>
                   <Grid
                     item
                     xs={12}
