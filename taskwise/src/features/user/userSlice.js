@@ -141,6 +141,10 @@ const userSlice = createSlice({
       }
       state.isAuthChecked = true;
     },
+    // for resetting user data
+    resetUserState: (state) => {
+      Object.assign(state, initialState);
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -183,6 +187,26 @@ const userSlice = createSlice({
         state.isAuthenticated = false;
         localStorage.removeItem("user");
         localStorage.removeItem("isAuthenticated");
+        // reset all the states to initial state
+        state.status = "idle";
+        state.errors = null;
+        state.signupStatus = "idle";
+        state.signupError = null;
+        state.loginStatus = "idle";
+        state.loginError = null;
+        state.loggedInUser = null;
+        state.successMessage = null;
+        state.isAuthChecked = false;
+        state.isAuthenticated = false;
+        state.forgotPasswordStatus = "idle";
+        state.forgotPasswordError = null;
+        state.verifyCodeStatus = "idle";
+        state.verifyCodeError = null;
+        state.resetPasswordStatus = "idle";
+        state.resetPasswordError = null;
+        state.resetEmail = null;
+        state.resendOTPStatus = "idle";
+        state.resendOTPError = null;
       })
       .addCase(logoutAsync.rejected, (state, action) => {
         state.status = "rejected";
@@ -263,6 +287,7 @@ export const {
   resetResendOTPStatus,
   clearResendOTPError,
   rehydrate,
+  resetUserState,
 } = userSlice.actions;
 
 export default userSlice.reducer;
