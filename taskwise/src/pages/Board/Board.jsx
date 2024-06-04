@@ -72,11 +72,12 @@ function Board() {
   }, [dispatch, id]);
  
   // console.log(id)
-  const initialData = useSelector((state) => state.project.selectedProject);
-  const columnAddStatus = useSelector((state)=>state.project.columnAddStatus)
-  const taskAddStatus = useSelector((state) => state.project.taskAddStatus);
-  const projectFetchStatus = useSelector((state) => state.project.projectFetchStatus);
-  const workspaceId=initialData?.workspaceId;
+  const initialData = useSelector((state) => state?.project?.selectedProject);
+  const columnAddStatus = useSelector((state)=>state.project?.columnAddStatus)
+  const taskAddStatus = useSelector((state) => state.project?.taskAddStatus);
+  const projectFetchStatus = useSelector((state) => state.project?.projectFetchStatus);
+  const workspaceId=useSelector((state) => state?.project?.selectedProject?.workspaceId);
+  console.log(workspaceId,"workspaceId")
   const [order, setOrder] = useState(null)
   const [dataTask, setDataTask] = useState(null)
   const handleClick = () => {
