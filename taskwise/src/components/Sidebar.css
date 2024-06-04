@@ -32,3 +32,14 @@
 .list-item-text {
   font-size: 1rem;
 }
+
+/* Style for the selected tab */
+.sidebar .list-item-button.selected {
+  background-color: white; /* White background for selected */
+  color: black; /* Black text for selected */
+}
+
+/* Target the image within the selected tab to invert its colors */
+.sidebar .list-item-button.selected .list-item-img {
+  filter: invert(1);
+}

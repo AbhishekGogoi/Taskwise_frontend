@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Box,
   List,
@@ -15,6 +15,12 @@ import { Link } from "react-router-dom";
 import "./Sidebar.css";
 
 function Sidebar() {
+  const [selected, setSelected] = useState("projects");
+
+  const handleSelect = (value) => {
+    setSelected(value);
+  };
+
   return (
     <Box className="sidebar">
       <List>
@@ -22,7 +28,10 @@ function Sidebar() {
           <ListItemButton
             component={Link}
             to="/projects"
-            className="list-item-button"
+            className={`list-item-button ${
+              selected === "projects" ? "selected" : ""
+            }`}
+            onClick={() => handleSelect("projects")}
           >
             <ListItemIcon>
               <img
@@ -41,7 +50,10 @@ function Sidebar() {
           <ListItemButton
             component={Link}
             to="/workspaces"
-            className="list-item-button"
+            className={`list-item-button ${
+              selected === "workspaces" ? "selected" : ""
+            }`}
+            onClick={() => handleSelect("workspaces")}
           >
             <ListItemIcon>
               <img
@@ -60,7 +72,10 @@ function Sidebar() {
           <ListItemButton
             component={Link}
             to="/my-tasks"
-            className="list-item-button"
+            className={`list-item-button ${
+              selected === "my-tasks" ? "selected" : ""
+            }`}
+            onClick={() => handleSelect("my-tasks")}
           >
             <ListItemIcon>
               <img
@@ -79,7 +94,10 @@ function Sidebar() {
           <ListItemButton
             component={Link}
             to="/calendar"
-            className="list-item-button"
+            className={`list-item-button ${
+              selected === "calendar" ? "selected" : ""
+            }`}
+            onClick={() => handleSelect("calendar")}
           >
             <ListItemIcon>
               <img
