@@ -47,9 +47,9 @@ const TaskDetailsPage = () => {
   const filteredTask = taskData.find((eachData) => eachData._id === taskID);
   console.log(filteredTask, "filteredTask");
   const [currentComment, setCurrentComment] = useState('');
-  const handleAddNewComment=(event)=>{
-        const newComment = event.target.value;
-        setCurrentComment(newComment);
+  const handleAddNewComment = (event) => {
+    const newComment = event.target.value;
+    setCurrentComment(newComment);
   }
 
 
@@ -125,10 +125,10 @@ const TaskDetailsPage = () => {
     }
     return changedFields;
   };
-  
+
   const handleSaveTask = () => {
     let updatedTaskDetails = { ...taskDetails };
-  
+
     if (currentComment.trim()) {
       const newComment = {
         user: userId,
@@ -140,14 +140,14 @@ const TaskDetailsPage = () => {
       };
       setCurrentComment('');
     }
-  
+
     const data = findChangedFields(initialTaskDetails, updatedTaskDetails);
-  
+
     if (Object.keys(data).length > 0 || currentComment.trim()) {
       if (currentComment.trim() && !data.comments) {
         data.comments = updatedTaskDetails.comments;
       }
-  
+
       console.log(data, "changedFields");
       const idObject = {
         taskId: taskID,
@@ -160,8 +160,8 @@ const TaskDetailsPage = () => {
       toast.info("No changes to save.");
     }
   };
-  
-  
+
+
 
 
   return (
@@ -239,36 +239,59 @@ const TaskDetailsPage = () => {
                     mb: 4,
                   }}
                 />
-                <Grid
-                  item
-                  xs={12}
-                  sx={{ display: "flex", alignItems: "center" }}
-                >
-                  {filteredTask?.comments?.map((comment) => (
-                    <Box sx={{ display: "flex" }}>
+                {/* <Grid item xs={12}>
+                  {filteredTask?.comments?.map((comment, index) => (
+                    <Grid container spacing={2} key={index}>
+                      <Grid item xs={12} sx={{ display: "flex", alignItems: "center" }}>
+                        <Avatar
+                          alt="Profile Image"
+                          src={ProfileImage}
+                          sx={{
+                            width: { xs: 15, md: 20, lg: 25, xl: 30 },
+                            height: { xs: 15, md: 20, lg: 25, xl: 30 },
+                          }}
+                        />
+                        <Box sx={{ ml: 3 }}>
+                          <Typography sx={{ cursor: "pointer" }}>
+                            <Tooltip title={comment?.user?.email}>
+                              {comment?.user?.username}
+                            </Tooltip>
+                          </Typography>
+                          <Typography>{comment?.comment}</Typography>
+                        </Box>
+                      </Grid>
+                    </Grid>
+                  ))}
+                </Grid> */}
+                <Typography variant="h6"
+                  gutterBottom
+                  sx={{ fontWeight: "700", mb: 1, fontSize: "1rem" }}>
+                  Comments ({taskDetails.comments.length})
+                </Typography>
+                {taskDetails.comments.map((comment, index) => (
+                  <Grid container spacing={2} key={index} sx={{ mb: 2 }}>
+                    <Grid item>
                       <Avatar
                         alt="Profile Image"
                         src={ProfileImage}
                         sx={{
-                          width: { xs: 15, md: 20, lg: 25, xl: 30 },
-                          height: { xs: 15, md: 20, lg: 25, xl: 30 },
+                          width: 30,
+                          height: 30,
                         }}
                       />
-
-                      <Box sx={{ ml: 3 }}>
-                        <Typography sx={{ cursor: "pointer" }}>
+                    </Grid>
+                    <Grid item xs>
+                      <Box>
+                        <Typography sx={{ cursor: "pointer", fontWeight: 'bold' }}>
                           <Tooltip title={comment?.user?.email}>
-
                             {comment?.user?.username}
                           </Tooltip>
-
                         </Typography>
                         <Typography>{comment?.comment}</Typography>
                       </Box>
-                    </Box>
-                  ))}
-                </Grid>
-
+                    </Grid>
+                  </Grid>
+                ))}
               </Grid>
 
               <Grid item xs={12} md={6}>
