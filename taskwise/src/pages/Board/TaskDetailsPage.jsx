@@ -11,10 +11,12 @@ import {
   MenuItem,
   Select,
   Button,
+  Avatar
 } from "@mui/material";
 import { toast, ToastContainer } from "react-toastify";
 import AddOutlinedIcon from "@mui/icons-material/AddOutlined";
 import { editTaskAsync } from "../../features/project/projectSlice"; // Import the update task action
+import ProfileImage from "../../assets/sample-pi.png";
 
 const TaskDetailsPage = () => {
   const navigate = useNavigate();
@@ -33,10 +35,10 @@ const TaskDetailsPage = () => {
   // const coldata = useSelector(
   //   (state) => state.project?.selectedProject?.columns
   // );
-  const pid=useSelector(
+  const pid = useSelector(
     (state) => state?.project?.selectedProject?.id
   );
-  console.log(pid,"pid")
+  console.log(pid, "pid")
   // const titlesAndIds = coldata?.map((item) => ({
   //   title: item.title,
   //   id: item._id,
@@ -45,10 +47,10 @@ const TaskDetailsPage = () => {
   const selectedProject = useSelector((state) => state.project.selectedProject);
   const taskData = selectedProject ? selectedProject.tasks : [];
   const membersData = useSelector((state) => state?.project?.workspaceMembers?.data);
-  console.log(membersData,"members in task details")
+  console.log(membersData, "members in task details")
   const filteredTask = taskData.find((eachData) => eachData._id === taskID);
-  console.log(filteredTask,"filteredTask");
- 
+  console.log(filteredTask, "filteredTask");
+
   function mapCommentsWithUserData() {
     return filteredTask?.comments?.map(comment => {
       const user = membersData?.find(user => user.user.id === comment._id);
@@ -68,7 +70,7 @@ const TaskDetailsPage = () => {
     });
   }
 
-  
+
 
   useEffect(() => {
     if (filteredTask) {
@@ -82,7 +84,7 @@ const TaskDetailsPage = () => {
       setTaskDetails(details);
       setInitialTaskDetails(details); // Set the initial task details
       const mappedData = mapCommentsWithUserData();
-      console.log(mappedData,"mapped data for comment");
+      console.log(mappedData, "mapped data for comment");
     }
   }, [filteredTask]);
 
@@ -106,13 +108,13 @@ const TaskDetailsPage = () => {
   const handleSaveTask = () => {
     const data = findChangedFields(initialTaskDetails, taskDetails);
     if (Object.keys(data).length > 0) {
-      console.log(data,"changedFields");
-      const idObject={
-        taskId:taskID,
-        id:pid
+      console.log(data, "changedFields");
+      const idObject = {
+        taskId: taskID,
+        id: pid
       }
       //dispatch(updateTaskAsync({ taskDetails: changedFields, taskID }));
-      dispatch(editTaskAsync({data,idObject}))
+      dispatch(editTaskAsync({ data, idObject }))
       toast.success("Task updated successfully!");
       navigate(-1)
     } else {
@@ -193,23 +195,28 @@ const TaskDetailsPage = () => {
                     mb: 4,
                   }}
                 />
-                <Typography>{taskDetails.comment}</Typography>
+                <Grid
+                  item
+                  xs={12}
+                  sx={{ display: "flex", alignItems: "center" }}
+                >
+                  <Box sx={{ display: "flex" }}>
+                    <Avatar
+                      alt="Profile Image"
+                      src={ProfileImage}
+                      sx={{
+                        width: { xs: 15, md: 20, lg: 25, xl: 30 },
+                        height: { xs: 15, md: 20, lg: 25, xl: 30 },
+                      }}
+                    />
 
-                <Box sx={{ mt: 3, mb: 4 }}>
-                  <TextField
-                    label="Select due date"
-                    type="date"
-                    InputLabelProps={{ shrink: true }}
-                    name="dueDate"
-                    value={taskDetails?.dueDate}
-                    onChange={handleChange}
-                    sx={{
-                      height: 32,
-                      width: "100%",
-                      maxWidth: 200,
-                    }}
-                  />
-                </Box>
+                    <Box sx={{ ml: 3 }}>
+                      <Typography>Name</Typography>
+                      <Typography>omment</Typography>
+                    </Box>
+                  </Box>
+                </Grid>
+               
               </Grid>
 
               <Grid item xs={12} md={6}>
@@ -336,7 +343,21 @@ const TaskDetailsPage = () => {
                       </Select> */}
                     </Box>
                   </Grid>
-
+                  <Box sx={{ mt: 3, mb: 4, ml:17 }}>
+                  <TextField
+                    label="Select due date"
+                    type="date"
+                    InputLabelProps={{ shrink: true }}
+                    name="dueDate"
+                    value={taskDetails?.dueDate}
+                    onChange={handleChange}
+                    sx={{
+                      height: 32,
+                      width: "100%",
+                      maxWidth: 200,
+                    }}
+                  />
+                </Box>
                   <Grid
                     item
                     xs={12}
