@@ -148,8 +148,11 @@ const userSlice = createSlice({
         state.signupStatus = "pending";
       })
       .addCase(signupAsync.fulfilled, (state, action) => {
-        state.signupStatus = "fullfilled";
+        state.signupStatus = "fulfilled";
         state.loggedInUser = action.payload;
+        state.isAuthenticated = true; // Set isAuthenticated to true upon successful signup
+        localStorage.setItem("user", JSON.stringify(action.payload)); // Store user in localStorage
+        localStorage.setItem("isAuthenticated", "true"); // Store isAuthenticated in localStorage
       })
       .addCase(signupAsync.rejected, (state, action) => {
         state.signupStatus = "rejected";
@@ -159,7 +162,7 @@ const userSlice = createSlice({
         state.loginStatus = "pending";
       })
       .addCase(loginAsync.fulfilled, (state, action) => {
-        state.loginStatus = "fullfilled";
+        state.loginStatus = "fulfilled";
         state.loggedInUser = action.payload;
         // for session management
         state.isAuthenticated = true;
@@ -174,7 +177,7 @@ const userSlice = createSlice({
         state.status = "pending";
       })
       .addCase(logoutAsync.fulfilled, (state) => {
-        state.status = "fullfilled";
+        state.status = "fulfilled";
         state.loggedInUser = null;
         // for session management
         state.isAuthenticated = false;
