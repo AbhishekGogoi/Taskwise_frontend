@@ -66,6 +66,8 @@ function Board() {
     //console.log("useEffect for dispatch")
     if (id) {
       dispatch(fetchProjectByIdAsync(id));
+    }
+    if(workspaceId){
       dispatch(fetchWorkspaceMembersAsync(workspaceId))
     }
       // eslint-disable-next-line

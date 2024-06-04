@@ -44,10 +44,11 @@ const TaskDetailsPage = () => {
 
   const selectedProject = useSelector((state) => state.project.selectedProject);
   const taskData = selectedProject ? selectedProject.tasks : [];
-
+  const membersData = useSelector((state) => state?.project?.workspaceMembers?.data);
+  console.log(membersData,"members in task details")
   const filteredTask = taskData.find((eachData) => eachData._id === taskID);
-
-
+  console.log(filteredTask,"filteredTask");
+  
   useEffect(() => {
     if (filteredTask) {
       const details = {
