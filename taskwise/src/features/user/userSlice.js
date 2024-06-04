@@ -142,8 +142,31 @@ const userSlice = createSlice({
       state.isAuthChecked = true;
     },
     // for resetting user data
+    // resetUserState: (state) => {
+    //   Object.assign(state, initialState);
+    //   state.isAuthChecked = true;
+    // },
     resetUserState: (state) => {
-      Object.assign(state, initialState);
+      // Explicitly reset state properties to their initial values
+      state.status = initialState.status;
+      state.errors = initialState.errors;
+      state.signupStatus = initialState.signupStatus;
+      state.signupError = initialState.signupError;
+      state.loginStatus = initialState.loginStatus;
+      state.loginError = initialState.loginError;
+      state.loggedInUser = initialState.loggedInUser;
+      state.successMessage = initialState.successMessage;
+      state.isAuthenticated = initialState.isAuthenticated;
+      state.forgotPasswordStatus = initialState.forgotPasswordStatus;
+      state.forgotPasswordError = initialState.forgotPasswordError;
+      state.verifyCodeStatus = initialState.verifyCodeStatus;
+      state.verifyCodeError = initialState.verifyCodeError;
+      state.resetPasswordStatus = initialState.resetPasswordStatus;
+      state.resetPasswordError = initialState.resetPasswordError;
+      state.resetEmail = initialState.resetEmail;
+      state.resendOTPStatus = initialState.resendOTPStatus;
+      state.resendOTPError = initialState.resendOTPError;
+      state.isAuthChecked = true; // Keep this true after reset
     },
   },
   extraReducers: (builder) => {
@@ -187,26 +210,25 @@ const userSlice = createSlice({
         state.isAuthenticated = false;
         localStorage.removeItem("user");
         localStorage.removeItem("isAuthenticated");
-        // reset all the states to initial state
-        state.status = "idle";
-        state.errors = null;
-        state.signupStatus = "idle";
-        state.signupError = null;
-        state.loginStatus = "idle";
-        state.loginError = null;
-        state.loggedInUser = null;
-        state.successMessage = null;
-        state.isAuthChecked = false;
-        state.isAuthenticated = false;
-        state.forgotPasswordStatus = "idle";
-        state.forgotPasswordError = null;
-        state.verifyCodeStatus = "idle";
-        state.verifyCodeError = null;
-        state.resetPasswordStatus = "idle";
-        state.resetPasswordError = null;
-        state.resetEmail = null;
-        state.resendOTPStatus = "idle";
-        state.resendOTPError = null;
+        // Object.assign(state, initialState);
+        state.status = initialState.status;
+        state.errors = initialState.errors;
+        state.signupStatus = initialState.signupStatus;
+        state.signupError = initialState.signupError;
+        state.loginStatus = initialState.loginStatus;
+        state.loginError = initialState.loginError;
+        state.loggedInUser = initialState.loggedInUser;
+        state.successMessage = initialState.successMessage;
+        state.forgotPasswordStatus = initialState.forgotPasswordStatus;
+        state.forgotPasswordError = initialState.forgotPasswordError;
+        state.verifyCodeStatus = initialState.verifyCodeStatus;
+        state.verifyCodeError = initialState.verifyCodeError;
+        state.resetPasswordStatus = initialState.resetPasswordStatus;
+        state.resetPasswordError = initialState.resetPasswordError;
+        state.resetEmail = initialState.resetEmail;
+        state.resendOTPStatus = initialState.resendOTPStatus;
+        state.resendOTPError = initialState.resendOTPError;
+        state.isAuthChecked = true; // Keep this true after logout
       })
       .addCase(logoutAsync.rejected, (state, action) => {
         state.status = "rejected";
@@ -256,17 +278,6 @@ const userSlice = createSlice({
       .addCase(resendOTPAsync.rejected, (state, action) => {
         state.resendOTPStatus = "rejected";
         state.resendOTPError = action.error;
-      })
-      // for session management
-      .addCase(rehydrate, (state) => {
-        const user = localStorage.getItem("user");
-        const isAuthenticated =
-          localStorage.getItem("isAuthenticated") === "true";
-        if (user) {
-          state.isAuthenticated = isAuthenticated;
-          state.loggedInUser = JSON.parse(user);
-        }
-        state.isAuthChecked = true;
       });
   },
 });

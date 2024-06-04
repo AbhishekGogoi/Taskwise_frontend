@@ -26,6 +26,7 @@ import VerificationPage from "./pages/ForgotPassword/VerificationPage";
 import ResetPasswordPage from "./pages/ForgotPassword/ResetPasswordPage";
 import ConfirmationPage from "./pages/ForgotPassword/ConfirmationPage";
 import ProfileSettingsPage from "./pages/ProfilePage/ProfilePage";
+import Protected from "./components/Protected";
 
 const theme = createTheme({
   typography: {
@@ -90,15 +91,17 @@ function AppLayout() {
             <Route path="/verification" element={<VerificationPage />} />
             <Route path="/resetpassword" element={<ResetPasswordPage />} />
             <Route path="/confirmation" element={<ConfirmationPage />} />
-            <Route path="/projects" element={<ProjectPage />} />
-            <Route path="/projects/:id" element={<Board />} />
-            <Route path="/projects/:id/new-task" element={<NewTaskPage />} />
-            <Route path="/tasks/:taskID" element={<TaskDetailsPage />} />
-            <Route path="/workspaces" element={<WorkspacesPage />} />
-            <Route path="/workspaces/:id" element={<WorkspaceDetails />} />
-            <Route path="/my-tasks" element={<MyTaskPage />} />
-            <Route path="/calendar" element={<CalendarPage />} />
-            <Route path="/settings" element={<ProfileSettingsPage />} />
+            <Route element={<Protected />}>
+              <Route path="/projects" element={<ProjectPage />} />
+              <Route path="/projects/:id" element={<Board />} />
+              <Route path="/projects/:id/new-task" element={<NewTaskPage />} />
+              <Route path="/tasks/:taskID" element={<TaskDetailsPage />} />
+              <Route path="/workspaces" element={<WorkspacesPage />} />
+              <Route path="/workspaces/:id" element={<WorkspaceDetails />} />
+              <Route path="/my-tasks" element={<MyTaskPage />} />
+              <Route path="/calendar" element={<CalendarPage />} />
+              <Route path="/settings" element={<ProfileSettingsPage />} />
+            </Route>
           </Routes>
         </main>
       </div>
