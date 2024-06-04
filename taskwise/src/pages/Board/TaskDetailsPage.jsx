@@ -11,7 +11,8 @@ import {
   MenuItem,
   Select,
   Button,
-  Avatar
+  Avatar,
+  Tooltip
 } from "@mui/material";
 import { toast, ToastContainer } from "react-toastify";
 import AddOutlinedIcon from "@mui/icons-material/AddOutlined";
@@ -32,17 +33,10 @@ const TaskDetailsPage = () => {
     dueDate: "",
   });
 
-  // const coldata = useSelector(
-  //   (state) => state.project?.selectedProject?.columns
-  // );
+ 
   const pid = useSelector(
     (state) => state?.project?.selectedProject?.id
   );
-  console.log(pid, "pid")
-  // const titlesAndIds = coldata?.map((item) => ({
-  //   title: item.title,
-  //   id: item._id,
-  // }));
 
   const selectedProject = useSelector((state) => state.project.selectedProject);
   const taskData = selectedProject ? selectedProject.tasks : [];
@@ -51,24 +45,7 @@ const TaskDetailsPage = () => {
   const filteredTask = taskData.find((eachData) => eachData._id === taskID);
   console.log(filteredTask, "filteredTask");
 
-  function mapCommentsWithUserData() {
-    return filteredTask?.comments?.map(comment => {
-      const user = membersData?.find(user => user.user.id === comment._id);
-      if (user) {
-        return {
-          email: user.user.email,
-          imgUrl: user.user.imgUrl,
-          comment: comment.comment
-        };
-      } else {
-        return {
-          email: null,
-          imgUrl: null,
-          comment: comment.comment
-        };
-      }
-    });
-  }
+
 
 
 
@@ -83,8 +60,6 @@ const TaskDetailsPage = () => {
       };
       setTaskDetails(details);
       setInitialTaskDetails(details); // Set the initial task details
-      const mappedData = mapCommentsWithUserData();
-      console.log(mappedData, "mapped data for comment");
     }
   }, [filteredTask]);
 
@@ -200,6 +175,7 @@ const TaskDetailsPage = () => {
                   xs={12}
                   sx={{ display: "flex", alignItems: "center" }}
                 >
+                  {filteredTask?.comments?.map((comment)=>(
                   <Box sx={{ display: "flex" }}>
                     <Avatar
                       alt="Profile Image"
@@ -211,10 +187,11 @@ const TaskDetailsPage = () => {
                     />
 
                     <Box sx={{ ml: 3 }}>
-                      <Typography>Name</Typography>
-                      <Typography>omment</Typography>
+                      <Typography>{comment?.user?.username}</Typography>
+                      <Typography>{comment?.comment}</Typography>
                     </Box>
                   </Box>
+                  ))}
                 </Grid>
                
               </Grid>
