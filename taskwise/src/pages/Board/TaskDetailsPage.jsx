@@ -268,6 +268,7 @@ const TaskDetailsPage = () => {
                   sx={{ fontWeight: "700", mb: 1, fontSize: "1rem" }}>
                   Comments ({taskDetails.comments.length})
                 </Typography>
+                {taskDetails.comments.length >0 &&
                 <Box
                   sx={{
                     maxHeight: '200px',
@@ -302,6 +303,7 @@ const TaskDetailsPage = () => {
                     </Grid>
                   ))}
                 </Box>
+                }
               </Grid>
 
               <Grid item xs={12} md={6}>
