@@ -120,7 +120,7 @@ const SignupPage = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const signupStatus = useSelector((state) => state.user.signupStatus);
+  const loggedInUser = useSelector((state) => state.user.loggedInUser);
   const signupError = useSelector((state) => state.user.signupError);
   // console.log(signupError?.message);
 
@@ -153,15 +153,6 @@ const SignupPage = () => {
     }),
   });
 
-  // const handleSignup = (e) => {
-  //   e.preventDefault();
-  //   if (password !== confirmPassword) {
-  //     alert("Passwords do not match");
-  //     return;
-  //   }
-  //   dispatch(signupAsync({ username, email, password }));
-  // };
-
   const handleSignup = (e) => {
     e.preventDefault();
     const { error } = schema.validate(
@@ -189,10 +180,10 @@ const SignupPage = () => {
   }, [signupError]);
 
   useEffect(() => {
-    if (signupStatus === "fullfilled") {
+    if (loggedInUser) {
       navigate("/projects");
     }
-  }, [signupStatus, navigate]);
+  }, [loggedInUser, navigate]);
 
   const handleLoginClick = () => {
     navigate("/login");
