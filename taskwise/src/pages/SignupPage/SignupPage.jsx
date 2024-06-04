@@ -120,8 +120,10 @@ const SignupPage = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const signupStatus = useSelector((state) => state.user.signupStatus);
-  const signupError = useSelector((state) => state.user.signupError);
+  const { loggedInUser, signupError } = useSelector((state) => ({
+    loggedInUser: state.user.loggedInUser,
+    signupError: state.user.signupError,
+  }));
 
   const schema = Joi.object({
     username: Joi.string().min(3).required().messages({
@@ -173,10 +175,11 @@ const SignupPage = () => {
   };
 
   useEffect(() => {
-    if (signupStatus === "fullfilled") {
+    // console.log("Signup Status:", signupStatus); // Add this line
+    if (loggedInUser) {
       navigate("/projects");
     }
-  }, [signupStatus, navigate]);
+  }, [loggedInUser, navigate]);
 
   useEffect(() => {
     if (signupError) {
