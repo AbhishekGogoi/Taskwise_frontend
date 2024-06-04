@@ -24,7 +24,7 @@ function NewTaskPage() {
     const [errors, setErrors] = useState({ title: '', description: '' });
     const navigate = useNavigate();
     const dispatch = useDispatch();
-    const userId = useSelector((state) => state?.user?.loggedInUser?.user?._id);
+    const userId = useSelector((state) => state?.user?.loggedInUser?.user);
     const { id } = useParams();
     //const colId = useSelector((state) => state?.project?.selectedProject?.order[0])
     const coldata = useSelector((state) => state?.project?.selectedProject?.columns);
@@ -120,6 +120,7 @@ function NewTaskPage() {
         // console.log(assigne,"assigne")
         console.log(files, "selected files")
         const user = users?.find(user => user.email === assignees);
+        console.log(user,"user")
         if (validateFields()) {
 
             const task = {
@@ -129,8 +130,8 @@ function NewTaskPage() {
                 dueDate: dueDate,
                 priority: priority,
                 assigneeUserID: user?.id,
-                comments: [{ id: user?.id, comment: currentComment }],
-                createdBy: userId,
+                comments: [{ user: userId, comment: currentComment }],
+                createdBy: userId?._id,
                 attachments:uploadedFileUrls
             };
             dispatch(addTaskAsync({ task, id }));

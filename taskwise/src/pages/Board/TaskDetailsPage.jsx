@@ -48,7 +48,28 @@ const TaskDetailsPage = () => {
   console.log(membersData,"members in task details")
   const filteredTask = taskData.find((eachData) => eachData._id === taskID);
   console.log(filteredTask,"filteredTask");
+ 
+  function mapCommentsWithUserData() {
+    return filteredTask?.comments?.map(comment => {
+      const user = membersData?.find(user => user.user.id === comment._id);
+      if (user) {
+        return {
+          email: user.user.email,
+          imgUrl: user.user.imgUrl,
+          comment: comment.comment
+        };
+      } else {
+        return {
+          email: null,
+          imgUrl: null,
+          comment: comment.comment
+        };
+      }
+    });
+  }
+
   
+
   useEffect(() => {
     if (filteredTask) {
       const details = {
@@ -60,6 +81,8 @@ const TaskDetailsPage = () => {
       };
       setTaskDetails(details);
       setInitialTaskDetails(details); // Set the initial task details
+      const mappedData = mapCommentsWithUserData();
+      console.log(mappedData,"mapped data for comment");
     }
   }, [filteredTask]);
 
