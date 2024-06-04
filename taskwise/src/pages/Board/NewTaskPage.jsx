@@ -131,7 +131,7 @@ function NewTaskPage() {
                 priority: priority,
                 assigneeUserID: user?.id,
                 comments: [{ user: userId, comment: currentComment }],
-                createdBy: userId?._id,
+                createdBy: userId,
                 attachments:uploadedFileUrls
             };
             dispatch(addTaskAsync({ task, id }));
