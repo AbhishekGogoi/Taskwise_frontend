@@ -87,14 +87,16 @@ const TaskDetailsPage = () => {
     setCurrentComment(newComment);
   }
 
-
+  const users = membersData?.map(item => item.user);
+  const [options] = useState(users);
+  console.log(options, "options")
 
   useEffect(() => {
     if (filteredTask) {
       const details = {
         taskName: filteredTask.taskName || "",
         content: filteredTask.content || "",
-        assignees: filteredTask.assigneeUserID || "",
+        assigneeUserID: filteredTask.assigneeUserID || "",
         priority: filteredTask.priority || "",
         createdBy: filteredTask.createdBy || [],
         dueDate: filteredTask.dueDate ? filteredTask.dueDate.split("T")[0] : "",
@@ -112,7 +114,7 @@ const TaskDetailsPage = () => {
       [name]: value,
     }));
   };
-  
+
   const findChangedFields = (initial, current) => {
     const changedFields = {};
     for (const key in initial) {
@@ -171,6 +173,19 @@ const TaskDetailsPage = () => {
   const open = Boolean(anchorEl);
   const id = open ? "simple-popover" : undefined;
 
+
+
+  const handleItemClick = (option) => {
+
+    const name = "assigneeUserID"
+    const value = option
+    setTaskDetails((prevDetails) => ({
+      ...prevDetails,
+      [name]: value,
+    }));
+
+    handleClose();
+  };
 
   return (
     <Box
@@ -316,7 +331,7 @@ const TaskDetailsPage = () => {
 
               <Grid item xs={12} md={6}>
                 <Grid container spacing={4}>
-                <Grid
+                  <Grid
                     item
                     xs={12}
                     sx={{ display: "flex", alignItems: "center" }}
@@ -349,7 +364,7 @@ const TaskDetailsPage = () => {
                         sx={{ ml: 1, cursor: "pointer" }}
                         onClick={handleClick}
                       >
-                        {taskDetails?.assignees?.email}
+                        {taskDetails?.assigneeUserID?.email}
                       </Typography>
                       <Popover
                         id={id}
@@ -366,45 +381,18 @@ const TaskDetailsPage = () => {
                         }}
                       >
                         <List>
-                          <ListItem button>
-                            <ListItemAvatar>
-                              <Avatar
-                                alt="Profile Image"
-                                src={ProfileImage}
-                                sx={{
-                                  width: 20,
-                                  height: 20,
-                                }}
-                              />
-                            </ListItemAvatar>
-                            <ListItemText  primary="Navinak321@gmail.com" />
-                          </ListItem>
-                          <ListItem button>
-                            <ListItemAvatar>
-                              <Avatar
-                                alt="Profile Image"
-                                src={ProfileImage}
-                                sx={{
-                                  width: 20,
-                                  height: 20,
-                                }}
-                              />
-                            </ListItemAvatar>
-                            <ListItemText primary="Navinak321@gmail.com" />
-                          </ListItem>
-                          <ListItem button>
-                            <ListItemAvatar>
-                              <Avatar
-                                alt="Profile Image"
-                                src={ProfileImage}
-                                sx={{
-                                  width: 20,
-                                  height: 20,
-                                }}
-                              />
-                            </ListItemAvatar>
-                            <ListItemText primary="Navinak321@gmail.com" />
-                          </ListItem>
+                          {options?.map(option => (
+                            <ListItem button key={option?.id} onClick={() => handleItemClick(option)}>
+                              <ListItemAvatar>
+                                <Avatar
+                                  alt="Profile Image"
+                                  src={option?.imgUrl}
+                                  sx={{ width: 20, height: 20 }}
+                                />
+                              </ListItemAvatar>
+                              <ListItemText primary={option?.email} />
+                            </ListItem>
+                          ))}
                         </List>
                       </Popover>
                       {/* <Select
@@ -543,7 +531,7 @@ const TaskDetailsPage = () => {
                   <Grid
                     item
                     xs={12}
-                    sx={{ display: "flex", alignItems: "center" ,mt:-5 }}
+                    sx={{ display: "flex", alignItems: "center", mt: -5 }}
                   >
                     <Typography
                       variant="h6"
@@ -552,21 +540,21 @@ const TaskDetailsPage = () => {
                     >
                       Due Date
                     </Typography>
-                  <Box sx={{ mb: 4, ml: 6 }}>
-                    <TextField
-                      //label="Select due date"
-                      type="date"
-                      InputLabelProps={{ shrink: true }}
-                      name="dueDate"
-                      value={taskDetails?.dueDate}
-                      onChange={handleChange}
-                      sx={{
-                        height: 28,
-                        width: "195px",
-                        maxWidth: 200,
-                      }}
-                    />
-                  </Box>
+                    <Box sx={{ mb: 4, ml: 6 }}>
+                      <TextField
+                        //label="Select due date"
+                        type="date"
+                        InputLabelProps={{ shrink: true }}
+                        name="dueDate"
+                        value={taskDetails?.dueDate}
+                        onChange={handleChange}
+                        sx={{
+                          height: 28,
+                          width: "195px",
+                          maxWidth: 200,
+                        }}
+                      />
+                    </Box>
                   </Grid>
                   <Grid
                     item
