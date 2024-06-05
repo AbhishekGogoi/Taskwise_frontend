@@ -24,20 +24,7 @@ const StyledPaper = styled(Paper)(({ theme }) => ({
   height: '400px',
   width: '94%',
   padding: theme.spacing(2),
-  overflowY: 'auto',
   borderRadius: 2,
-  '&::-webkit-scrollbar': {
-    width: '8px',
-  },
-  '&::-webkit-scrollbar-track': {
-    background: '#f1f1f1',
-  },
-  '&::-webkit-scrollbar-thumb': {
-    backgroundColor: '#888',
-  },
-  '&::-webkit-scrollbar-thumb:hover': {
-    background: '#555',
-  },
 }));
 
 const TabLabelWrapper = styled('div')({

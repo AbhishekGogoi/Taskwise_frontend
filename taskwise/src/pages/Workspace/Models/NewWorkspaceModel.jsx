@@ -9,7 +9,7 @@ import Chip from '@mui/material/Chip';
 import PropTypes from 'prop-types';
 import Thumbnail from '../../../components/Thumbnail';
 import { useDispatch, useSelector } from "react-redux";
-import { createWorkspaceAsync, uploadFileAsync } from "../../../features/workspace/workspaceSlice";
+import { createWorkspaceAsync, uploadFileAsync, getImageUrlAsync } from "../../../features/workspace/workspaceSlice";
 import ModeEditSharpIcon from '@mui/icons-material/ModeEditSharp';
 
 const style = {
@@ -26,7 +26,6 @@ const style = {
 };
 
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-const defaultImage = 'https://taskwiseai-s3.s3.ap-south-1.amazonaws.com/1717225670701-sample-one.jpg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAW3MEDJLIRCUPEROY%2F20240601%2Fap-south-1%2Fs3%2Faws4_request&X-Amz-Date=20240601T070750Z&X-Amz-Expires=3600&X-Amz-Signature=ea21669e6ae66f6d912079548d409b76215448ba616de7135999478f47a2e099&X-Amz-SignedHeaders=host';
 
 const NewWorkspaceModel = ({ handleClose, onWorkspaceCreated }) => {
   const dispatch = useDispatch();
@@ -36,7 +35,8 @@ const NewWorkspaceModel = ({ handleClose, onWorkspaceCreated }) => {
   const [description, setDescription] = useState('');
   const [members, setMembers] = useState([]);
   const [inputValue, setInputValue] = useState('');
-  const [imageUrl, setImageUrl] = useState(defaultImage);
+  const [imageUrl, setImageUrl] = useState('');
+  const [imageKey, setImageKey] = useState('');
   const [nameError, setNameError] = useState('');
   const [membersError, setMembersError] = useState('');
   const fileInputRef = useRef(null);
@@ -54,6 +54,7 @@ const NewWorkspaceModel = ({ handleClose, onWorkspaceCreated }) => {
       try {
         const response = await dispatch(uploadFileAsync(formData));
         setImageUrl(response.payload.presignedUrl);
+        setImageKey(response.payload.imgKey);
       } catch (error) {
         console.error('Error uploading image:', error);
       }
@@ -65,28 +66,38 @@ const NewWorkspaceModel = ({ handleClose, onWorkspaceCreated }) => {
       setNameError('Workspace name is required.');
       return;
     }
-  
-    let finalImageUrl = imageUrl; // Initially set to uploaded image URL
-  
-    // If imageUrl is empty, assign default image URL
+
+    let finalImageUrl = imageUrl;
+    let finalImageKey = imageKey;
+
     if (!imageUrl) {
-      console.warn('No image uploaded. Using default image.');
-      finalImageUrl = defaultImage;
+      try {
+        const response = await dispatch(getImageUrlAsync("1717581391326-ws-image.jpg"));
+        finalImageUrl = response.payload.presignedUrl;
+        finalImageKey = response.payload.imgKey;
+      } catch (error) {
+        console.error('Error generating pre-signed URL:', error);
+        return;
+      }
     }
-  
+
     const newWorkspace = {
       name: workspaceName,
       description,
+      imgKey: finalImageKey,
       imgUrl: finalImageUrl,
       creatorUserID: userId,
       memberEmails: members,
     };
-  
-    console.log(newWorkspace);
-    await dispatch(createWorkspaceAsync(newWorkspace));
-    onWorkspaceCreated(); // Notify the parent component about the new workspace
-    handleClose();
-  }; 
+
+    try {
+      await dispatch(createWorkspaceAsync(newWorkspace));
+      onWorkspaceCreated(); // Notify the parent component about the new workspace
+      handleClose();
+    } catch (error) {
+      console.error('Error creating workspace:', error);
+    }
+  };
 
   const handleAddMember = (event) => {
     if (event.key === 'Enter' || event.key === ',' || event.key === ' ') {
@@ -120,7 +131,7 @@ const NewWorkspaceModel = ({ handleClose, onWorkspaceCreated }) => {
         Thumbnail
       </Typography>
       <Box sx={{ display: 'flex', justifyContent: 'left', alignItems: 'left', marginBottom: '20px' }}>
-        <Thumbnail selectedImage={defaultImage} handleFileUploadClick={handleFileUploadClick} width={80} height={80} />
+        <Thumbnail selectedImage={imageUrl} handleFileUploadClick={handleFileUploadClick} width={80} height={80} />
         <IconButton onClick={handleFileUploadClick}>
           <ModeEditSharpIcon sx={{ color: "#000000" }} />
         </IconButton>
