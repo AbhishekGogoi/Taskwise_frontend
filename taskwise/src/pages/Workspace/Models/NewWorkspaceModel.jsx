@@ -9,9 +9,8 @@ import Chip from '@mui/material/Chip';
 import PropTypes from 'prop-types';
 import Thumbnail from '../../../components/Thumbnail';
 import { useDispatch, useSelector } from "react-redux";
-import { createWorkspaceAsync, uploadFileAsync } from "../../../features/workspace/workspaceSlice";
+import { createWorkspaceAsync, uploadFileAsync, getImageUrlAsync } from "../../../features/workspace/workspaceSlice";
 import ModeEditSharpIcon from '@mui/icons-material/ModeEditSharp';
-import WSImage from '../../../assets/ws-image.jpg';
 
 const style = {
   position: 'absolute',
@@ -37,6 +36,7 @@ const NewWorkspaceModel = ({ handleClose, onWorkspaceCreated }) => {
   const [members, setMembers] = useState([]);
   const [inputValue, setInputValue] = useState('');
   const [imageUrl, setImageUrl] = useState('');
+  const [imageKey, setImageKey] = useState('');
   const [nameError, setNameError] = useState('');
   const [membersError, setMembersError] = useState('');
   const fileInputRef = useRef(null);
@@ -54,6 +54,7 @@ const NewWorkspaceModel = ({ handleClose, onWorkspaceCreated }) => {
       try {
         const response = await dispatch(uploadFileAsync(formData));
         setImageUrl(response.payload.presignedUrl);
+        setImageKey(response.payload.imgKey);
       } catch (error) {
         console.error('Error uploading image:', error);
       }
@@ -66,33 +67,37 @@ const NewWorkspaceModel = ({ handleClose, onWorkspaceCreated }) => {
       return;
     }
 
-    let finalImageUrl = imageUrl || WSImage; // Use uploaded image or default image
+    let finalImageUrl = imageUrl;
+    let finalImageKey = imageKey;
 
     if (!imageUrl) {
       try {
-        // Upload default image
-        const formData = new FormData();
-        formData.append('file', WSImage);
-        const response = await dispatch(uploadFileAsync(formData));
+        const response = await dispatch(getImageUrlAsync("1717581391326-ws-image.jpg"));
         finalImageUrl = response.payload.presignedUrl;
+        finalImageKey = response.payload.imgKey;
       } catch (error) {
-        console.error('Error uploading default image:', error);
+        console.error('Error generating pre-signed URL:', error);
+        return;
       }
     }
 
     const newWorkspace = {
       name: workspaceName,
       description,
+      imgKey: finalImageKey,
       imgUrl: finalImageUrl,
       creatorUserID: userId,
       memberEmails: members,
     };
 
-    console.log(newWorkspace);
-    dispatch(createWorkspaceAsync(newWorkspace));
-    onWorkspaceCreated(); // Notify the parent component about the new workspace
-    handleClose();
-  }; 
+    try {
+      await dispatch(createWorkspaceAsync(newWorkspace));
+      onWorkspaceCreated(); // Notify the parent component about the new workspace
+      handleClose();
+    } catch (error) {
+      console.error('Error creating workspace:', error);
+    }
+  };
 
   const handleAddMember = (event) => {
     if (event.key === 'Enter' || event.key === ',' || event.key === ' ') {
@@ -126,7 +131,7 @@ const NewWorkspaceModel = ({ handleClose, onWorkspaceCreated }) => {
         Thumbnail
       </Typography>
       <Box sx={{ display: 'flex', justifyContent: 'left', alignItems: 'left', marginBottom: '20px' }}>
-        <Thumbnail selectedImage={imageUrl || WSImage} handleFileUploadClick={handleFileUploadClick} width={80} height={80} />
+        <Thumbnail selectedImage={imageUrl} handleFileUploadClick={handleFileUploadClick} width={80} height={80} />
         <IconButton onClick={handleFileUploadClick}>
           <ModeEditSharpIcon sx={{ color: "#000000" }} />
         </IconButton>

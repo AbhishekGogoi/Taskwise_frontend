@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import TextField from "@mui/material/TextField";
@@ -11,11 +11,10 @@ import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import InputLabel from "@mui/material/InputLabel";
 import PropTypes from "prop-types";
-import ProjectThumbnail from "../pages/Project/ProjectThumbnail"; // Import the ThumbnailComponent
+import ProjectThumbnail from "../pages/Project/ProjectThumbnail";
 import { useDispatch, useSelector } from "react-redux";
 import { addProjectAsync } from "../features/project/projectSlice";
-import { fetchWorkspaceByUserIDAsync, uploadFileAsync } from "../features/workspace/workspaceSlice";
-import { useEffect } from "react";
+import { fetchWorkspaceByUserIDAsync, uploadFileAsync, getImageUrlAsync } from "../features/workspace/workspaceSlice";
 
 const style = {
   position: "absolute",
@@ -34,38 +33,26 @@ const NewProjectModel = ({ handleClose }) => {
   const dispatch = useDispatch();
   const creatorUserID = useSelector((state) => state?.user?.loggedInUser?.user?._id);
   const [selectedImage, setSelectedImage] = useState(null);
-  const [workspace, setWorkspace] = useState(null);
+  const [workspace, setWorkspace] = useState('');
   const fileInputRef = useRef(null);
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [errors, setErrors] = useState({});
+  const [imageUrl, setImageUrl] = useState('');
+  const [imageKey, setImageKey] = useState('');
 
-  const Data = useSelector((state) => state?.workspace?.workspaces);
-  const uniqueWorkspaces = {};
-  const defaultImage = 'https://taskwiseai-s3.s3.ap-south-1.amazonaws.com/1717225670701-sample-one.jpg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAW3MEDJLIRCUPEROY%2F20240601%2Fap-south-1%2Fs3%2Faws4_request&X-Amz-Date=20240601T070750Z&X-Amz-Expires=3600&X-Amz-Signature=ea21669e6ae66f6d912079548d409b76215448ba616de7135999478f47a2e099&X-Amz-SignedHeaders=host';
-  const [imageUrl, setImageUrl] = useState(defaultImage);
+  const workspaces = useSelector((state) => state?.workspace?.workspaces);
+
   useEffect(() => {
-    dispatch(fetchWorkspaceByUserIDAsync(creatorUserID))
-    // eslint-disable-next-line
-  }, [creatorUserID])
-  console.log(Data, "workspaces")
-  // Data.forEach(project => {
-  //   const { workspaceName, workspaceId } = project;
-  //   if (!uniqueWorkspaces[workspaceId]) {
-  //     uniqueWorkspaces[workspaceId] = workspaceName;
-  //   }
-  // });
+    if (creatorUserID) {
+      dispatch(fetchWorkspaceByUserIDAsync(creatorUserID));
+    }
+  }, [creatorUserID, dispatch]);
 
-
-  const result = Object.keys(uniqueWorkspaces).map(workspaceId => ({
-    workspaceId,
-    workspaceName: uniqueWorkspaces[workspaceId]
-  }));
-  console.log(result, "result")
   const handleFileUploadClick = () => {
     fileInputRef.current.click();
-
   };
+
   const validateForm = () => {
     const newErrors = {};
     if (!name) {
@@ -76,21 +63,41 @@ const NewProjectModel = ({ handleClose }) => {
     }
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
-  }
-  const handleCreate = () => {
-    if (validateForm()) {
-      const projectdata = {
-        "name": name,
-        "description": description,
-        "workspaceID": workspace,
-        "imgUrl":imageUrl,
-        "creatorUserID": creatorUserID,
-      }
-      dispatch(addProjectAsync(projectdata))
-      handleClose()
-    }
+  };
 
-  }
+  const handleCreate = async () => {
+    if (validateForm()) {
+      let finalImageUrl = imageUrl;
+      let finalImageKey = imageKey;
+      if (!selectedImage) {
+        try {
+          const response = await dispatch(getImageUrlAsync("1717579493959-projectimages.jpg"));
+          finalImageUrl = response.payload.presignedUrl;
+          finalImageKey = response.payload.imgKey;
+        } catch (error) {
+          console.error('Error generating pre-signed URL:', error);
+          return;
+        }
+      }
+
+      const projectData = {
+        name: name,
+        description: description,
+        workspaceID: workspace,
+        imgUrl: finalImageUrl,
+        imgKey: finalImageKey,
+        creatorUserID: creatorUserID,
+      };
+      
+      try {
+        await dispatch(addProjectAsync(projectData));
+        handleClose();
+      } catch (error) {
+        console.error('Error creating project:', error);
+      }
+    }
+  };
+
   const handleFileChange = async (event) => {
     const file = event.target.files[0];
     if (file) {
@@ -105,6 +112,7 @@ const NewProjectModel = ({ handleClose }) => {
       try {
         const response = await dispatch(uploadFileAsync(formData));
         setImageUrl(response.payload.presignedUrl);
+        setImageKey(response.payload.imgKey);
       } catch (error) {
         console.error('Error uploading image:', error);
       }
@@ -211,7 +219,7 @@ const NewProjectModel = ({ handleClose }) => {
           <MenuItem value="">
             <em>None</em>
           </MenuItem>
-          {Data.map((workspace) => (
+          {workspaces.map((workspace) => (
             <MenuItem key={workspace.id} value={workspace.id}>
               {workspace.name}
             </MenuItem>
