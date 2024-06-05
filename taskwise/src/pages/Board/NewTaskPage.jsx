@@ -8,9 +8,10 @@ import { useSelector } from 'react-redux';
 import { Skeleton } from '@mui/material';
 import DeleteIcon from "@mui/icons-material/Delete";
 import { useRef } from 'react';
-import {  ToastContainer } from 'react-toastify';
+import {  ToastContainer,toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { uploadFileAsync } from '../../features/workspace/workspaceSlice';
+import { resetTaskAddStatus } from '../../features/project/projectSlice';
 
 function NewTaskPage() {
     const [title, setTitle] = useState('');
@@ -21,6 +22,7 @@ function NewTaskPage() {
     const [priority, setPriority] = useState('');
     const [status, setStatus] = useState(null);
     const [assignees, setAssignees] = useState(null);
+    const [loading, setLoading] = useState(false);
     const [errors, setErrors] = useState({ title: '', description: '' });
     const navigate = useNavigate();
     const dispatch = useDispatch();
@@ -115,7 +117,7 @@ function NewTaskPage() {
     };
 
 
-    const handleCreateTask = () => {
+    const handleCreateTask = async () => {
         // const assigne=users?.filter((item)=>item.email===assignees)
         // console.log(assigne,"assigne")
         console.log(files, "selected files")
@@ -134,10 +136,8 @@ function NewTaskPage() {
                 createdBy: userId,
                 attachments:uploadedFileUrls
             };
-            dispatch(addTaskAsync({ task, id }));
-            if (taskAddStatus !== "rejected") {
-                navigate(-1);
-            }
+            setLoading(true)
+            await dispatch(addTaskAsync({ task, id }));
         }
     };
 
@@ -163,6 +163,15 @@ function NewTaskPage() {
         dispatch(fetchWorkspaceMembersAsync(workspaceId))
         // eslint-disable-next-line
     }, []);
+    useEffect(() => {
+        if (taskAddStatus === 'fulfilled') {
+          navigate(-1);
+        } else if (taskAddStatus === 'rejected') {
+          toast.error('Failed to add task.');
+          setLoading(false); // Reset loading state on error
+          dispatch(resetTaskAddStatus());
+        }
+      }, [taskAddStatus, navigate, dispatch]);
     return (
         <Box
             sx={{
@@ -443,8 +452,8 @@ function NewTaskPage() {
                                 </Button>
                             </Grid>
                             <Grid item xs={12} sm={6}>
-                                <Button variant="contained" color="primary" fullWidth onClick={handleCreateTask}>
-                                    Create Task
+                                <Button variant="contained" disabled={taskAddStatus === 'pending'} color="primary" fullWidth onClick={handleCreateTask}>
+                                {taskAddStatus === 'pending' ? 'Creating Task...' : 'Create Task'}
                                 </Button>
                             </Grid>
                         </Grid>

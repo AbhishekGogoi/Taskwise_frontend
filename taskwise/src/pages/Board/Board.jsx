@@ -118,7 +118,7 @@ function Board() {
   // };
 
   useEffect(() => {
-    //console.log("useEffect for dispatch")
+    console.log("useeffect for id,workspaceid")
     if (id) {
       dispatch(fetchProjectByIdAsync(id));
     }
@@ -129,6 +129,7 @@ function Board() {
   }, [workspaceId, id]);
 
   useEffect(()=>{
+    console.log("useEffect for column add status")
     if(columnAddStatus==="fulfilled"){
       toast.success("Column added successfully!");
     }
@@ -136,7 +137,7 @@ function Board() {
       toast.error("Column not added!");
     }
     dispatch(resetColumnAddStatus())
-  },[columnAddStatus,dispatch])
+  },[columnAddStatus])
 
   useEffect(() => {
     console.log("initial Data changed useeffect")
@@ -154,7 +155,7 @@ function Board() {
       setDataTask(initialData?.tasks);
     }
       // eslint-disable-next-line
-  }, [initialData]);
+  }, [initialData,taskAddStatus]);
 
   const handleDrop = (taskId, newColumnId) => {
     //console.log("handleDrop", taskId, newColumnId);
