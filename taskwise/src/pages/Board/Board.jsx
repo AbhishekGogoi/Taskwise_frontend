@@ -76,30 +76,18 @@ function Board() {
   const handleClick = () => {
     navigate(`/projects/${id}/new-task`);
   };
+
+
+  let user=useSelector((state)=>state?.user?.loggedInUser?.user);
+  let workspaceMembers=useSelector((state)=>state?.project?.workspaceMembers?.data)
+  const isAdmin = workspaceMembers?.find((member) => member.user.email === user.email)?.role === 'Admin';
+
+  
+  //console.log(isAdmin,"isAdmin")
   const project = {
     img: "https://img.freepik.com/free-vector/hand-drawn-minimal-background_23-2149001650.jpg?t=st=1716280160~exp=1716280760~hmac=f254cfeda21a263638253b9f6f0c0c9028bac218840dea34d6de5739054a4a96",
   };
-  // const initialData = {
-  //   order: [1, 2, 3, 4, 5, 6],
-  //   columns: [
-  //     1: { id: 1, title: "To Do", taskIds: [1, 2] },
-  //     2: { id: 2, title: "In Progress", taskIds: [3] },
-  //     3: { id: 3, title: "Done", taskIds: [4] },
-  //     4: { id: 4, title: "Review", taskIds: [5, 6] },
-  //     5: { id: 5, title: "QA", taskIds: [7] },
-  //     6: { id: 6, title: "Deploy", taskIds: [8] },
-  //   ],
-  //   tasks: {
-  //     1: { id: 1, content: "Take out the garbage" },
-  //     2: { id: 2, content: "Watch my favorite show" },
-  //     3: { id: 3, content: "Charge my phone" },
-  //     4: { id: 4, content: "Cook dinner" },
-  //     5: { id: 5, content: "Finish report" },
-  //     6: { id: 6, content: "Clean the house" },
-  //     7: { id: 7, content: "Go for a run" },
-  //     8: { id: 8, content: "Attend meeting" },
-  //   },
-  // };
+  
 
   const [columns, setColumns] = useState({});
   const [isAddColumnModalOpen, setIsAddColumnModalOpen] = useState(false);
@@ -111,11 +99,7 @@ function Board() {
     setIsAddColumnModalOpen(false);
   };
 
-  // const handleAddColumn = (newColumnName) => {
-  //   // Implement the logic to add a new column
-  //   // For example, you might want to update the state or dispatch an action
-  //   console.log("New column added:", newColumnName);
-  // };
+
 
   useEffect(() => {
     console.log("useeffect for id,workspaceid")
@@ -221,6 +205,7 @@ function Board() {
   const handleSearchChange = (event) => {
     setSearchTerm(event.target.value);
   };
+
 
 
   return (

@@ -20,6 +20,11 @@ import {
   Tab,
   ImageList,
   ImageListItem,
+  ListItemAvatar,
+  ListItemText,
+  Popover,
+  List,
+  ListItem,
 } from "@mui/material";
 import { toast, ToastContainer } from "react-toastify";
 import AddOutlinedIcon from "@mui/icons-material/AddOutlined";
@@ -107,46 +112,7 @@ const TaskDetailsPage = () => {
       [name]: value,
     }));
   };
-  // const findChangedFields = (initial, current) => {
-  //   const changedFields = {};
-  //   for (const key in initial) {
-  //     if (initial[key] !== current[key]) {
-  //       changedFields[key] = current[key];
-  //     }
-  //   }
-  //   return changedFields;
-  // };
-
-  // const handleSaveTask = () => {
-  //   let updatedTaskDetails = taskDetails;
-  //   if (currentComment.trim()) {
-  //     const newComment = {
-  //       user:userId,
-  //       comment: currentComment,
-  //     };
-  //     updatedTaskDetails = {
-  //       ...taskDetails,
-  //       comments: [...taskDetails.comments, newComment],
-  //     };
-  //     setCurrentComment('');
-  //   }
-
-  //   const data = findChangedFields(initialTaskDetails, updatedTaskDetails);
-  //   if (Object.keys(data).length > 0) {
-  //     console.log(data, "changedFields");
-  //     const idObject = {
-  //       taskId: taskID,
-  //       id: pid
-  //     }
-  //     //dispatch(updateTaskAsync({ taskDetails: changedFields, taskID }));
-  //     dispatch(editTaskAsync({ data, idObject }))
-  //     toast.success("Task updated successfully!");
-  //     navigate(-1)
-  //   } else {
-  //     toast.info("No changes to save.");
-  //   }
-  // };
-
+  
   const findChangedFields = (initial, current) => {
     const changedFields = {};
     for (const key in initial) {
@@ -192,7 +158,18 @@ const TaskDetailsPage = () => {
     }
   };
 
+  const [anchorEl, setAnchorEl] = useState(null);
 
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  const open = Boolean(anchorEl);
+  const id = open ? "simple-popover" : undefined;
 
 
   return (
@@ -360,17 +337,76 @@ const TaskDetailsPage = () => {
                       }}
                     >
                       <Avatar
-                            alt="Profile Image"
-                            src={ProfileImage}
-                            sx={{
-                              width: 20,
-                              height: 20,
-                            }}
-                          />
+                        alt="Profile Image"
+                        src={ProfileImage}
+                        sx={{
+                          width: 20,
+                          height: 20,
+                        }}
+                      />
 
-                          <Typography sx={{ml:1}}>
-                            {taskDetails?.assignees?.email}
-                          </Typography>
+                      <Typography
+                        sx={{ ml: 1, cursor: "pointer" }}
+                        onClick={handleClick}
+                      >
+                        {taskDetails?.assignees?.email}
+                      </Typography>
+                      <Popover
+                        id={id}
+                        open={open}
+                        anchorEl={anchorEl}
+                        onClose={handleClose}
+                        anchorOrigin={{
+                          vertical: "bottom",
+                          horizontal: "center",
+                        }}
+                        transformOrigin={{
+                          vertical: 'top',
+                          horizontal: 'center',
+                        }}
+                      >
+                        <List>
+                          <ListItem button>
+                            <ListItemAvatar>
+                              <Avatar
+                                alt="Profile Image"
+                                src={ProfileImage}
+                                sx={{
+                                  width: 20,
+                                  height: 20,
+                                }}
+                              />
+                            </ListItemAvatar>
+                            <ListItemText  primary="Navinak321@gmail.com" />
+                          </ListItem>
+                          <ListItem button>
+                            <ListItemAvatar>
+                              <Avatar
+                                alt="Profile Image"
+                                src={ProfileImage}
+                                sx={{
+                                  width: 20,
+                                  height: 20,
+                                }}
+                              />
+                            </ListItemAvatar>
+                            <ListItemText primary="Navinak321@gmail.com" />
+                          </ListItem>
+                          <ListItem button>
+                            <ListItemAvatar>
+                              <Avatar
+                                alt="Profile Image"
+                                src={ProfileImage}
+                                sx={{
+                                  width: 20,
+                                  height: 20,
+                                }}
+                              />
+                            </ListItemAvatar>
+                            <ListItemText primary="Navinak321@gmail.com" />
+                          </ListItem>
+                        </List>
+                      </Popover>
                       {/* <Select
                         sx={{
                           height: 32,
@@ -507,16 +543,16 @@ const TaskDetailsPage = () => {
                   <Grid
                     item
                     xs={12}
-                    sx={{ display: "flex", alignItems: "center" }}
+                    sx={{ display: "flex", alignItems: "center" ,mt:-5 }}
                   >
                     <Typography
                       variant="h6"
                       gutterBottom
-                      sx={{ fontWeight: "700", mt: 1, fontSize: "1rem" }}
+                      sx={{ fontWeight: "700", fontSize: "1rem" }}
                     >
                       Due Date
                     </Typography>
-                  <Box sx={{ mt: 3, mb: 4, ml: 6 }}>
+                  <Box sx={{ mb: 4, ml: 6 }}>
                     <TextField
                       //label="Select due date"
                       type="date"
@@ -525,8 +561,8 @@ const TaskDetailsPage = () => {
                       value={taskDetails?.dueDate}
                       onChange={handleChange}
                       sx={{
-                        height: 32,
-                        width: "100%",
+                        height: 28,
+                        width: "195px",
                         maxWidth: 200,
                       }}
                     />
