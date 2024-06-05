@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
 import { IconButton, Menu, MenuItem } from '@mui/material';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { columnOrderChangeAsync } from '../../features/project/projectSlice';
 
-const ColumnDropdown = ({ column }) => {
+const ColumnDropdown = ({ column, id }) => {
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
-
+  const dispatch=useDispatch()
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
@@ -17,14 +18,15 @@ const ColumnDropdown = ({ column }) => {
 
   const order = useSelector((state) => state.project.selectedProject.order);
   const colId = column._id;
-  const colIndex = order.indexOf(colId);
-
+  const colIndex = order?.indexOf(colId);
+  console.log(id,"id")
 
   const handleMoveLeft = () => {
     if (colIndex > 0) {
       const newOrder = [...order];
       [newOrder[colIndex - 1], newOrder[colIndex]] = [newOrder[colIndex], newOrder[colIndex - 1]];
       //dispatch(updateColumnOrder(newOrder));
+      dispatch(columnOrderChangeAsync({order:newOrder,projectId:id}))
     }
     handleClose();
   };
@@ -33,7 +35,7 @@ const ColumnDropdown = ({ column }) => {
     if (colIndex < order.length - 1) {
       const newOrder = [...order];
       [newOrder[colIndex + 1], newOrder[colIndex]] = [newOrder[colIndex], newOrder[colIndex + 1]];
-      //dispatch(updateColumnOrder(newOrder));
+      //dispatch(updateColumnOrder(newOrder)); {order,projectId}
     }
     handleClose();
   };
