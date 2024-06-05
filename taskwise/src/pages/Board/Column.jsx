@@ -83,7 +83,7 @@ function Column({ column, tasks, onDrop }) {
             {title}
           </Typography>
         )}
-        <ColumnDropdown /> {/* Replace the AddIcon with ColumnDropdown */}
+        <ColumnDropdown column={column}/> {/* Replace the AddIcon with ColumnDropdown */}
       </Box>
       <Box
         ref={drop}
