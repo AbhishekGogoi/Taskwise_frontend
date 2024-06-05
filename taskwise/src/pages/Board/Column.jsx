@@ -9,13 +9,17 @@ import CancelIcon from '@mui/icons-material/Cancel';
 import { useDispatch, useSelector } from "react-redux";
 import { editColumnAsync } from "../../features/project/projectSlice";
 import { useParams } from "react-router-dom";
+import { useEffect } from "react";
+
+
 function Column({ column, tasks, onDrop }) {
   const [isEditing, setIsEditing] = useState(false);
   const [title, setTitle] = useState(column.title);
   const [editTitle, setEditTitle] = useState(column.title);
   const dispatch = useDispatch();
   const { id } = useParams();
-  const editingColumn = useSelector((state) => state.project.columnEditStatus);
+  const editingColumn = useSelector((state) => state?.project?.columnEditStatus);
+  const columns = useSelector((state) => state?.project?.selectedProject?.columns);
   // eslint-disable-next-line
   const [{ isOver }, drop] = useDrop({
     accept: "task", // Specify the accepted item type here
@@ -52,6 +56,14 @@ function Column({ column, tasks, onDrop }) {
     setEditTitle(title);
     setIsEditing(false);
   };
+
+  useEffect(() => {
+    const updatedColumn = columns.find((col) => col._id === column._id);
+    if (updatedColumn) {
+      setTitle(updatedColumn.title);
+      setEditTitle(updatedColumn.title);
+    }
+  }, [columns, column._id]);
 
   return (
     <Box sx={{ display: "flex", flexDirection: "column" }}>
