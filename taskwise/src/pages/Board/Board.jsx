@@ -136,7 +136,7 @@ function Board() {
       toast.error("Column not added!");
     }
     dispatch(resetColumnAddStatus())
-  },[columnAddStatus])
+  },[columnAddStatus,dispatch])
 
   useEffect(() => {
     console.log("initial Data changed useeffect")

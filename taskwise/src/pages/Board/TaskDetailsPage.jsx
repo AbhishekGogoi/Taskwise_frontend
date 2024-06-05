@@ -18,12 +18,8 @@ import {
   DialogTitle,
   Tabs,
   Tab,
-  Card,
-  CardContent,
-  CardActions,
   ImageList,
   ImageListItem,
-  Modal,
 } from "@mui/material";
 import { toast, ToastContainer } from "react-toastify";
 import AddOutlinedIcon from "@mui/icons-material/AddOutlined";

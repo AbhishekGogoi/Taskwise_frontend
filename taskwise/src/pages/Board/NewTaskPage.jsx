@@ -130,7 +130,7 @@ function NewTaskPage() {
                 dueDate: dueDate,
                 priority: priority,
                 assigneeUserID: user,
-                comments: currentComment !="" ? [{ user: userId, comment: currentComment }] : [],
+                comments: currentComment !=="" ? [{ user: userId, comment: currentComment }] : [],
                 createdBy: userId,
                 attachments:uploadedFileUrls
             };
