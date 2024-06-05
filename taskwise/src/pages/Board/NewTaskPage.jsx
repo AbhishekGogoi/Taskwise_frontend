@@ -129,7 +129,7 @@ function NewTaskPage() {
                 columnId: status,
                 dueDate: dueDate,
                 priority: priority,
-                assigneeUserID: user?.id,
+                assigneeUserID: user,
                 comments: currentComment !="" ? [{ user: userId, comment: currentComment }] : [],
                 createdBy: userId,
                 attachments:uploadedFileUrls
