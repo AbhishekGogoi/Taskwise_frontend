@@ -12,7 +12,7 @@ import Divider from "@mui/material/Divider";
 import { Button } from "@mui/material";
 import { useSelector, useDispatch } from "react-redux";
 import { useEffect } from "react";
-import { fetchProjectByIdAsync, resetTaskAddStatus, moveTaskAsync, resetColumnAddStatus, fetchWorkspaceMembersAsync } from "../../features/project/projectSlice";
+import { fetchProjectByIdAsync, resetTaskAddStatus, moveTaskAsync, resetColumnAddStatus, fetchWorkspaceMembersAsync,resetColumnorderChangeStatus } from "../../features/project/projectSlice";
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import AddColumnModal from "./AddColumnModal";
@@ -70,6 +70,8 @@ function Board() {
   const taskAddStatus = useSelector((state) => state.project?.taskAddStatus);
   const projectFetchStatus = useSelector((state) => state.project?.projectFetchStatus);
   const workspaceId=useSelector((state) => state?.project?.selectedProject?.workspaceId);
+  const columnMovedStatus=useSelector((state)=>state?.project?.columnorderChangeStatus);
+
   console.log(workspaceId,"workspaceId")
   const [order, setOrder] = useState(null)
   const [dataTask, setDataTask] = useState(null)
@@ -122,6 +124,15 @@ function Board() {
     }
     dispatch(resetColumnAddStatus())
   },[columnAddStatus])
+  useEffect(()=>{
+    if(columnMovedStatus=="fulfilled"){
+      toast.success("Column moved successfully!");
+    }
+    if(columnMovedStatus=="rejected"){
+      toast.error("Server error");
+    }
+    dispatch(resetColumnorderChangeStatus())
+  },[columnMovedStatus])
 
   useEffect(() => {
     console.log("initial Data changed useeffect")
