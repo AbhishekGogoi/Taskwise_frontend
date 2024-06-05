@@ -51,6 +51,7 @@ const TaskDetailsPage = () => {
     priority: "",
     dueDate: "",
     comments: [],
+    createdBy: [],
   });
 
 
@@ -92,8 +93,9 @@ const TaskDetailsPage = () => {
       const details = {
         taskName: filteredTask.taskName || "",
         content: filteredTask.content || "",
-        assignees: filteredTask.assignees || "",
+        assignees: filteredTask.assigneeUserID || "",
         priority: filteredTask.priority || "",
+        createdBy: filteredTask.createdBy || [],
         dueDate: filteredTask.dueDate ? filteredTask.dueDate.split("T")[0] : "",
         comments: filteredTask.comments || [],
       };
@@ -341,7 +343,7 @@ const TaskDetailsPage = () => {
 
               <Grid item xs={12} md={6}>
                 <Grid container spacing={4}>
-                  <Grid
+                <Grid
                     item
                     xs={12}
                     sx={{ display: "flex", alignItems: "center" }}
@@ -361,7 +363,19 @@ const TaskDetailsPage = () => {
                         ml: 4,
                       }}
                     >
-                      <Select
+                      <Avatar
+                            alt="Profile Image"
+                            src={ProfileImage}
+                            sx={{
+                              width: 20,
+                              height: 20,
+                            }}
+                          />
+
+                          <Typography sx={{ml:1}}>
+                            {taskDetails?.assignees?.email}
+                          </Typography>
+                      {/* <Select
                         sx={{
                           height: 32,
                           width: "100%",
@@ -377,7 +391,7 @@ const TaskDetailsPage = () => {
                         <MenuItem value="Option 1">Option 1</MenuItem>
                         <MenuItem value="Option 2">Option 2</MenuItem>
                         <MenuItem value="Option 3">Option 3</MenuItem>
-                      </Select>
+                      </Select> */}
                     </Box>
                   </Grid>
 
@@ -420,7 +434,38 @@ const TaskDetailsPage = () => {
                       </Select>
                     </Box>
                   </Grid>
-
+                  <Grid
+                    item
+                    xs={12}
+                    sx={{ display: "flex", alignItems: "center" }}
+                  >
+                    <Typography
+                      variant="h6"
+                      gutterBottom
+                      sx={{ fontWeight: "700", fontSize: "1rem" }}
+                    >
+                      Created by
+                    </Typography>
+                    <Box
+                      sx={{
+                        display: "flex",
+                        alignItems: "center",
+                        flexGrow: 1,
+                        ml: 3,
+                        mb: 1,
+                      }}
+                    >
+                      <Avatar
+                        alt="Profile Image"
+                        src={ProfileImage}
+                        sx={{
+                          width: 20,
+                          height: 20,
+                        }}
+                      />
+                      <Typography sx={{ ml: 1 }}>{taskDetails?.createdBy?.email}</Typography>
+                    </Box>
+                  </Grid>
                   <Grid
                     item
                     xs={12}
