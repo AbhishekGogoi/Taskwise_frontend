@@ -12,14 +12,33 @@ import {
   Select,
   Button,
   Avatar,
-  Tooltip
+  Tooltip,
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  Tabs,
+  Tab,
+  Card,
+  CardContent,
+  CardActions,
+  ImageList,
+  ImageListItem,
+  Modal,
 } from "@mui/material";
 import { toast, ToastContainer } from "react-toastify";
 import AddOutlinedIcon from "@mui/icons-material/AddOutlined";
 import { editTaskAsync } from "../../features/project/projectSlice"; // Import the update task action
 import ProfileImage from "../../assets/sample-pi.png";
+import ChevronRightSharpIcon from "@mui/icons-material/ChevronRightSharp";
+import { styled } from "@mui/material/styles";
+import ImageOutlinedIcon from "@mui/icons-material/ImageOutlined";
+const TabLabelWrapper = styled("div")({
+  display: "flex",
+  alignItems: "center",
+});
 
 const TaskDetailsPage = () => {
+
   const navigate = useNavigate();
   const { taskID } = useParams();
   const dispatch = useDispatch();
@@ -38,6 +57,20 @@ const TaskDetailsPage = () => {
   const pid = useSelector(
     (state) => state?.project?.selectedProject?.id
   );
+  const [openDialog, setOpenDialog] = useState(false);
+  const [dialogTitle, setDialogTitle] = useState("");
+  const [dialogTab, setDialogTab] = useState(0);
+  const handleDialogOpen = (title) => {
+    setDialogTitle(title);
+    setOpenDialog(true);
+  };
+  const handleDialogClose = () => {
+    setOpenDialog(false);
+  };
+
+  const handleTabChange = (event, newValue) => {
+    setDialogTab(newValue);
+  };
 
   const selectedProject = useSelector((state) => state.project.selectedProject);
   const userId = useSelector((state) => state?.user?.loggedInUser?.user);
@@ -268,41 +301,41 @@ const TaskDetailsPage = () => {
                   sx={{ fontWeight: "700", mb: 1, fontSize: "1rem" }}>
                   Comments ({taskDetails.comments.length})
                 </Typography>
-                {taskDetails.comments.length >0 &&
-                <Box
-                  sx={{
-                    maxHeight: '200px',
-                    overflowY: 'auto',
-                    border: '1px solid #ccc',
-                    padding: '8px',
-                    borderRadius: '4px'
-                  }}
-                >
-                  {taskDetails.comments.map((comment, index) => (
-                    <Grid container spacing={2} key={index} sx={{ mb: 2 }}>
-                      <Grid item>
-                        <Avatar
-                          alt="Profile Image"
-                          src={ProfileImage}
-                          sx={{
-                            width: 30,
-                            height: 30,
-                          }}
-                        />
+                {taskDetails.comments.length > 0 &&
+                  <Box
+                    sx={{
+                      maxHeight: '200px',
+                      overflowY: 'auto',
+                      border: '1px solid #ccc',
+                      padding: '8px',
+                      borderRadius: '4px'
+                    }}
+                  >
+                    {taskDetails.comments.map((comment, index) => (
+                      <Grid container spacing={2} key={index} sx={{ mb: 2 }}>
+                        <Grid item>
+                          <Avatar
+                            alt="Profile Image"
+                            src={ProfileImage}
+                            sx={{
+                              width: 30,
+                              height: 30,
+                            }}
+                          />
+                        </Grid>
+                        <Grid item xs>
+                          <Box>
+                            <Typography sx={{ cursor: "pointer", fontWeight: 'bold' }}>
+                              <Tooltip title={comment?.user?.email}>
+                                {comment?.user?.username}
+                              </Tooltip>
+                            </Typography>
+                            <Typography>{comment?.comment}</Typography>
+                          </Box>
+                        </Grid>
                       </Grid>
-                      <Grid item xs>
-                        <Box>
-                          <Typography sx={{ cursor: "pointer", fontWeight: 'bold' }}>
-                            <Tooltip title={comment?.user?.email}>
-                              {comment?.user?.username}
-                            </Tooltip>
-                          </Typography>
-                          <Typography>{comment?.comment}</Typography>
-                        </Box>
-                      </Grid>
-                    </Grid>
-                  ))}
-                </Box>
+                    ))}
+                  </Box>
                 }
               </Grid>
 
@@ -453,15 +486,26 @@ const TaskDetailsPage = () => {
                     <Typography
                       variant="h6"
                       gutterBottom
-                      sx={{ fontWeight: "700", mb: 1, fontSize: "1rem" }}
+                      sx={{ fontWeight: "700", mt: 1, fontSize: "1rem" }}
                     >
-                      Attachments
+                      Attachments ({filteredTask?.attachments.length})
                     </Typography>
-                    <Box sx={{ ml: "3rem" }}>
-                      <IconButton>
-                        <AddOutlinedIcon />
-                      </IconButton>
-                    </Box>
+
+                    <IconButton
+                      color="primary"
+                      onClick={() => handleDialogOpen()}
+                    // disabled={mediaImages.length === 0 && docs.length === 0}
+                    >
+                      <ChevronRightSharpIcon
+                        sx={{ color: "#000000", fontSize: 35, mb: 1, m: 1 }}
+                      />
+                    </IconButton>
+                    <IconButton sx={{ ml: 7 }}>
+                      <Tooltip title="Add more attachments" cursor="pointer">
+                        <AddOutlinedIcon sx={{ fontSize: 35 }} />
+                      </Tooltip>
+                    </IconButton>
+                    <Box sx={{ ml: "3rem" }}></Box>
                   </Grid>
                 </Grid>
               </Grid>
@@ -502,6 +546,59 @@ const TaskDetailsPage = () => {
             </Grid>
           </Box>
         </Paper>
+        <Dialog
+          open={openDialog}
+          onClose={handleDialogClose}
+          maxWidth="md"
+          fullWidth
+        >
+          <DialogTitle>{dialogTitle}</DialogTitle>
+          <DialogContent>
+            <Grid container spacing={2} alignItems="center">
+              <Grid item xs={12}>
+                <Tabs
+                  value={dialogTab}
+                  onChange={handleTabChange}
+                  variant="fullWidth"
+                >
+                  <Tab
+                    label={
+                      <TabLabelWrapper>
+                        <ImageOutlinedIcon sx={{ p: 1 }} />
+                        <span>Media</span>
+                      </TabLabelWrapper>
+                    }
+                  />
+                </Tabs>
+              </Grid>
+              <Grid item xs={12}>
+                {dialogTab === 0 &&
+                  (filteredTask?.attachments.length > 0 ? (
+                    <ImageList cols={3} rowHeight={200}>
+                      {filteredTask?.attachments.map((image, index) => (
+                        <ImageListItem key={index}>
+                          <img
+                            src={image}
+                            alt={`Media ${index + 1}`}
+                            loading="lazy"
+                            style={{
+                              width: "100%",
+                              height: "100%",
+                              objectFit: "cover",
+                            }}
+                          />
+                        </ImageListItem>
+                      ))}
+                    </ImageList>
+                  ) : (
+                    <Typography sx={{ p: 2, textAlign: "left", color: "#888" }}>
+                      No media available
+                    </Typography>
+                  ))}
+              </Grid>
+            </Grid>
+          </DialogContent>
+        </Dialog>
       </Box>
     </Box>
   );
