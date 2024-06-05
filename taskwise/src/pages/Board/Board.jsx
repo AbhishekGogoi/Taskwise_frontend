@@ -62,16 +62,7 @@ function Board() {
   const dispatch = useDispatch();
   const [searchTerm, setSearchTerm] = useState("");
 
-  useEffect(() => {
-    //console.log("useEffect for dispatch")
-    if (id) {
-      dispatch(fetchProjectByIdAsync(id));
-    }
-    if(workspaceId){
-      dispatch(fetchWorkspaceMembersAsync(workspaceId))
-    }
-      // eslint-disable-next-line
-  }, [dispatch, id]);
+ 
  
   // console.log(id)
   const initialData = useSelector((state) => state?.project?.selectedProject);
@@ -127,7 +118,17 @@ function Board() {
   // };
 
   useEffect(() => {
-    console.log("initial Data changed useeffect")
+    //console.log("useEffect for dispatch")
+    if (id) {
+      dispatch(fetchProjectByIdAsync(id));
+    }
+    if(workspaceId){
+      dispatch(fetchWorkspaceMembersAsync(workspaceId))
+    }
+      // eslint-disable-next-line
+  }, [workspaceId, id]);
+
+  useEffect(()=>{
     if(columnAddStatus==="fulfilled"){
       toast.success("Column added successfully!");
     }
@@ -135,6 +136,18 @@ function Board() {
       toast.error("Column not added!");
     }
     dispatch(resetColumnAddStatus())
+  },[columnAddStatus])
+
+  useEffect(() => {
+    console.log("initial Data changed useeffect")
+    if (taskAddStatus === "fulfilled") {
+      toast.success("Task added successfully!");
+      dispatch(resetTaskAddStatus());
+    }
+    if (taskAddStatus === "rejected") {
+      toast.error("Failed to add task.");
+      dispatch(resetTaskAddStatus());
+    }
     if (initialData) {
       setColumns(initialData?.columns);
       setOrder(initialData?.order);
@@ -189,16 +202,17 @@ function Board() {
     //console.log("updatedcolumns", updatedColumns);
   };
 
-  useEffect(() => {
-    if (taskAddStatus === "fulfilled") {
-      toast.success("Task added successfully!");
-      dispatch(resetTaskAddStatus());
-    }
-    if (taskAddStatus === "rejected") {
-      toast.error("Failed to add task.");
-      dispatch(resetTaskAddStatus());
-    }
-  }, [taskAddStatus, dispatch,id]);
+  // useEffect(() => {
+  //   if (taskAddStatus === "fulfilled") {
+  //     toast.success("Task added successfully!");
+  //     dispatch(resetTaskAddStatus());
+  //   }
+  //   if (taskAddStatus === "rejected") {
+  //     toast.error("Failed to add task.");
+  //     dispatch(resetTaskAddStatus());
+  //   }
+
+  // }, [taskAddStatus, dispatch,id]);
   if (projectFetchStatus === "loading") {
     return <div className="loading">Loading...</div>
   }
