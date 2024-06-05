@@ -35,7 +35,7 @@ const ColumnDropdown = ({ column, id }) => {
     if (colIndex < order.length - 1) {
       const newOrder = [...order];
       [newOrder[colIndex + 1], newOrder[colIndex]] = [newOrder[colIndex], newOrder[colIndex + 1]];
-      //dispatch(updateColumnOrder(newOrder)); {order,projectId}
+      dispatch(columnOrderChangeAsync({order:newOrder,projectId:id}))
     }
     handleClose();
   };
