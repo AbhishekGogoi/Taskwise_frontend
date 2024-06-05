@@ -504,9 +504,21 @@ const TaskDetailsPage = () => {
                       </Select> */}
                     </Box>
                   </Grid>
-                  <Box sx={{ mt: 3, mb: 4, ml: 17 }}>
+                  <Grid
+                    item
+                    xs={12}
+                    sx={{ display: "flex", alignItems: "center" }}
+                  >
+                    <Typography
+                      variant="h6"
+                      gutterBottom
+                      sx={{ fontWeight: "700", mt: 1, fontSize: "1rem" }}
+                    >
+                      Due Date
+                    </Typography>
+                  <Box sx={{ mt: 3, mb: 4, ml: 6 }}>
                     <TextField
-                      label="Select due date"
+                      //label="Select due date"
                       type="date"
                       InputLabelProps={{ shrink: true }}
                       name="dueDate"
@@ -519,6 +531,7 @@ const TaskDetailsPage = () => {
                       }}
                     />
                   </Box>
+                  </Grid>
                   <Grid
                     item
                     xs={12}
