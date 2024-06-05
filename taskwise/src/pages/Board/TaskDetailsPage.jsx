@@ -86,7 +86,8 @@ const TaskDetailsPage = () => {
     const newComment = event.target.value;
     setCurrentComment(newComment);
   }
-
+  const isAdmin = membersData?.find((member) => member.user.email === userId.email)?.role === 'Admin';
+  const isCreator=userId.email==filteredTask.createdBy.email ? true : false;
   const users = membersData?.map(item => item.user);
   const [options] = useState(users);
   console.log(options, "options")
@@ -176,14 +177,17 @@ const TaskDetailsPage = () => {
 
 
   const handleItemClick = (option) => {
-
-    const name = "assigneeUserID"
-    const value = option
-    setTaskDetails((prevDetails) => ({
-      ...prevDetails,
-      [name]: value,
-    }));
-
+    console.log(isAdmin)
+    if(isAdmin || isCreator){
+      const name = "assigneeUserID"
+      const value = option
+      setTaskDetails((prevDetails) => ({
+        ...prevDetails,
+        [name]: value,
+      }));
+    }else{
+      toast.error("Not authorised to reassign the task")
+    }
     handleClose();
   };
 
