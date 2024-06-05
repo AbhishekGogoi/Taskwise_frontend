@@ -11,6 +11,7 @@ import Thumbnail from '../../../components/Thumbnail';
 import { useDispatch, useSelector } from "react-redux";
 import { createWorkspaceAsync, uploadFileAsync } from "../../../features/workspace/workspaceSlice";
 import ModeEditSharpIcon from '@mui/icons-material/ModeEditSharp';
+import WSImage from '../../../assets/ws-image.jpg';
 
 const style = {
   position: 'absolute',
@@ -26,7 +27,6 @@ const style = {
 };
 
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-const defaultImage = 'https://taskwiseai-s3.s3.ap-south-1.amazonaws.com/1717225670701-sample-one.jpg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAW3MEDJLIRCUPEROY%2F20240601%2Fap-south-1%2Fs3%2Faws4_request&X-Amz-Date=20240601T070750Z&X-Amz-Expires=3600&X-Amz-Signature=ea21669e6ae66f6d912079548d409b76215448ba616de7135999478f47a2e099&X-Amz-SignedHeaders=host';
 
 const NewWorkspaceModel = ({ handleClose, onWorkspaceCreated }) => {
   const dispatch = useDispatch();
@@ -36,7 +36,7 @@ const NewWorkspaceModel = ({ handleClose, onWorkspaceCreated }) => {
   const [description, setDescription] = useState('');
   const [members, setMembers] = useState([]);
   const [inputValue, setInputValue] = useState('');
-  const [imageUrl, setImageUrl] = useState(defaultImage);
+  const [imageUrl, setImageUrl] = useState('');
   const [nameError, setNameError] = useState('');
   const [membersError, setMembersError] = useState('');
   const fileInputRef = useRef(null);
@@ -65,15 +65,21 @@ const NewWorkspaceModel = ({ handleClose, onWorkspaceCreated }) => {
       setNameError('Workspace name is required.');
       return;
     }
-  
-    let finalImageUrl = imageUrl; // Initially set to uploaded image URL
-  
-    // If imageUrl is empty, assign default image URL
+
+    let finalImageUrl = imageUrl || WSImage; // Use uploaded image or default image
+
     if (!imageUrl) {
-      console.warn('No image uploaded. Using default image.');
-      finalImageUrl = defaultImage;
+      try {
+        // Upload default image
+        const formData = new FormData();
+        formData.append('file', WSImage);
+        const response = await dispatch(uploadFileAsync(formData));
+        finalImageUrl = response.payload.presignedUrl;
+      } catch (error) {
+        console.error('Error uploading default image:', error);
+      }
     }
-  
+
     const newWorkspace = {
       name: workspaceName,
       description,
@@ -81,9 +87,9 @@ const NewWorkspaceModel = ({ handleClose, onWorkspaceCreated }) => {
       creatorUserID: userId,
       memberEmails: members,
     };
-  
+
     console.log(newWorkspace);
-    await dispatch(createWorkspaceAsync(newWorkspace));
+    dispatch(createWorkspaceAsync(newWorkspace));
     onWorkspaceCreated(); // Notify the parent component about the new workspace
     handleClose();
   }; 
@@ -120,7 +126,7 @@ const NewWorkspaceModel = ({ handleClose, onWorkspaceCreated }) => {
         Thumbnail
       </Typography>
       <Box sx={{ display: 'flex', justifyContent: 'left', alignItems: 'left', marginBottom: '20px' }}>
-        <Thumbnail selectedImage={defaultImage} handleFileUploadClick={handleFileUploadClick} width={80} height={80} />
+        <Thumbnail selectedImage={imageUrl || WSImage} handleFileUploadClick={handleFileUploadClick} width={80} height={80} />
         <IconButton onClick={handleFileUploadClick}>
           <ModeEditSharpIcon sx={{ color: "#000000" }} />
         </IconButton>

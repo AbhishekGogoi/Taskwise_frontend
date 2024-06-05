@@ -58,10 +58,29 @@ const CustomBox = styled(Box)(({ theme }) => ({
   overflowY: 'auto',
   padding: theme.spacing(2),
   '&::-webkit-scrollbar': {
-    display: 'none',
+    width: '8px',
+  },
+  '&::-webkit-scrollbar-thumb': {
+    backgroundColor: '#888',
+    borderRadius: '4px',
+  },
+  '&::-webkit-scrollbar-thumb:hover': {
+    backgroundColor: '#555',
   },
   '-ms-overflow-style': 'none',
-  'scrollbar-width': 'none',
+  'scrollbar-width': 'thin',
+  'scrollbar-color': '#888 #e0e0e0',
+}));
+
+// Styled message for no workspaces
+const NoWorkspacesMessage = styled("div")(({ theme }) => ({
+  display: "flex",
+  justifyContent: "center",
+  alignItems: "center",
+  height: "100%",
+  width: "100%",
+  fontSize: "1.5rem",
+  color: theme.palette.text.secondary,
 }));
 
 function WorkspacePage() {
@@ -132,13 +151,17 @@ function WorkspacePage() {
         </Box>
       </Paper>
       <CustomBox>
-        <Grid container spacing={3} alignItems="center">
-          {WorkspaceData.map((workspace) => (
-            <Grid item key={workspace.id} xs={6} sm={6} md={3} lg={3} xl={2}>
-              <WorkspaceCard workspace={workspace} onClick={() => navigate(`/workspaces/${workspace.id}`)} />
-            </Grid>
-          ))}
-        </Grid>
+        {WorkspaceData.length > 0 ? (
+          <Grid container spacing={3} alignItems="center">
+            {WorkspaceData.map((workspace) => (
+              <Grid item key={workspace.id} xs={6} sm={6} md={3} lg={3} xl={2}>
+                <WorkspaceCard workspace={workspace} onClick={() => navigate(`/workspaces/${workspace.id}`)} />
+              </Grid>
+            ))}
+          </Grid>
+        ) : (
+          <NoWorkspacesMessage>Start by adding a new workspace.</NoWorkspacesMessage>
+        )}
       </CustomBox>
       <Modal
         open={openModal}
