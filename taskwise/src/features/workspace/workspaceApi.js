@@ -66,4 +66,61 @@ export const uploadFile = async (formData) => {
         throw error.response.data;
     }
 };
-  
+
+// Function to get the pre-signed URL for an image
+export const getImageUrl = async (key) => {
+    try {
+        const res = await axiosi.get(`/get-image-url`, {
+            params: { key }
+        });
+        return { data: res.data };
+    } catch (error) {
+        throw error.response.data;
+    }
+};
+
+export const exitMember = async (workspaceId, userId) => {
+    try {
+        const res = await axiosi.patch(`/workspaces/${workspaceId}/members/${userId}/exit`);
+        return { data: res.data };
+    } catch (error) {
+        throw error.response.data;
+    }
+};
+
+export const updateMemberRole = async (workspaceId, adminUserId, userId, role) => {
+    try {
+      const response = await axiosi.patch(`/workspaces/members/role/${adminUserId}`, {
+        workspaceId,
+        userId,
+        role,
+      });
+      return response.data;  // Return the response data
+    } catch (error) {
+      throw error.response.data;  // Throw the error response data
+    }
+  };
+
+  export const addMember = async (workspaceId, adminUserId, memberEmails) => {
+    try {
+      const response = await axiosi.post(`/workspaces/${workspaceId}/user/${adminUserId}/members`, {
+        memberEmails
+      });
+      return response.data;  // Return the response data
+    } catch (error) {
+      throw error.response.data;  // Throw the error response data
+    }
+  };
+
+export const updateWorkspace = async (workspaceId, name, imgUrl, imgKey) => {
+  try {
+      const res = await axiosi.put(`/workspaces/${workspaceId}`, {
+          name,
+          imgUrl,
+          imgKey
+      });
+      return { data: res.data };
+  } catch (error) {
+      throw error.response.data;
+  }
+};

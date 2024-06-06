@@ -17,27 +17,14 @@ import ImageOutlinedIcon from '@mui/icons-material/ImageOutlined';
 import DescriptionOutlinedIcon from '@mui/icons-material/DescriptionOutlined';
 import CloseIcon from '@mui/icons-material/Close';
 import ExitWorkspaceModal from './Models/ExitWorkspaceModal';
-import AddMemberToWorkspaceModel from './Models/AddMemberModel';
+import AddMemberToWorkspaceModel from './Models/AddMemberToWorkspaceModal';
 import ShareJoiningLinkModel from './Models/ShareJoiningLinkModel';
 
 const StyledPaper = styled(Paper)(({ theme }) => ({
   height: '400px',
   width: '94%',
   padding: theme.spacing(2),
-  overflowY: 'auto',
   borderRadius: 2,
-  '&::-webkit-scrollbar': {
-    width: '8px',
-  },
-  '&::-webkit-scrollbar-track': {
-    background: '#f1f1f1',
-  },
-  '&::-webkit-scrollbar-thumb': {
-    backgroundColor: '#888',
-  },
-  '&::-webkit-scrollbar-thumb:hover': {
-    background: '#555',
-  },
 }));
 
 const TabLabelWrapper = styled('div')({
@@ -207,7 +194,7 @@ function WorkspaceSettings({ workspace, membersData }) {
             </Typography>
           </Box>
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
-            <WorkspaceSettingsMembers membersData={membersData}/>
+            <WorkspaceSettingsMembers membersData={membersData} workspaceId={workspace.id}/>
           </Box>
           <Box sx={{ display: 'flex', alignItems: 'center', marginTop: 6 }}>
             <IconButton onClick={handleOpenExitModal}>
@@ -224,7 +211,7 @@ function WorkspaceSettings({ workspace, membersData }) {
             aria-describedby="add-member-modal-description"
           >
             <Box>
-              <AddMemberToWorkspaceModel handleClose={handleClose} />
+              <AddMemberToWorkspaceModel handleClose={handleClose} workspaceId={workspace.id} />
             </Box>
           </Modal>
             <Modal
@@ -255,7 +242,7 @@ function WorkspaceSettings({ workspace, membersData }) {
                 width: '400px',
               }}
             >
-              <ExitWorkspaceModal handleClose={handleCloseExitModal} />
+              <ExitWorkspaceModal handleClose={handleCloseExitModal} workspaceId={workspace.id} />
             </Box>
           </Modal>
         </StyledPaper>
