@@ -19,6 +19,17 @@ const StyledAgGridContainer = styled("div")(({ theme }) => ({
   width: "100%",
 }));
 
+// Styled message for no tasks
+const NoTasksMessage = styled("div")(({ theme }) => ({
+  display: "flex",
+  justifyContent: "center",
+  alignItems: "center",
+  height: "100%",
+  width: "100%",
+  fontSize: "1.5rem",
+  color: theme.palette.text.secondary,
+}));
+
 // Main component to display the tasks data
 const WorkspaceTaskPage = ({ tasksData }) => {
   const gridStyle = useMemo(() => ({ height: "100%", width: "100%" }), []);
@@ -76,15 +87,19 @@ const WorkspaceTaskPage = ({ tasksData }) => {
 
   return (
     <StyledAgGridContainer>
-      <div className="ag-theme-alpine" style={gridStyle}>
-        <AgGridReact
-          rowData={rowData}
-          columnDefs={colDefs}
-          defaultColDef={defaultColDef}
-          rowSelection="multiple"
-          suppressRowClickSelection={true}
-        />
-      </div>
+      {rowData && rowData.length > 0 ? (
+        <div className="ag-theme-alpine" style={gridStyle}>
+          <AgGridReact
+            rowData={rowData}
+            columnDefs={colDefs}
+            defaultColDef={defaultColDef}
+            rowSelection="multiple"
+            suppressRowClickSelection={true}
+          />
+        </div>
+      ) : (
+        <NoTasksMessage>There are no tasks on your list at this moment</NoTasksMessage>
+      )}
     </StyledAgGridContainer>
   );
 };

@@ -66,4 +66,16 @@ export const uploadFile = async (formData) => {
         throw error.response.data;
     }
 };
+
+// Function to get the pre-signed URL for an image
+export const getImageUrl = async (key) => {
+    try {
+        const res = await axiosi.get(`/get-image-url`, {
+            params: { key }
+        });
+        return { data: res.data };
+    } catch (error) {
+        throw error.response.data;
+    }
+};
   

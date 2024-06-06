@@ -5,7 +5,8 @@ import { createWorkspace,
          fetchWorkspaceProjects,
          fetchWorkspaceMembers,
          fetchWorkspaceTasks,
-         uploadFile } from "./workspaceApi";
+         uploadFile,
+         getImageUrl } from "./workspaceApi";
 
 const initialState = {
   workspaces: [],
@@ -66,6 +67,15 @@ export const uploadFileAsync = createAsyncThunk(
   "workspaces/uploadFile",
   async (formData) => {
     const response = await uploadFile(formData);
+    return response.data;
+  }
+);
+
+// Redux thunk to get the image URL
+export const getImageUrlAsync = createAsyncThunk(
+  "workspaces/getImageUrl",
+  async (key) => {
+    const response = await getImageUrl(key);
     return response.data;
   }
 );

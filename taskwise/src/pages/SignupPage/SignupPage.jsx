@@ -18,6 +18,7 @@ import "react-toastify/dist/ReactToastify.css";
 import Joi from "joi";
 import googleiconnew from "../../assets/googleiconnew.png";
 import TaskWiseLogo from "../../assets/TaskWiseLogo.png";
+import { getImageUrlAsync } from "../../features/workspace/workspaceSlice";
 
 // Styles
 const StyledContainer = styled(Container)({
@@ -162,13 +163,14 @@ const SignupPage = () => {
   //   dispatch(signupAsync({ username, email, password }));
   // };
 
-  const handleSignup = (e) => {
+  const handleSignup = async (e) => {
     e.preventDefault();
+  
     const { error } = schema.validate(
       { username, email, password, confirmPassword },
       { abortEarly: false }
     );
-
+  
     if (error) {
       const validationErrors = {};
       error.details.forEach((detail) => {
@@ -177,11 +179,23 @@ const SignupPage = () => {
       setErrors(validationErrors);
       return;
     }
-
+  
+    let finalImageUrl = '';
+    let finalImageKey = '';
+  
+    try {
+      const response = await dispatch(getImageUrlAsync("1717583169603-user-img.jpg"));
+      finalImageUrl = response?.payload?.presignedUrl;
+      finalImageKey = response?.payload?.imgKey;
+    } catch (error) {
+      console.error('Error generating pre-signed URL:', error);
+      return;
+    }
+  
     setErrors({});
-    dispatch(signupAsync({ username, email, password })); // Exclude confirmPassword
+    dispatch(signupAsync({ username, email, password, finalImageUrl, finalImageKey }));
   };
-
+ 
   useEffect(() => {
     if (signupError) {
       toast.error(signupError.message);
