@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, lazy, Suspense } from "react";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import Header from "./components/Header";
 import Sidebar from "./components/Sidebar";
@@ -8,31 +8,37 @@ import {
   Route,
   useLocation,
 } from "react-router-dom";
-import ProjectPage from "./pages/Project/ProjectPage";
-import LandingPage from "./pages/landingPage/LandingPage";
-import WorkspacesPage from "./pages/Workspace/WorkspacePage";
-import MyTaskPage from "./pages/MyTaskPage/MyTaskPage";
-import CalendarPage from "./pages/CalendarPage/CalendarPage";
 import Drawer from "@mui/material/Drawer";
-import WorkspaceDetails from "./pages/Workspace/WorkspaceDetails";
-import NewTaskPage from "./pages/Board/NewTaskPage";
-import TaskDetailsPage from "./pages/Board/TaskDetailsPage";
-import useMediaQuery from "@mui/material/useMediaQuery";
-import Board from "./pages/Board/Board";
-import LoginPage from "./pages/LoginPage/LoginPage";
-import SignupPage from "./pages/SignupPage/SignupPage";
-import ForgotPasswordPage from "./pages/ForgotPassword/ForgotPasswordPage";
-import VerificationPage from "./pages/ForgotPassword/VerificationPage";
-import ResetPasswordPage from "./pages/ForgotPassword/ResetPasswordPage";
-import ConfirmationPage from "./pages/ForgotPassword/ConfirmationPage";
-import ProfileSettingsPage from "./pages/ProfilePage/ProfilePage";
 import Protected from "./components/Protected";
+import useMediaQuery from "@mui/material/useMediaQuery";
+
+// Lazy load the pages
+const ProjectPage = lazy(() => import("./pages/Project/ProjectPage"));
+const LandingPage = lazy(() => import("./pages/landingPage/LandingPage"));
+const WorkspacesPage = lazy(() => import("./pages/Workspace/WorkspacePage"));
+const MyTaskPage = lazy(() => import("./pages/MyTaskPage/MyTaskPage"));
+const CalendarPage = lazy(() => import("./pages/CalendarPage/CalendarPage"));
+const WorkspaceDetails = lazy(() => import("./pages/Workspace/WorkspaceDetails"));
+const NewTaskPage = lazy(() => import("./pages/Board/NewTaskPage"));
+const TaskDetailsPage = lazy(() => import("./pages/Board/TaskDetailsPage"));
+const Board = lazy(() => import("./pages/Board/Board"));
+const LoginPage = lazy(() => import("./pages/LoginPage/LoginPage"));
+const SignupPage = lazy(() => import("./pages/SignupPage/SignupPage"));
+const ForgotPasswordPage = lazy(() => import("./pages/ForgotPassword/ForgotPasswordPage"));
+const VerificationPage = lazy(() => import("./pages/ForgotPassword/VerificationPage"));
+const ResetPasswordPage = lazy(() => import("./pages/ForgotPassword/ResetPasswordPage"));
+const ConfirmationPage = lazy(() => import("./pages/ForgotPassword/ConfirmationPage"));
+const ProfileSettingsPage = lazy(() => import("./pages/ProfilePage/ProfilePage"));
 
 const theme = createTheme({
   typography: {
     fontFamily: "Manrope, sans-serif",
   },
 });
+
+function Loading() {
+  return <div>Loading...</div>;
+}
 
 function AppLayout() {
   const location = useLocation();
@@ -85,7 +91,7 @@ function AppLayout() {
         >
           <Routes>
             <Route path="/" element={<LandingPage />} />
-            <Route path="/login" element={<LoginPage />} />
+            <Route path="/login" element={<Suspense fallback={<Loading />}><LoginPage /> </Suspense>} />
             <Route path="/signup" element={<SignupPage />} />
             <Route path="/forgotpassword" element={<ForgotPasswordPage />} />
             <Route path="/verification" element={<VerificationPage />} />
