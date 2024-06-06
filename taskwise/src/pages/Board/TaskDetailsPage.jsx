@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import {
@@ -33,6 +33,8 @@ import ProfileImage from "../../assets/sample-pi.png";
 import ChevronRightSharpIcon from "@mui/icons-material/ChevronRightSharp";
 import { styled } from "@mui/material/styles";
 import ImageOutlinedIcon from "@mui/icons-material/ImageOutlined";
+import DeleteIcon from "@mui/icons-material/Delete";
+import { uploadFileAsync } from "../../features/workspace/workspaceSlice";
 const TabLabelWrapper = styled("div")({
   display: "flex",
   alignItems: "center",
@@ -87,11 +89,37 @@ const TaskDetailsPage = () => {
     setCurrentComment(newComment);
   }
   const isAdmin = membersData?.find((member) => member.user.email === userId.email)?.role === 'Admin';
-  const isCreator=userId.email==filteredTask.createdBy.email ? true : false;
+  const isCreator = userId.email == filteredTask.createdBy.email ? true : false;
   const users = membersData?.map(item => item.user);
   const [options] = useState(users);
   console.log(options, "options")
+  const fileInputRef = useRef(null);
+  const [files, setFiles] = useState([]);
+  const [uploadedFileUrls, setUploadedFileUrls] = useState([]);
+  const handleUploadClick = () => {
+    fileInputRef.current.click();
+  };
+  const handleFileChange = async (event) => {
+    const newFiles = Array.from(event.target.files).map((file) => ({
+      url: URL.createObjectURL(file),
+      type: file.type,
+      name: file.name,
+    }));
+    setFiles((prevFiles) => [...prevFiles, ...newFiles]);
 
+    const file = event.target.files[0];
+    if (file) {
+      const formData = new FormData();
+      formData.append("file", file);
+      const response = await dispatch(uploadFileAsync(formData));
+      const newFileUrls = response.payload.presignedUrl;
+      setUploadedFileUrls((prevUrls) => [...prevUrls, newFileUrls]);
+    }
+  };
+  const handleDelete = (index) => {
+    setFiles((prevFiles) => prevFiles.filter((file, i) => i !== index));
+    setUploadedFileUrls((prevUrls) => prevUrls.filter((url, i) => i !== index));
+  };
   useEffect(() => {
     if (filteredTask) {
       const details = {
@@ -178,14 +206,14 @@ const TaskDetailsPage = () => {
 
   const handleItemClick = (option) => {
     console.log(isAdmin)
-    if(isAdmin || isCreator){
+    if (isAdmin || isCreator) {
       const name = "assigneeUserID"
       const value = option
       setTaskDetails((prevDetails) => ({
         ...prevDetails,
         [name]: value,
       }));
-    }else{
+    } else {
       toast.error("Not authorised to reassign the task")
     }
     handleClose();
@@ -582,13 +610,59 @@ const TaskDetailsPage = () => {
                         sx={{ color: "#000000", fontSize: 35, mb: 1, m: 1 }}
                       />
                     </IconButton>
-                    <IconButton sx={{ ml: 7 }}>
+                    <IconButton sx={{ ml: 7 }} onClick={handleUploadClick}>
                       <Tooltip title="Add more attachments" cursor="pointer">
                         <AddOutlinedIcon sx={{ fontSize: 35 }} />
                       </Tooltip>
                     </IconButton>
+                    <input
+                      type="file"
+                      ref={fileInputRef}
+                      style={{ display: "none" }}
+                      onChange={handleFileChange}
+                      accept="image/*,application/pdf"
+                      multiple
+                    />
                     <Box sx={{ ml: "3rem" }}></Box>
                   </Grid>
+                  <Box
+                    sx={{
+                      maxHeight: "400px",
+                      overflow: "scroll",
+                      "&::-webkit-scrollbar": {
+                        display: "none",
+                      },
+                    }}
+                  >
+                    {files.map((file, index) => (
+                      <Grid item xs={12} key={index} sx={{ mt: 2, ml: 3 }}>
+                        <Box sx={{ display: "flex", alignItems: "center" }}>
+                          {file.type.startsWith("image/") ? (
+                            <img
+                              src={file.url}
+                              alt={file.name}
+                              style={{
+                                maxWidth: "50%",
+                                height: "auto",
+                                marginRight: "1rem",
+                              }}
+                            />
+                          ) : (
+                            <embed
+                              src={file.url}
+                              type="application/pdf"
+                              width="50%"
+                              height="300px"
+                              style={{ marginRight: "1rem" }}
+                            />
+                          )}
+                          <IconButton onClick={() => handleDelete(index)}>
+                            <DeleteIcon />
+                          </IconButton>
+                        </Box>
+                      </Grid>
+                    ))}
+                  </Box>
                 </Grid>
               </Grid>
             </Grid>
