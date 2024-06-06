@@ -130,6 +130,7 @@ const TaskDetailsPage = () => {
         createdBy: filteredTask.createdBy || [],
         dueDate: filteredTask.dueDate ? filteredTask.dueDate.split("T")[0] : "",
         comments: filteredTask.comments || [],
+        attachments: filteredTask.attachments || [],
       };
       setTaskDetails(details);
       setInitialTaskDetails(details); // Set the initial task details
@@ -169,13 +170,26 @@ const TaskDetailsPage = () => {
       setCurrentComment('');
     }
 
+    if (uploadedFileUrls.length > 0) {
+      const updatedAttachments = [
+        ...(updatedTaskDetails.attachments || []),
+        ...uploadedFileUrls,
+      ];
+      updatedTaskDetails = {
+        ...updatedTaskDetails,
+        attachments: updatedAttachments,
+      };
+    }
+
     const data = findChangedFields(initialTaskDetails, updatedTaskDetails);
 
     if (Object.keys(data).length > 0 || currentComment.trim()) {
       if (currentComment.trim() && !data.comments) {
         data.comments = updatedTaskDetails.comments;
       }
-
+      if (uploadedFileUrls.length > 0 && !data.attachments) {
+        data.attachments = updatedTaskDetails.attachments;
+      }
       console.log(data, "changedFields");
       const idObject = {
         taskId: taskID,
