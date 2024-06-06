@@ -6,7 +6,11 @@ import { createWorkspace,
          fetchWorkspaceMembers,
          fetchWorkspaceTasks,
          uploadFile,
-         getImageUrl } from "./workspaceApi";
+         getImageUrl,
+         exitMember,
+         updateMemberRole, 
+         addMember,
+         updateWorkspace } from "./workspaceApi";
 
 const initialState = {
   workspaces: [],
@@ -76,6 +80,38 @@ export const getImageUrlAsync = createAsyncThunk(
   "workspaces/getImageUrl",
   async (key) => {
     const response = await getImageUrl(key);
+    return response.data;
+  }
+);
+
+export const exitMemberAsync = createAsyncThunk(
+  "workspaces/exitMember",
+  async ({ workspaceId, userId }) => {
+    const response = await exitMember(workspaceId, userId);
+    return response.data;
+  }
+);
+
+export const updateMemberRoleAsync = createAsyncThunk(
+  'members/updateMemberRole',
+  async ({ workspaceId, adminUserId, userId, role }) => {
+    const response = await updateMemberRole(workspaceId, adminUserId, userId, role);
+    return response.data;
+  }
+);
+
+export const addMemberAsync = createAsyncThunk(
+  'members/addMember',
+  async ({ workspaceId, adminUserId, memberEmails }) => {
+    const response = await addMember(workspaceId, adminUserId, memberEmails);
+    return response.data;
+  }
+);
+
+export const updateWorkspaceAsync = createAsyncThunk(
+  "workspaces/updateWorkspace",
+  async (workspaceId, name, imgUrl, imgKey) => {
+    const response = await updateWorkspace(workspaceId, name, imgUrl, imgKey);
     return response.data;
   }
 );
@@ -171,10 +207,53 @@ const workspaceSlice = createSlice({
       .addCase(createWorkspaceAsync.rejected, (state, action) => {
         state.status = 'failed';
         state.errors = action.error.message;
+      })
+      .addCase(exitMemberAsync.pending, (state) => {
+        state.status = 'loading';
+      })
+      .addCase(exitMemberAsync.fulfilled, (state, action) => {
+        state.status = 'succeeded';
+        state.successMessage = 'Member exited successfully!';
+      })
+      .addCase(exitMemberAsync.rejected, (state, action) => {
+        state.status = 'failed';
+        state.errors = action.error.message;
+      })
+      .addCase(updateMemberRoleAsync.pending, (state) => {
+        state.status = 'loading';
+      })
+      .addCase(updateMemberRoleAsync.fulfilled, (state, action) => {
+        state.status = 'succeeded';
+        state.successMessage = 'Updated Member Role successfully!';
+      })
+      .addCase(updateMemberRoleAsync.rejected, (state, action) => {
+        state.status = 'failed';
+        state.errors = action.error.message;
+      })
+      .addCase(addMemberAsync.pending, (state) => {
+        state.status = 'loading';
+      })
+      .addCase(addMemberAsync.fulfilled, (state, action) => {
+        state.status = 'succeeded';
+        state.successMessage = 'Added Member successfully!';
+      })
+      .addCase(addMemberAsync.rejected, (state, action) => {
+        state.status = 'failed';
+        state.errors = action.error.message;
+      })
+      .addCase(updateWorkspaceAsync.pending, (state) => {
+        state.status = 'loading';
+      })
+      .addCase(updateWorkspaceAsync.fulfilled, (state, action) => {
+        state.status = 'succeeded';
+        state.successMessage = 'Workspace updated successfully!';
+      })
+      .addCase(updateWorkspaceAsync.rejected, (state, action) => {
+        state.status = 'failed';
+        state.errors = action.error.message;
       });
   }
 });
-
 
 export const {
   clearworkspaceErrors,
