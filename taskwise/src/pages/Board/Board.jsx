@@ -82,6 +82,7 @@ function Board() {
 
   let user=useSelector((state)=>state?.user?.loggedInUser?.user);
   let workspaceMembers=useSelector((state)=>state?.project?.workspaceMembers?.data)
+  // eslint-disable-next-line
   const isAdmin = workspaceMembers?.find((member) => member.user.email === user.email)?.role === 'Admin';
 
   
@@ -121,15 +122,17 @@ function Board() {
       toast.error("Column not added!");
     }
     dispatch(resetColumnAddStatus())
+    // eslint-disable-next-line
   },[columnAddStatus])
   useEffect(()=>{
-    if(columnMovedStatus=="fulfilled"){
+    if(columnMovedStatus==="fulfilled"){
       toast.success("Column moved successfully!");
     }
-    if(columnMovedStatus=="rejected"){
+    if(columnMovedStatus==="rejected"){
       toast.error("Server error");
     }
     dispatch(resetColumnorderChangeStatus())
+    // eslint-disable-next-line
   },[columnMovedStatus])
 
   useEffect(() => {

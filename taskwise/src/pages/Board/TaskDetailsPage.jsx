@@ -89,7 +89,7 @@ const TaskDetailsPage = () => {
     setCurrentComment(newComment);
   }
   const isAdmin = membersData?.find((member) => member.user.email === userId.email)?.role === 'Admin';
-  const isCreator = userId.email == filteredTask.createdBy.email ? true : false;
+  const isCreator = userId.email === filteredTask.createdBy.email ? true : false;
   const users = membersData?.map(item => item.user);
   const [options] = useState(users);
   console.log(options, "options")

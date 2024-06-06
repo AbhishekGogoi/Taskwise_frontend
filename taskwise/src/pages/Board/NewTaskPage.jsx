@@ -22,6 +22,7 @@ function NewTaskPage() {
     const [priority, setPriority] = useState('');
     const [status, setStatus] = useState(null);
     const [assignees, setAssignees] = useState(null);
+    // eslint-disable-next-line
     const [loading, setLoading] = useState(false);
     const [errors, setErrors] = useState({ title: '', description: '' });
     const navigate = useNavigate();
