@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useLocation } from "react-router-dom";
 import {
   Box,
   List,
@@ -15,7 +16,11 @@ import { Link } from "react-router-dom";
 import "./Sidebar.css";
 
 function Sidebar() {
-  const [selected, setSelected] = useState("projects");
+  const location = useLocation();
+  const [selected, setSelected] = useState(() => {
+    const pathSegments = location.pathname.split("/");
+    return pathSegments.length > 1 ? pathSegments[1] : "projects";
+  });
 
   const handleSelect = (value) => {
     setSelected(value);
