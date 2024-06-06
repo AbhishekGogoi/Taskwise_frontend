@@ -11,7 +11,7 @@ import {
 import Drawer from "@mui/material/Drawer";
 import Protected from "./components/Protected";
 import useMediaQuery from "@mui/material/useMediaQuery";
-
+import Loading from "./components/Loading"
 // Lazy load the pages
 const ProjectPage = lazy(() => import("./pages/Project/ProjectPage"));
 const LandingPage = lazy(() => import("./pages/landingPage/LandingPage"));
@@ -36,9 +36,6 @@ const theme = createTheme({
   },
 });
 
-function Loading() {
-  return <div>Loading...</div>;
-}
 
 function AppLayout() {
   const location = useLocation();
@@ -89,9 +86,10 @@ function AppLayout() {
               : { backgroundColor: "#f0f0f0", padding: "20px", flexGrow: 1 }
           }
         >
+          <Suspense fallback={<Loading />}>
           <Routes>
             <Route path="/" element={<LandingPage />} />
-            <Route path="/login" element={<Suspense fallback={<Loading />}><LoginPage /> </Suspense>} />
+            <Route path="/login" element={<LoginPage />} />
             <Route path="/signup" element={<SignupPage />} />
             <Route path="/forgotpassword" element={<ForgotPasswordPage />} />
             <Route path="/verification" element={<VerificationPage />} />
@@ -109,6 +107,7 @@ function AppLayout() {
               <Route path="/settings" element={<ProfileSettingsPage />} />
             </Route>
           </Routes>
+          </Suspense>
         </main>
       </div>
     </>
