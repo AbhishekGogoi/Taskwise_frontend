@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import {
@@ -11,12 +11,37 @@ import {
   MenuItem,
   Select,
   Button,
+  Avatar,
+  Tooltip,
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  Tabs,
+  Tab,
+  ImageList,
+  ImageListItem,
+  ListItemAvatar,
+  ListItemText,
+  Popover,
+  List,
+  ListItem,
 } from "@mui/material";
 import { toast, ToastContainer } from "react-toastify";
 import AddOutlinedIcon from "@mui/icons-material/AddOutlined";
 import { editTaskAsync } from "../../features/project/projectSlice"; // Import the update task action
+import ProfileImage from "../../assets/sample-pi.png";
+import ChevronRightSharpIcon from "@mui/icons-material/ChevronRightSharp";
+import { styled } from "@mui/material/styles";
+import ImageOutlinedIcon from "@mui/icons-material/ImageOutlined";
+import DeleteIcon from "@mui/icons-material/Delete";
+import { uploadFileAsync } from "../../features/workspace/workspaceSlice";
+const TabLabelWrapper = styled("div")({
+  display: "flex",
+  alignItems: "center",
+});
 
 const TaskDetailsPage = () => {
+
   const navigate = useNavigate();
   const { taskID } = useParams();
   const dispatch = useDispatch();
@@ -28,34 +53,84 @@ const TaskDetailsPage = () => {
     assignees: "",
     priority: "",
     dueDate: "",
+    comments: [],
+    createdBy: [],
   });
 
-  // const coldata = useSelector(
-  //   (state) => state.project?.selectedProject?.columns
-  // );
-  const pid=useSelector(
+
+  const pid = useSelector(
     (state) => state?.project?.selectedProject?.id
   );
-  console.log(pid,"pid")
-  // const titlesAndIds = coldata?.map((item) => ({
-  //   title: item.title,
-  //   id: item._id,
-  // }));
+  const [openDialog, setOpenDialog] = useState(false);
+  const [dialogTitle, setDialogTitle] = useState("");
+  const [dialogTab, setDialogTab] = useState(0);
+  const handleDialogOpen = (title) => {
+    setDialogTitle(title);
+    setOpenDialog(true);
+  };
+  const handleDialogClose = () => {
+    setOpenDialog(false);
+  };
+
+  const handleTabChange = (event, newValue) => {
+    setDialogTab(newValue);
+  };
 
   const selectedProject = useSelector((state) => state.project.selectedProject);
+  const userId = useSelector((state) => state?.user?.loggedInUser?.user);
   const taskData = selectedProject ? selectedProject.tasks : [];
-
+  const membersData = useSelector((state) => state?.project?.workspaceMembers?.data);
+  console.log(membersData, "members in task details")
   const filteredTask = taskData.find((eachData) => eachData._id === taskID);
+  console.log(filteredTask, "filteredTask");
+  const [currentComment, setCurrentComment] = useState('');
+  const handleAddNewComment = (event) => {
+    const newComment = event.target.value;
+    setCurrentComment(newComment);
+  }
+  const isAdmin = membersData?.find((member) => member.user.email === userId.email)?.role === 'Admin';
+  const isCreator = userId.email === filteredTask.createdBy.email ? true : false;
+  const users = membersData?.map(item => item.user);
+  const [options] = useState(users);
+  console.log(options, "options")
+  const fileInputRef = useRef(null);
+  const [files, setFiles] = useState([]);
+  const [uploadedFileUrls, setUploadedFileUrls] = useState([]);
+  const handleUploadClick = () => {
+    fileInputRef.current.click();
+  };
+  const handleFileChange = async (event) => {
+    const newFiles = Array.from(event.target.files).map((file) => ({
+      url: URL.createObjectURL(file),
+      type: file.type,
+      name: file.name,
+    }));
+    setFiles((prevFiles) => [...prevFiles, ...newFiles]);
 
-
+    const file = event.target.files[0];
+    if (file) {
+      const formData = new FormData();
+      formData.append("file", file);
+      const response = await dispatch(uploadFileAsync(formData));
+      const newFileUrls = response.payload.presignedUrl;
+      setUploadedFileUrls((prevUrls) => [...prevUrls, newFileUrls]);
+    }
+  };
+  const handleDelete = (index) => {
+    setFiles((prevFiles) => prevFiles.filter((file, i) => i !== index));
+    setUploadedFileUrls((prevUrls) => prevUrls.filter((url, i) => i !== index));
+  };
   useEffect(() => {
     if (filteredTask) {
       const details = {
         taskName: filteredTask.taskName || "",
         content: filteredTask.content || "",
-        assignees: filteredTask.assignees || "",
+        assigneeUserID: filteredTask.assigneeUserID || "",
         priority: filteredTask.priority || "",
+        createdBy: filteredTask.createdBy || [],
         dueDate: filteredTask.dueDate ? filteredTask.dueDate.split("T")[0] : "",
+        comments: filteredTask.comments || [],
+        attachments: filteredTask.attachments || [],
       };
       setTaskDetails(details);
       setInitialTaskDetails(details); // Set the initial task details
@@ -69,6 +144,7 @@ const TaskDetailsPage = () => {
       [name]: value,
     }));
   };
+
   const findChangedFields = (initial, current) => {
     const changedFields = {};
     for (const key in initial) {
@@ -80,20 +156,81 @@ const TaskDetailsPage = () => {
   };
 
   const handleSaveTask = () => {
-    const data = findChangedFields(initialTaskDetails, taskDetails);
-    if (Object.keys(data).length > 0) {
-      console.log(data,"changedFields");
-      const idObject={
-        taskId:taskID,
-        id:pid
+    let updatedTaskDetails = { ...taskDetails };
+
+    if (currentComment.trim()) {
+      const newComment = {
+        user: userId,
+        comment: currentComment,
+      };
+      updatedTaskDetails = {
+        ...updatedTaskDetails,
+        comments: [...(updatedTaskDetails.comments || []), newComment],
+      };
+      setCurrentComment('');
+    }
+
+    if (uploadedFileUrls.length > 0) {
+      const updatedAttachments = [
+        ...(updatedTaskDetails.attachments || []),
+        ...uploadedFileUrls,
+      ];
+      updatedTaskDetails = {
+        ...updatedTaskDetails,
+        attachments: updatedAttachments,
+      };
+    }
+
+    const data = findChangedFields(initialTaskDetails, updatedTaskDetails);
+
+    if (Object.keys(data).length > 0 || currentComment.trim()) {
+      if (currentComment.trim() && !data.comments) {
+        data.comments = updatedTaskDetails.comments;
       }
-      //dispatch(updateTaskAsync({ taskDetails: changedFields, taskID }));
-      dispatch(editTaskAsync({data,idObject}))
+      if (uploadedFileUrls.length > 0 && !data.attachments) {
+        data.attachments = updatedTaskDetails.attachments;
+      }
+      console.log(data, "changedFields");
+      const idObject = {
+        taskId: taskID,
+        id: pid,
+      };
+      dispatch(editTaskAsync({ data, idObject }));
       toast.success("Task updated successfully!");
-      navigate(-1)
+      navigate(-1);
     } else {
       toast.info("No changes to save.");
     }
+  };
+
+  const [anchorEl, setAnchorEl] = useState(null);
+
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  const open = Boolean(anchorEl);
+  const id = open ? "simple-popover" : undefined;
+
+
+
+  const handleItemClick = (option) => {
+    console.log(isAdmin)
+    if (isAdmin || isCreator) {
+      const name = "assigneeUserID"
+      const value = option
+      setTaskDetails((prevDetails) => ({
+        ...prevDetails,
+        [name]: value,
+      }));
+    } else {
+      toast.error("Not authorised to reassign the task")
+    }
+    handleClose();
   };
 
   return (
@@ -165,27 +302,77 @@ const TaskDetailsPage = () => {
                   variant="outlined"
                   fullWidth
                   placeholder="Ask a question or add a comment"
+                  value={currentComment}
+                  onChange={handleAddNewComment}
                   sx={{
                     mb: 4,
                   }}
                 />
-                <Typography>{taskDetails.comment}</Typography>
-
-                <Box sx={{ mt: 3, mb: 4 }}>
-                  <TextField
-                    label="Select due date"
-                    type="date"
-                    InputLabelProps={{ shrink: true }}
-                    name="dueDate"
-                    value={taskDetails?.dueDate}
-                    onChange={handleChange}
+                {/* <Grid item xs={12}>
+                  {filteredTask?.comments?.map((comment, index) => (
+                    <Grid container spacing={2} key={index}>
+                      <Grid item xs={12} sx={{ display: "flex", alignItems: "center" }}>
+                        <Avatar
+                          alt="Profile Image"
+                          src={ProfileImage}
+                          sx={{
+                            width: { xs: 15, md: 20, lg: 25, xl: 30 },
+                            height: { xs: 15, md: 20, lg: 25, xl: 30 },
+                          }}
+                        />
+                        <Box sx={{ ml: 3 }}>
+                          <Typography sx={{ cursor: "pointer" }}>
+                            <Tooltip title={comment?.user?.email}>
+                              {comment?.user?.username}
+                            </Tooltip>
+                          </Typography>
+                          <Typography>{comment?.comment}</Typography>
+                        </Box>
+                      </Grid>
+                    </Grid>
+                  ))}
+                </Grid> */}
+                <Typography variant="h6"
+                  gutterBottom
+                  sx={{ fontWeight: "700", mb: 1, fontSize: "1rem" }}>
+                  Comments ({taskDetails.comments.length})
+                </Typography>
+                {taskDetails.comments.length > 0 &&
+                  <Box
                     sx={{
-                      height: 32,
-                      width: "100%",
-                      maxWidth: 200,
+                      maxHeight: '200px',
+                      overflowY: 'auto',
+                      border: '1px solid #ccc',
+                      padding: '8px',
+                      borderRadius: '4px'
                     }}
-                  />
-                </Box>
+                  >
+                    {taskDetails.comments.map((comment, index) => (
+                      <Grid container spacing={2} key={index} sx={{ mb: 2 }}>
+                        <Grid item>
+                          <Avatar
+                            alt="Profile Image"
+                            src={ProfileImage}
+                            sx={{
+                              width: 30,
+                              height: 30,
+                            }}
+                          />
+                        </Grid>
+                        <Grid item xs>
+                          <Box>
+                            <Typography sx={{ cursor: "pointer", fontWeight: 'bold' }}>
+                              <Tooltip title={comment?.user?.email}>
+                                {comment?.user?.username}
+                              </Tooltip>
+                            </Typography>
+                            <Typography>{comment?.comment}</Typography>
+                          </Box>
+                        </Grid>
+                      </Grid>
+                    ))}
+                  </Box>
+                }
               </Grid>
 
               <Grid item xs={12} md={6}>
@@ -210,7 +397,51 @@ const TaskDetailsPage = () => {
                         ml: 4,
                       }}
                     >
-                      <Select
+                      <Avatar
+                        alt="Profile Image"
+                        src={ProfileImage}
+                        sx={{
+                          width: 20,
+                          height: 20,
+                        }}
+                      />
+
+                      <Typography
+                        sx={{ ml: 1, cursor: "pointer" }}
+                        onClick={handleClick}
+                      >
+                        {taskDetails?.assigneeUserID?.email}
+                      </Typography>
+                      <Popover
+                        id={id}
+                        open={open}
+                        anchorEl={anchorEl}
+                        onClose={handleClose}
+                        anchorOrigin={{
+                          vertical: "bottom",
+                          horizontal: "center",
+                        }}
+                        transformOrigin={{
+                          vertical: 'top',
+                          horizontal: 'center',
+                        }}
+                      >
+                        <List>
+                          {options?.map(option => (
+                            <ListItem button key={option?.id} onClick={() => handleItemClick(option)}>
+                              <ListItemAvatar>
+                                <Avatar
+                                  alt="Profile Image"
+                                  src={option?.imgUrl}
+                                  sx={{ width: 20, height: 20 }}
+                                />
+                              </ListItemAvatar>
+                              <ListItemText primary={option?.email} />
+                            </ListItem>
+                          ))}
+                        </List>
+                      </Popover>
+                      {/* <Select
                         sx={{
                           height: 32,
                           width: "100%",
@@ -226,7 +457,7 @@ const TaskDetailsPage = () => {
                         <MenuItem value="Option 1">Option 1</MenuItem>
                         <MenuItem value="Option 2">Option 2</MenuItem>
                         <MenuItem value="Option 3">Option 3</MenuItem>
-                      </Select>
+                      </Select> */}
                     </Box>
                   </Grid>
 
@@ -269,7 +500,38 @@ const TaskDetailsPage = () => {
                       </Select>
                     </Box>
                   </Grid>
-
+                  <Grid
+                    item
+                    xs={12}
+                    sx={{ display: "flex", alignItems: "center" }}
+                  >
+                    <Typography
+                      variant="h6"
+                      gutterBottom
+                      sx={{ fontWeight: "700", fontSize: "1rem" }}
+                    >
+                      Created by
+                    </Typography>
+                    <Box
+                      sx={{
+                        display: "flex",
+                        alignItems: "center",
+                        flexGrow: 1,
+                        ml: 3,
+                        mb: 1,
+                      }}
+                    >
+                      <Avatar
+                        alt="Profile Image"
+                        src={ProfileImage}
+                        sx={{
+                          width: 20,
+                          height: 20,
+                        }}
+                      />
+                      <Typography sx={{ ml: 1 }}>{taskDetails?.createdBy?.email}</Typography>
+                    </Box>
+                  </Grid>
                   <Grid
                     item
                     xs={12}
@@ -312,7 +574,34 @@ const TaskDetailsPage = () => {
                       </Select> */}
                     </Box>
                   </Grid>
-
+                  <Grid
+                    item
+                    xs={12}
+                    sx={{ display: "flex", alignItems: "center", mt: -5 }}
+                  >
+                    <Typography
+                      variant="h6"
+                      gutterBottom
+                      sx={{ fontWeight: "700", fontSize: "1rem" }}
+                    >
+                      Due Date
+                    </Typography>
+                    <Box sx={{ mb: 4, ml: 6 }}>
+                      <TextField
+                        //label="Select due date"
+                        type="date"
+                        InputLabelProps={{ shrink: true }}
+                        name="dueDate"
+                        value={taskDetails?.dueDate}
+                        onChange={handleChange}
+                        sx={{
+                          height: 28,
+                          width: "195px",
+                          maxWidth: 200,
+                        }}
+                      />
+                    </Box>
+                  </Grid>
                   <Grid
                     item
                     xs={12}
@@ -321,16 +610,73 @@ const TaskDetailsPage = () => {
                     <Typography
                       variant="h6"
                       gutterBottom
-                      sx={{ fontWeight: "700", mb: 1, fontSize: "1rem" }}
+                      sx={{ fontWeight: "700", mt: 1, fontSize: "1rem" }}
                     >
-                      Attachments
+                      Attachments ({filteredTask?.attachments.length})
                     </Typography>
-                    <Box sx={{ ml: "3rem" }}>
-                      <IconButton>
-                        <AddOutlinedIcon />
-                      </IconButton>
-                    </Box>
+
+                    <IconButton
+                      color="primary"
+                      onClick={() => handleDialogOpen()}
+                    // disabled={mediaImages.length === 0 && docs.length === 0}
+                    >
+                      <ChevronRightSharpIcon
+                        sx={{ color: "#000000", fontSize: 35, mb: 1, m: 1 }}
+                      />
+                    </IconButton>
+                    <IconButton sx={{ ml: 7 }} onClick={handleUploadClick}>
+                      <Tooltip title="Add more attachments" cursor="pointer">
+                        <AddOutlinedIcon sx={{ fontSize: 35 }} />
+                      </Tooltip>
+                    </IconButton>
+                    <input
+                      type="file"
+                      ref={fileInputRef}
+                      style={{ display: "none" }}
+                      onChange={handleFileChange}
+                      accept="image/*,application/pdf"
+                      multiple
+                    />
+                    <Box sx={{ ml: "3rem" }}></Box>
                   </Grid>
+                  <Box
+                    sx={{
+                      maxHeight: "400px",
+                      overflow: "scroll",
+                      "&::-webkit-scrollbar": {
+                        display: "none",
+                      },
+                    }}
+                  >
+                    {files.map((file, index) => (
+                      <Grid item xs={12} key={index} sx={{ mt: 2, ml: 3 }}>
+                        <Box sx={{ display: "flex", alignItems: "center" }}>
+                          {file.type.startsWith("image/") ? (
+                            <img
+                              src={file.url}
+                              alt={file.name}
+                              style={{
+                                maxWidth: "50%",
+                                height: "auto",
+                                marginRight: "1rem",
+                              }}
+                            />
+                          ) : (
+                            <embed
+                              src={file.url}
+                              type="application/pdf"
+                              width="50%"
+                              height="300px"
+                              style={{ marginRight: "1rem" }}
+                            />
+                          )}
+                          <IconButton onClick={() => handleDelete(index)}>
+                            <DeleteIcon />
+                          </IconButton>
+                        </Box>
+                      </Grid>
+                    ))}
+                  </Box>
                 </Grid>
               </Grid>
             </Grid>
@@ -370,6 +716,59 @@ const TaskDetailsPage = () => {
             </Grid>
           </Box>
         </Paper>
+        <Dialog
+          open={openDialog}
+          onClose={handleDialogClose}
+          maxWidth="md"
+          fullWidth
+        >
+          <DialogTitle>{dialogTitle}</DialogTitle>
+          <DialogContent>
+            <Grid container spacing={2} alignItems="center">
+              <Grid item xs={12}>
+                <Tabs
+                  value={dialogTab}
+                  onChange={handleTabChange}
+                  variant="fullWidth"
+                >
+                  <Tab
+                    label={
+                      <TabLabelWrapper>
+                        <ImageOutlinedIcon sx={{ p: 1 }} />
+                        <span>Media</span>
+                      </TabLabelWrapper>
+                    }
+                  />
+                </Tabs>
+              </Grid>
+              <Grid item xs={12}>
+                {dialogTab === 0 &&
+                  (filteredTask?.attachments.length > 0 ? (
+                    <ImageList cols={3} rowHeight={200}>
+                      {filteredTask?.attachments.map((image, index) => (
+                        <ImageListItem key={index}>
+                          <img
+                            src={image}
+                            alt={`Media ${index + 1}`}
+                            loading="lazy"
+                            style={{
+                              width: "100%",
+                              height: "100%",
+                              objectFit: "cover",
+                            }}
+                          />
+                        </ImageListItem>
+                      ))}
+                    </ImageList>
+                  ) : (
+                    <Typography sx={{ p: 2, textAlign: "left", color: "#888" }}>
+                      No media available
+                    </Typography>
+                  ))}
+              </Grid>
+            </Grid>
+          </DialogContent>
+        </Dialog>
       </Box>
     </Box>
   );

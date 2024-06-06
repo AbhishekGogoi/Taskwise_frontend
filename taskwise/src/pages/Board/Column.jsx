@@ -9,13 +9,19 @@ import CancelIcon from '@mui/icons-material/Cancel';
 import { useDispatch, useSelector } from "react-redux";
 import { editColumnAsync } from "../../features/project/projectSlice";
 import { useParams } from "react-router-dom";
+import { useEffect } from "react";
+
+
+
 function Column({ column, tasks, onDrop }) {
   const [isEditing, setIsEditing] = useState(false);
   const [title, setTitle] = useState(column.title);
   const [editTitle, setEditTitle] = useState(column.title);
   const dispatch = useDispatch();
   const { id } = useParams();
-  const editingColumn = useSelector((state) => state.project.columnEditStatus);
+  const editingColumn = useSelector((state) => state?.project?.columnEditStatus);
+  const columns = useSelector((state) => state?.project?.selectedProject?.columns);
+
   // eslint-disable-next-line
   const [{ isOver }, drop] = useDrop({
     accept: "task", // Specify the accepted item type here
@@ -53,8 +59,17 @@ function Column({ column, tasks, onDrop }) {
     setIsEditing(false);
   };
 
+  useEffect(() => {
+    const updatedColumn = columns.find((col) => col._id === column._id);
+    if (updatedColumn) {
+      setTitle(updatedColumn.title);
+      setEditTitle(updatedColumn.title);
+    }
+  }, [columns, column._id]);
+
   return (
     <Box sx={{ display: "flex", flexDirection: "column" }}>
+
       <Box sx={{ display: "flex", alignItems: "center", cursor: "pointer" }}>
         {isEditing ? (
           <Box sx={{ display: "flex", flexGrow: 1 }}>
@@ -76,14 +91,14 @@ function Column({ column, tasks, onDrop }) {
                 </IconButton>
               </>
             )
-          }
+            }
           </Box>
         ) : (
           <Typography variant="h6" sx={{ flexGrow: 1 }} onClick={handleTitleClick}>
             {title}
           </Typography>
         )}
-        <ColumnDropdown /> {/* Replace the AddIcon with ColumnDropdown */}
+        <ColumnDropdown column={column} id={id} /> {/* Replace the AddIcon with ColumnDropdown */}
       </Box>
       <Box
         ref={drop}
