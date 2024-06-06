@@ -7,6 +7,7 @@ import {
   verifyResetCode,
   resendOTP,
   resetPassword,
+  updateProfile,
 } from "./userApi";
 
 const initialState = {
@@ -77,6 +78,14 @@ export const resetPasswordAsync = createAsyncThunk(
   "user/resetPasswordAsync",
   async (cred) => {
     const res = await resetPassword(cred);
+    return res;
+  }
+);
+
+export const updateProfileAsync = createAsyncThunk(
+  "user/updateProfile",
+  async (cred) => {
+    const res = await updateProfile(cred);
     return res;
   }
 );
@@ -229,6 +238,18 @@ const userSlice = createSlice({
       .addCase(resendOTPAsync.rejected, (state, action) => {
         state.resendOTPStatus = "rejected";
         state.resendOTPError = action.error;
+      })
+      //for update profile
+      .addCase(updateProfileAsync.pending, (state) => {
+        state.status = "pending";
+      })
+      .addCase(updateProfileAsync.fulfilled, (state, action) => {
+        state.status = "fulfilled";
+        state.loggedInUser = action.payload;
+      })
+      .addCase(updateProfileAsync.rejected, (state, action) => {
+        state.status = "rejected";
+        state.errors = action.error;
       })
       // for session management
       .addCase(rehydrate, (state) => {

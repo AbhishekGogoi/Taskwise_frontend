@@ -11,7 +11,8 @@ import {
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import ChangePasswordModal from "../../components/ChangePasswordModal";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { updateProfileAsync } from "../../features/user/userSlice";
 
 const Container = styled(Box)({
   display: "flex",
@@ -83,10 +84,13 @@ const PageWrapper = styled(Box)({
 });
 
 const ProfileSettingsPage = () => {
-  const email = useSelector((state) => state.user.loggedInUser.user.email);
+  const dispatch = useDispatch();
+  const email = useSelector((state) => state.user.loggedInUser?.user?.email);
   const username = useSelector(
-    (state) => state.user.loggedInUser.user.username
+    (state) => state.user.loggedInUser?.user?.username
   );
+
+  const [title, setTitle] = useState("");
 
   const [changePasswordModalOpen, setChangePasswordModalOpen] = useState(false);
 
@@ -105,7 +109,11 @@ const ProfileSettingsPage = () => {
     handleCloseChangePasswordModal();
   };
 
-  const [title, setTitle] = useState("Product Designer");
+  const userId = useSelector((state) => state.user.loggedInUser?.user?._id);
+
+  const handleSubmit = () => {
+    dispatch(updateProfileAsync({ title, userId }));
+  };
 
   return (
     <PageWrapper>
@@ -147,6 +155,7 @@ const ProfileSettingsPage = () => {
                 minWidth: "200px",
                 height: "40px",
               }}
+              onClick={handleSubmit}
             >
               Save User Profile
             </Button>

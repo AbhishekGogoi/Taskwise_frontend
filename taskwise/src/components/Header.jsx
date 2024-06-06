@@ -28,7 +28,6 @@ function Header({ isSmallScreen, toggleDrawer }) {
   const dispatch = useDispatch();
 
   const { status, loggedInUser } = useSelector((state) => state.user);
-  console.log(loggedInUser);
 
   const handleOpenUserMenu = (event) => {
     setAnchorElUser(event.currentTarget);
