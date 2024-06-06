@@ -86,9 +86,7 @@ function Board() {
 
   
   //console.log(isAdmin,"isAdmin")
-  const project = {
-    img: "https://img.freepik.com/free-vector/hand-drawn-minimal-background_23-2149001650.jpg?t=st=1716280160~exp=1716280760~hmac=f254cfeda21a263638253b9f6f0c0c9028bac218840dea34d6de5739054a4a96",
-  };
+ 
   
 
   const [columns, setColumns] = useState({});
@@ -250,7 +248,7 @@ function Board() {
           >
             <Box sx={{ display: "flex", alignItems: "center", flex: 1 }}>
               <img
-                src={project.img}
+                src={initialData?.imgUrl}
                 alt="project"
                 style={{
                   borderRadius: "8px",
