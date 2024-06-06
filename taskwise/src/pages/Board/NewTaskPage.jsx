@@ -8,7 +8,7 @@ import { useSelector } from 'react-redux';
 import { Skeleton } from '@mui/material';
 import DeleteIcon from "@mui/icons-material/Delete";
 import { useRef } from 'react';
-import {  ToastContainer,toast } from 'react-toastify';
+import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { uploadFileAsync } from '../../features/workspace/workspaceSlice';
 import { resetTaskAddStatus } from '../../features/project/projectSlice';
@@ -107,7 +107,7 @@ function NewTaskPage() {
             const formData = new FormData();
             formData.append('file', file);
             const response = await dispatch(uploadFileAsync(formData));
-            const newFileUrls=response.payload.presignedUrl;
+            const newFileUrls = response.payload.presignedUrl;
             setUploadedFileUrls((prevUrls) => [...prevUrls, newFileUrls]);
         }
     };
@@ -122,7 +122,7 @@ function NewTaskPage() {
         // console.log(assigne,"assigne")
         console.log(files, "selected files")
         const user = users?.find(user => user.email === assignees);
-        console.log(user,"user")
+        console.log(user, "user")
         if (validateFields()) {
 
             const task = {
@@ -132,9 +132,9 @@ function NewTaskPage() {
                 dueDate: dueDate,
                 priority: priority,
                 assigneeUserID: user,
-                comments: currentComment !=="" ? [{ user: userId, comment: currentComment }] : [],
+                comments: currentComment !== "" ? [{ user: userId, comment: currentComment }] : [],
                 createdBy: userId,
-                attachments:uploadedFileUrls
+                attachments: uploadedFileUrls
             };
             setLoading(true)
             await dispatch(addTaskAsync({ task, id }));
@@ -165,13 +165,13 @@ function NewTaskPage() {
     }, []);
     useEffect(() => {
         if (taskAddStatus === 'fulfilled') {
-          navigate(-1);
+            navigate(-1);
         } else if (taskAddStatus === 'rejected') {
-          toast.error('Failed to add task.');
-          setLoading(false); // Reset loading state on error
-          dispatch(resetTaskAddStatus());
+            toast.error('Failed to add task.');
+            setLoading(false); // Reset loading state on error
+            dispatch(resetTaskAddStatus());
         }
-      }, [taskAddStatus, navigate, dispatch]);
+    }, [taskAddStatus, navigate, dispatch]);
     return (
         <Box
             sx={{
@@ -252,17 +252,24 @@ function NewTaskPage() {
                                 }}
                             />
 
-                            <Box sx={{ mt: 3, mb: 4 }}>
+                            <Box sx={{ mt: 3, mb: 4, display:"flex" }}>
+                                <Typography
+                                    variant="h6"
+                                    gutterBottom
+                                    sx={{ fontWeight: "700", fontSize: "1rem",mt:2 }}
+                                >
+                                    Due Date
+                                </Typography>
                                 <TextField
-                                    label="Select due date"
+                                    //label="Select due date"
                                     type="date"
                                     InputLabelProps={{ shrink: true }}
                                     value={dueDate}
                                     onChange={(e) => setDueDate(e.target.value)}
                                     sx={{
                                         height: 32,
-                                        width: '100%',
-                                        maxWidth: 200,
+                                        width: '300px',
+                                        marginLeft:"20px"
                                     }}
                                 />
                             </Box>
@@ -453,7 +460,7 @@ function NewTaskPage() {
                             </Grid>
                             <Grid item xs={12} sm={6}>
                                 <Button variant="contained" disabled={taskAddStatus === 'pending'} color="primary" fullWidth onClick={handleCreateTask}>
-                                {taskAddStatus === 'pending' ? 'Creating Task...' : 'Create Task'}
+                                    {taskAddStatus === 'pending' ? 'Creating Task...' : 'Create Task'}
                                 </Button>
                             </Grid>
                         </Grid>
