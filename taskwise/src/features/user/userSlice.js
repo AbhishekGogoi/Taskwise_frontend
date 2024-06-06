@@ -141,6 +141,33 @@ const userSlice = createSlice({
       }
       state.isAuthChecked = true;
     },
+    // for resetting user data
+    // resetUserState: (state) => {
+    //   Object.assign(state, initialState);
+    //   state.isAuthChecked = true;
+    // },
+    resetUserState: (state) => {
+      // Explicitly reset state properties to their initial values
+      state.status = initialState.status;
+      state.errors = initialState.errors;
+      state.signupStatus = initialState.signupStatus;
+      state.signupError = initialState.signupError;
+      state.loginStatus = initialState.loginStatus;
+      state.loginError = initialState.loginError;
+      state.loggedInUser = initialState.loggedInUser;
+      state.successMessage = initialState.successMessage;
+      state.isAuthenticated = initialState.isAuthenticated;
+      state.forgotPasswordStatus = initialState.forgotPasswordStatus;
+      state.forgotPasswordError = initialState.forgotPasswordError;
+      state.verifyCodeStatus = initialState.verifyCodeStatus;
+      state.verifyCodeError = initialState.verifyCodeError;
+      state.resetPasswordStatus = initialState.resetPasswordStatus;
+      state.resetPasswordError = initialState.resetPasswordError;
+      state.resetEmail = initialState.resetEmail;
+      state.resendOTPStatus = initialState.resendOTPStatus;
+      state.resendOTPError = initialState.resendOTPError;
+      state.isAuthChecked = true; // Keep this true after reset
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -148,8 +175,11 @@ const userSlice = createSlice({
         state.signupStatus = "pending";
       })
       .addCase(signupAsync.fulfilled, (state, action) => {
-        state.signupStatus = "fullfilled";
+        state.signupStatus = "fulfilled";
         state.loggedInUser = action.payload;
+        state.isAuthenticated = true; // Set isAuthenticated to true upon successful signup
+        localStorage.setItem("user", JSON.stringify(action.payload)); // Store user in localStorage
+        localStorage.setItem("isAuthenticated", "true"); // Store isAuthenticated in localStorage
       })
       .addCase(signupAsync.rejected, (state, action) => {
         state.signupStatus = "rejected";
@@ -159,7 +189,7 @@ const userSlice = createSlice({
         state.loginStatus = "pending";
       })
       .addCase(loginAsync.fulfilled, (state, action) => {
-        state.loginStatus = "fullfilled";
+        state.loginStatus = "fulfilled";
         state.loggedInUser = action.payload;
         // for session management
         state.isAuthenticated = true;
@@ -174,12 +204,31 @@ const userSlice = createSlice({
         state.status = "pending";
       })
       .addCase(logoutAsync.fulfilled, (state) => {
-        state.status = "fullfilled";
+        state.status = "fulfilled";
         state.loggedInUser = null;
         // for session management
         state.isAuthenticated = false;
         localStorage.removeItem("user");
         localStorage.removeItem("isAuthenticated");
+        // Object.assign(state, initialState);
+        state.status = initialState.status;
+        state.errors = initialState.errors;
+        state.signupStatus = initialState.signupStatus;
+        state.signupError = initialState.signupError;
+        state.loginStatus = initialState.loginStatus;
+        state.loginError = initialState.loginError;
+        state.loggedInUser = initialState.loggedInUser;
+        state.successMessage = initialState.successMessage;
+        state.forgotPasswordStatus = initialState.forgotPasswordStatus;
+        state.forgotPasswordError = initialState.forgotPasswordError;
+        state.verifyCodeStatus = initialState.verifyCodeStatus;
+        state.verifyCodeError = initialState.verifyCodeError;
+        state.resetPasswordStatus = initialState.resetPasswordStatus;
+        state.resetPasswordError = initialState.resetPasswordError;
+        state.resetEmail = initialState.resetEmail;
+        state.resendOTPStatus = initialState.resendOTPStatus;
+        state.resendOTPError = initialState.resendOTPError;
+        state.isAuthChecked = true; // Keep this true after logout
       })
       .addCase(logoutAsync.rejected, (state, action) => {
         state.status = "rejected";
@@ -229,17 +278,6 @@ const userSlice = createSlice({
       .addCase(resendOTPAsync.rejected, (state, action) => {
         state.resendOTPStatus = "rejected";
         state.resendOTPError = action.error;
-      })
-      // for session management
-      .addCase(rehydrate, (state) => {
-        const user = localStorage.getItem("user");
-        const isAuthenticated =
-          localStorage.getItem("isAuthenticated") === "true";
-        if (user) {
-          state.isAuthenticated = isAuthenticated;
-          state.loggedInUser = JSON.parse(user);
-        }
-        state.isAuthChecked = true;
       });
   },
 });
@@ -260,6 +298,7 @@ export const {
   resetResendOTPStatus,
   clearResendOTPError,
   rehydrate,
+  resetUserState,
 } = userSlice.actions;
 
 export default userSlice.reducer;
