@@ -100,12 +100,12 @@ const Dropdown = ({ task, columnId }) => {
         open={open}
         onClose={handleClose}
       >
-        {colIndex > 0 && (
+        {/* {colIndex > 0 && (
           <MenuItem onClick={handleMoveLeft}>Move to left</MenuItem>
         )}
         {colIndex < order?.length - 1 && (
           <MenuItem onClick={handleMoveRight}>Move to right</MenuItem>
-        )}
+        )} */}
         <MenuItem onClick={handleDelete}>Delete</MenuItem>
       </Menu>
 
@@ -122,7 +122,7 @@ const Dropdown = ({ task, columnId }) => {
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleDialogClose} color="primary">
+          <Button onClick={handleDialogClose} color="secondary">
             Cancel
           </Button>
           <Button onClick={handleConfirmDelete} color="primary" autoFocus>
