@@ -1,5 +1,5 @@
 import React from "react";
-import { Typography, Tooltip } from "@mui/material";
+import { Typography, Tooltip, CardMedia } from "@mui/material";
 import { useDrag } from "react-dnd";
 import { Card, CardContent, Chip, Box } from "@mui/material";
 import { DateRange, AttachFile } from "@mui/icons-material";
@@ -7,7 +7,7 @@ import { useNavigate } from "react-router-dom";
 import Dropdown from "./Dropdown";
 
 
-function Task({ task,column }) {
+function Task({ task, column }) {
   const navigate = useNavigate();
   const [{ isDragging }, drag] = useDrag({
     type: "task",
@@ -16,7 +16,7 @@ function Task({ task,column }) {
       isDragging: !!monitor.isDragging(),
     }),
   });
-  console.log(column,"column task")
+  console.log(column, "column task")
   let formattedDate;
   if (task?.dueDate) {
     try {
@@ -47,13 +47,31 @@ function Task({ task,column }) {
 
   const getChipProps = (priority) => {
     switch (priority) {
-      case 'High':
-        return { label: 'High', color: 'error' };
-      case 'Medium':
-        return { label: 'Medium', color: 'warning' };
-      case 'Low':
+      case "High":
+        return {
+          label: "High",
+          sx: {
+            backgroundColor: "#F1CFc5",
+            color: "#F93E3E",
+          },
+        };
+      case "Medium":
+        return {
+          label: "Medium",
+          sx: {
+            backgroundColor: "#FFF3E9",
+            color: "#FD973C",
+          },
+        };
+      case "Low":
       default:
-        return { label: 'Low', color: 'success' };
+        return {
+          label: "Low",
+          sx: {
+            backgroundColor: "#E6F8F3",
+            color: "#18BB90",
+          },
+        };
     }
   };
 
@@ -65,8 +83,11 @@ function Task({ task,column }) {
         sx={{
           maxWidth: "300px", // Set max width
           minWidth: "250px", // Set min width
-          maxHeight: "250px", // Set max height
+          maxHeight: "400px", // Set max height
           minHeight: "100px", // Set min height
+          pl: 2,
+          pr: 2,
+          borderRadius: 3,
         }}
         ref={drag} // Attach the drag source ref to the Card component
         style={{ cursor: "pointer", opacity: isDragging ? 0 : 1 }}
@@ -79,23 +100,41 @@ function Task({ task,column }) {
               label={chipProps.label}
               color={chipProps.color}
               size="small"
-              sx={{ fontSize: "0.4rem", height: "15px" }}
+              sx={{
+                fontSize: "0.85rem", height: "20px", ...chipProps.sx,
+                p: 1.4,borderRadius: 1,
+              }}
             />
             <Box className="dropdown" onClick={handleDropdownClick}>
               <Dropdown columnId={column?._id} task={task} />
             </Box>
           </Box>
-          <Typography variant="h6" component="div" sx={{ fontSize: "1rem" }}>
+          <Typography variant="h6" component="div" sx={{ fontSize: "1.2rem" , mb:1}}>
             {task.taskName}
           </Typography>
           <Typography
             variant="body2"
             color="text.secondary"
-            sx={{ fontSize: "0.4rem" }}
+            sx={{ fontSize: "0.9rem", mb:3 }}
           >
             {task.content}
           </Typography>
-          <Box display="flex" justifyContent="space-between" alignItems="center" mt={1}>
+          {task?.attachments?.length === 0 ? (
+            ""
+          ) : (
+            <Box sx={{ display: "flex", gap: 2 }}>
+              {task?.attachments?.slice(0, 2).map((eachUrl) => (
+                <CardMedia
+                  component="img"
+                  alt="Task image"
+                  height="100"
+                  image={eachUrl}
+                  sx={{ borderRadius: 3, width: "50%" }}
+                />
+              ))}
+            </Box>
+          )}
+          <Box display="flex" justifyContent="center" alignItems="center" mt={2} gap={2}>
             <Tooltip title="Due Date">
               <Box display="flex" alignItems="center">
                 <DateRange sx={{ fontSize: "0.75rem" }} />
