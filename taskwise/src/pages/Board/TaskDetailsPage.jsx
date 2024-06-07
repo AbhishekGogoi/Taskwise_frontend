@@ -18,8 +18,6 @@ import {
   DialogTitle,
   Tabs,
   Tab,
-  ImageList,
-  ImageListItem,
   ListItemAvatar,
   ListItemText,
   Popover,
@@ -35,6 +33,8 @@ import { styled } from "@mui/material/styles";
 import ImageOutlinedIcon from "@mui/icons-material/ImageOutlined";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { uploadFileAsync } from "../../features/workspace/workspaceSlice";
+import { Card, CardMedia, CardActions } from "@mui/material";
+
 const TabLabelWrapper = styled("div")({
   display: "flex",
   alignItems: "center",
@@ -96,9 +96,11 @@ const TaskDetailsPage = () => {
   const fileInputRef = useRef(null);
   const [files, setFiles] = useState([]);
   const [uploadedFileUrls, setUploadedFileUrls] = useState([]);
+
   const handleUploadClick = () => {
-    fileInputRef.current.click();
+      fileInputRef.current.click();
   };
+
   const handleFileChange = async (event) => {
     const newFiles = Array.from(event.target.files).map((file) => ({
       url: URL.createObjectURL(file),
@@ -106,20 +108,33 @@ const TaskDetailsPage = () => {
       name: file.name,
     }));
     setFiles((prevFiles) => [...prevFiles, ...newFiles]);
-
-    const file = event.target.files[0];
-    if (file) {
+  
+    // Iterate over each file in the event
+    Array.from(event.target.files).forEach(async (file) => {
       const formData = new FormData();
-      formData.append("file", file);
+      formData.append('file', file);
       const response = await dispatch(uploadFileAsync(formData));
-      const newFileUrls = response.payload.presignedUrl;
-      setUploadedFileUrls((prevUrls) => [...prevUrls, newFileUrls]);
-    }
+      const newFileUrl = response.payload.presignedUrl;
+      let newFileKey, docType;
+      if (file.type.startsWith('image/')) {
+        newFileKey = response.payload.imgKey;
+        docType = 'image';
+      } else {
+        newFileKey = response.payload.fileKey;
+        docType = 'document';
+      }
+      setUploadedFileUrls((prevUrls) => [
+        ...prevUrls,
+        { docType, docName: file.name, docKey: newFileKey, docUrl: newFileUrl }
+      ]);
+    });
   };
+  
   const handleDelete = (index) => {
-    setFiles((prevFiles) => prevFiles.filter((file, i) => i !== index));
-    setUploadedFileUrls((prevUrls) => prevUrls.filter((url, i) => i !== index));
+      setFiles((prevFiles) => prevFiles.filter((file, i) => i !== index));
+      setUploadedFileUrls((prevUrls) => prevUrls.filter((url, i) => i !== index));
   };
+
   useEffect(() => {
     if (filteredTask) {
       const details = {
@@ -130,7 +145,7 @@ const TaskDetailsPage = () => {
         createdBy: filteredTask.createdBy || [],
         dueDate: filteredTask.dueDate ? filteredTask.dueDate.split("T")[0] : "",
         comments: filteredTask.comments || [],
-        attachments: filteredTask.attachments || [],
+        attachments: filteredTask.attachments || [], // Include attachments
       };
       setTaskDetails(details);
       setInitialTaskDetails(details); // Set the initial task details
@@ -155,53 +170,56 @@ const TaskDetailsPage = () => {
     return changedFields;
   };
 
-  const handleSaveTask = () => {
-    let updatedTaskDetails = { ...taskDetails };
+const handleSaveTask = () => {
+  let updatedTaskDetails = { ...taskDetails };
 
-    if (currentComment.trim()) {
-      const newComment = {
-        user: userId,
-        comment: currentComment,
-      };
-      updatedTaskDetails = {
-        ...updatedTaskDetails,
-        comments: [...(updatedTaskDetails.comments || []), newComment],
-      };
-      setCurrentComment('');
+  // Check if there are new comments
+  if (currentComment.trim()) {
+    const newComment = {
+      user: userId,
+      comment: currentComment,
+    };
+    updatedTaskDetails = {
+      ...updatedTaskDetails,
+      comments: [...(updatedTaskDetails.comments || []), newComment],
+    };
+    setCurrentComment('');
+  }
+
+  // Check if there are new attachments
+  if (uploadedFileUrls.length > 0) {
+    const updatedAttachments = [
+      ...(updatedTaskDetails.attachments || []),
+      ...uploadedFileUrls,
+    ];
+    updatedTaskDetails = {
+      ...updatedTaskDetails,
+      attachments: updatedAttachments,
+    };
+  }
+
+  // Find the changed fields
+  const data = findChangedFields(initialTaskDetails, updatedTaskDetails);
+
+  // Save the task if there are changes
+  if (Object.keys(data).length > 0 || currentComment.trim()) {
+    if (currentComment.trim() && !data.comments) {
+      data.comments = updatedTaskDetails.comments;
     }
-
-    if (uploadedFileUrls.length > 0) {
-      const updatedAttachments = [
-        ...(updatedTaskDetails.attachments || []),
-        ...uploadedFileUrls,
-      ];
-      updatedTaskDetails = {
-        ...updatedTaskDetails,
-        attachments: updatedAttachments,
-      };
+    if (uploadedFileUrls.length > 0 && !data.attachments) {
+      data.attachments = updatedTaskDetails.attachments;
     }
-
-    const data = findChangedFields(initialTaskDetails, updatedTaskDetails);
-
-    if (Object.keys(data).length > 0 || currentComment.trim()) {
-      if (currentComment.trim() && !data.comments) {
-        data.comments = updatedTaskDetails.comments;
-      }
-      if (uploadedFileUrls.length > 0 && !data.attachments) {
-        data.attachments = updatedTaskDetails.attachments;
-      }
-      console.log(data, "changedFields");
-      const idObject = {
-        taskId: taskID,
-        id: pid,
-      };
-      dispatch(editTaskAsync({ data, idObject }));
-      toast.success("Task updated successfully!");
-      navigate(-1);
-    } else {
-      toast.info("No changes to save.");
-    }
-  };
+    const idObject = {
+      taskId: taskID,
+      id: pid,
+    };
+    dispatch(editTaskAsync({ data, idObject, attachments: updatedTaskDetails.attachments }));
+    toast.success("Task updated successfully!");
+    navigate(-1);
+  } else {
+    toast.info("No changes to save.");
+  }
+};
 
   const [anchorEl, setAnchorEl] = useState(null);
 
@@ -648,34 +666,34 @@ const TaskDetailsPage = () => {
                       },
                     }}
                   >
-                    {files.map((file, index) => (
-                      <Grid item xs={12} key={index} sx={{ mt: 2, ml: 3 }}>
-                        <Box sx={{ display: "flex", alignItems: "center" }}>
-                          {file.type.startsWith("image/") ? (
-                            <img
-                              src={file.url}
-                              alt={file.name}
-                              style={{
-                                maxWidth: "50%",
-                                height: "auto",
-                                marginRight: "1rem",
-                              }}
-                            />
-                          ) : (
-                            <embed
-                              src={file.url}
-                              type="application/pdf"
-                              width="50%"
-                              height="300px"
-                              style={{ marginRight: "1rem" }}
-                            />
-                          )}
-                          <IconButton onClick={() => handleDelete(index)}>
-                            <DeleteIcon />
-                          </IconButton>
-                        </Box>
-                      </Grid>
-                    ))}
+                  {files.map((file, index) => (
+                    <Grid item xs={12} key={index} sx={{ mt: 2, ml: 3 }}>
+                      <Box sx={{ display: "flex", alignItems: "center" }}>
+                        {file.type.startsWith("image/") ? (
+                          <img
+                            src={file.url}
+                            alt={file.name}
+                            style={{
+                              maxWidth: "50%",
+                              height: "auto",
+                              marginRight: "1rem",
+                            }}
+                          />
+                        ) : (
+                          <embed
+                            src={file.url}
+                            type="application/pdf"
+                            width="50%"
+                            height="300px"
+                            style={{ marginRight: "1rem" }}
+                          />
+                        )}
+                        <IconButton onClick={() => handleDelete(index)}>
+                          <DeleteIcon />
+                        </IconButton>
+                      </Box>
+                    </Grid>
+                  ))}
                   </Box>
                 </Grid>
               </Grid>
@@ -724,7 +742,7 @@ const TaskDetailsPage = () => {
         >
           <DialogTitle>{dialogTitle}</DialogTitle>
           <DialogContent>
-            <Grid container spacing={2} alignItems="center">
+            <Grid container spacing={2}>
               <Grid item xs={12}>
                 <Tabs
                   value={dialogTab}
@@ -741,30 +759,40 @@ const TaskDetailsPage = () => {
                   />
                 </Tabs>
               </Grid>
-              <Grid item xs={12}>
-                {dialogTab === 0 &&
-                  (filteredTask?.attachments?.length > 0 ? (
-                    <ImageList cols={3} rowHeight={200}>
-                      {filteredTask?.attachments.map((image, index) => (
-                        <ImageListItem key={index}>
-                          <img
-                            src={image}
-                            alt={`Media ${index + 1}`}
-                            loading="lazy"
-                            style={{
-                              width: "100%",
-                              height: "100%",
-                              objectFit: "cover",
+              <Grid item xs={12} >
+                {filteredTask?.attachments.length > 0 ? (
+                  <Grid container spacing={1}>
+                    {filteredTask.attachments
+                      .filter((attachment) => attachment.docType === "image")
+                      .map((attachment, index) => (
+                        <Grid item md={4} lg={3} key={index} sx={{ marginBottom: 1, justifyContent: "center" }}>
+                          <Card 
+                            sx={{
+                              width: '100%',
+                              maxWidth: 240,
+                              borderRadius: 2,
                             }}
-                          />
-                        </ImageListItem>
+                          >
+                            <CardMedia
+                              component="img"
+                              image={attachment.docUrl}
+                              alt={`Attachment ${index}`}
+                              height="100"
+                            />
+                            <CardActions>
+                              <Button size="small" href={attachment.docUrl} target="_blank">
+                                {attachment.docName}
+                              </Button>
+                            </CardActions>
+                          </Card>
+                        </Grid>
                       ))}
-                    </ImageList>
-                  ) : (
-                    <Typography sx={{ p: 2, textAlign: "left", color: "#888" }}>
-                      No media available
-                    </Typography>
-                  ))}
+                  </Grid>
+                ) : (
+                  <Typography sx={{ p: 2, textAlign: "center", color: "#888" }}>
+                    No media available
+                  </Typography>
+                )}
               </Grid>
             </Grid>
           </DialogContent>
