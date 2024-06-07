@@ -128,7 +128,7 @@ function Task({ task, column }) {
                   component="img"
                   alt="Task image"
                   height="100"
-                  image={eachUrl}
+                  image={eachUrl?.docUrl}
                   sx={{ borderRadius: 3, width: "50%" }}
                 />
               ))}
