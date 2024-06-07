@@ -81,6 +81,14 @@ export const resetPasswordAsync = createAsyncThunk(
   }
 );
 
+export const updateProfileAsync = createAsyncThunk(
+  "user/updateProfile",
+  async (cred) => {
+    const res = await updateProfile(cred);
+    return res;
+  }
+);
+
 const userSlice = createSlice({
   name: "userSlice",
   initialState,
