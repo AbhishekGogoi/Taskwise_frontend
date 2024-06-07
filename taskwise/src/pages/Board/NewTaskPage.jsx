@@ -143,6 +143,7 @@ function NewTaskPage() {
                 priority: priority,
                 assigneeUserID: user._id,
                 createdBy: userId,
+                comments: currentComment !== "" ? [{ user: userId, comment: currentComment }] : [],
                 attachments: uploadedFileUrls // Include all uploaded file URLs in the task object
             };
     
