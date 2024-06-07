@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { IconButton, Menu, MenuItem } from '@mui/material';
-import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
+import MoreVertIcon from '@mui/icons-material/MoreVert';
 
 const Dropdown = () => {
   const [anchorEl, setAnchorEl] = useState(null);
@@ -23,9 +23,8 @@ const Dropdown = () => {
         onClick={handleClick}
         variant="outlined"
         color="neutral"
-        size="small" // Set size to small
       >
-        <MoreHorizIcon />
+        <MoreVertIcon />
       </IconButton>
       <Menu
         id="dropdown-menu"

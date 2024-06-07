@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import { List, ListItem, ListItemAvatar, Avatar, ListItemText, IconButton, Typography, Box, Paper, Modal } from '@mui/material';
 import PersonAddAltSharpIcon from '@mui/icons-material/PersonAddAltSharp';
 import { styled } from '@mui/material/styles';
-import AddMemberToWorkspaceModal from './Models/AddMemberToWorkspaceModal';
+// import MemberData from '../../data/members.json';
+import AddMemberToWorkspaceModel from './Models/AddMemberModel';
 
 const StyledPaper = styled(Paper)(({ theme }) => ({
   padding: theme.spacing(2),
@@ -21,7 +22,7 @@ const StyledPaper = styled(Paper)(({ theme }) => ({
   },
 }));
 
-function WorkspaceMembers({ height, width, membersData, addMember, workspace }) {
+function WorkspaceMembers({ height, width, membersData }) {
   const [open, setOpen] = useState(false);
 
   const handleOpen = () => setOpen(true);
@@ -62,7 +63,7 @@ function WorkspaceMembers({ height, width, membersData, addMember, workspace }) 
         aria-describedby="add-member-modal-description"
       >
         <Box>
-          <AddMemberToWorkspaceModal handleClose={handleClose} addMember={addMember} workspaceId={workspace.id} />
+          <AddMemberToWorkspaceModel handleClose={handleClose} />
         </Box>
       </Modal>
     </StyledPaper>

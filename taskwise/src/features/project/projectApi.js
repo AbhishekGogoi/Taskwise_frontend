@@ -83,13 +83,3 @@ export const fetchWorkspaceMembers=async(workspaceId)=>{
         throw error.response.data
     }
   }
-
-export const columnOrderChange=async({order,projectId})=>{
-    console.log(order,projectId)
-    try{
-        const res=await axiosi.put(`/projects/${projectId}/order`,{order});
-        return res.data
-    }catch(error){
-        throw error.response.data
-    }
-}

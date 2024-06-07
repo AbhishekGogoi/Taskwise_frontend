@@ -17,7 +17,7 @@ import ImageOutlinedIcon from '@mui/icons-material/ImageOutlined';
 import DescriptionOutlinedIcon from '@mui/icons-material/DescriptionOutlined';
 import CloseIcon from '@mui/icons-material/Close';
 import ExitWorkspaceModal from './Models/ExitWorkspaceModal';
-import AddMemberToWorkspaceModel from './Models/AddMemberToWorkspaceModal';
+import AddMemberToWorkspaceModel from './Models/AddMemberModel';
 import ShareJoiningLinkModel from './Models/ShareJoiningLinkModel';
 
 const StyledPaper = styled(Paper)(({ theme }) => ({
@@ -194,7 +194,7 @@ function WorkspaceSettings({ workspace, membersData }) {
             </Typography>
           </Box>
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
-            <WorkspaceSettingsMembers membersData={membersData} workspaceId={workspace.id}/>
+            <WorkspaceSettingsMembers membersData={membersData}/>
           </Box>
           <Box sx={{ display: 'flex', alignItems: 'center', marginTop: 6 }}>
             <IconButton onClick={handleOpenExitModal}>
@@ -211,7 +211,7 @@ function WorkspaceSettings({ workspace, membersData }) {
             aria-describedby="add-member-modal-description"
           >
             <Box>
-              <AddMemberToWorkspaceModel handleClose={handleClose} workspaceId={workspace.id} />
+              <AddMemberToWorkspaceModel handleClose={handleClose} />
             </Box>
           </Modal>
             <Modal
@@ -242,7 +242,7 @@ function WorkspaceSettings({ workspace, membersData }) {
                 width: '400px',
               }}
             >
-              <ExitWorkspaceModal handleClose={handleCloseExitModal} workspaceId={workspace.id} />
+              <ExitWorkspaceModal handleClose={handleCloseExitModal} />
             </Box>
           </Modal>
         </StyledPaper>

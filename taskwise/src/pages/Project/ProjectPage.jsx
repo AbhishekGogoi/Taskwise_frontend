@@ -12,14 +12,9 @@ import ProjectCard from "./ProjectCard";
 import NewProjectModel from "../../components/NewProjectModel";
 import Modal from "@mui/material/Modal";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  fetchProjectAsync,
-  resetProjectAddStatus,
-} from "../../features/project/projectSlice";
-import { fetchWorkspaceByUserIDAsync } from "../../features/workspace/workspaceSlice";
-import { toast, ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
-import NoWorkspacePage from "../../components/NoWorkspacePage";
+import { fetchProjectAsync, resetProjectAddStatus } from "../../features/project/projectSlice";
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const SearchIconWrapper = styled("div")(({ theme }) => ({
   padding: theme.spacing(0, 2),
@@ -140,12 +135,7 @@ function ProjectPage() {
   const [isModalOpen, setModalOpen] = useState(false);
   const dispatch = useDispatch();
   const projectData = useSelector((state) => state.project.projects);
-  const projectAddStatus = useSelector(
-    (state) => state.project.projectAddStatus
-  );
-
-  const workspaces = useSelector((state) => state.workspace.workspaces);
-
+  const projectAddStatus = useSelector((state) => state.project.projectAddStatus);
   // console.log(projectData);
   const userId = useSelector((state) => state?.user?.loggedInUser?.user?._id);
   const [searchQuery, setSearchQuery] = useState("");
@@ -158,8 +148,7 @@ function ProjectPage() {
 
   //console.log(userId)
   useEffect(() => {
-    dispatch(fetchProjectAsync(userId));
-    dispatch(fetchWorkspaceByUserIDAsync(userId));
+    dispatch(fetchProjectAsync(userId))
   }, [dispatch, userId]);
   useEffect(() => {
     if (projectAddStatus === "fulfilled") {
@@ -167,7 +156,7 @@ function ProjectPage() {
       dispatch(resetProjectAddStatus());
     }
     // eslint-disable-next-line
-  }, [projectAddStatus]);
+  }, [projectAddStatus])
   const handleOpenModal = () => {
     setModalOpen(true);
   };
@@ -175,10 +164,6 @@ function ProjectPage() {
   const handleCloseModal = () => {
     setModalOpen(false);
   };
-
-  if (workspaces.length <= 0) {
-    return <NoWorkspacePage />;
-  }
 
   return (
     <Box
@@ -247,30 +232,15 @@ function ProjectPage() {
           </Search>
         </Box>
       </Paper>
-      {projectData.length <= 0 ? (
-        <Box
-          sx={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            height: "calc(100vh - 200px)", // Adjust height as needed
-          }}
-        >
-          <Typography variant="h6" color="textSecondary">
-            Create a Project to get started
-          </Typography>
-        </Box>
-      ) : (
-        <CustomBox>
-          <Grid container spacing={3} alignItems="center">
-            {filteredProjects?.map((project) => (
-              <Grid item key={project.id} xs={6} sm={6} md={3} lg={3} xl={2}>
-                <ProjectCard project={project} />
-              </Grid>
-            ))}
-          </Grid>
-        </CustomBox>
-      )}
+      <CustomBox>
+        <Grid container spacing={3} alignItems="center">
+          {filteredProjects?.map((project) => (
+            <Grid item key={project.id} xs={6} sm={6} md={3} lg={3} xl={2}>
+              <ProjectCard project={project} />
+            </Grid>
+          ))}
+        </Grid>
+      </CustomBox>
       <Modal open={isModalOpen} onClose={handleCloseModal}>
         <Box>
           <NewProjectModel handleClose={handleCloseModal} />

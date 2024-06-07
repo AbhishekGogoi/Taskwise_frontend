@@ -1,6 +1,6 @@
+// AddMemberToWorkspaceModal.js
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import { useDispatch, useSelector } from 'react-redux';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import TextField from '@mui/material/TextField';
@@ -10,7 +10,6 @@ import CloseIcon from '@mui/icons-material/Close';
 import Chip from '@mui/material/Chip';
 import Modal from '@mui/material/Modal';
 import AddedMembersModal from './AddedMembersModal';
-import { addMemberAsync, fetchWorkspaceMembersAsync } from '../../../features/workspace/workspaceSlice';
 
 const style = {
   position: 'absolute',
@@ -27,13 +26,11 @@ const style = {
 
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-const AddMemberToWorkspaceModal = ({ handleClose, workspaceId }) => {
+const AddMemberToWorkspaceModal = ({ handleClose }) => {
   const [members, setMembers] = useState([]);
   const [inputValue, setInputValue] = useState('');
   const [membersError, setMembersError] = useState('');
   const [openAddedMembersModal, setOpenAddedMembersModal] = useState(false);
-  const dispatch = useDispatch(); // Initialize useDispatch hook
-  const adminUserId = useSelector((state) => state?.user?.loggedInUser?.user?._id);
 
   const handleAddMember = (event) => {
     if (event.key === 'Enter' || event.key === ',' || event.key === ' ') {
@@ -53,17 +50,9 @@ const AddMemberToWorkspaceModal = ({ handleClose, workspaceId }) => {
     setMembers((prevMembers) => prevMembers.filter((email) => email !== emailToDelete));
   };
 
-  const handleAddButtonClick = async () => {
-    try {
-      // Dispatch the addMemberAsync action creator
-      await dispatch(addMemberAsync({ workspaceId, adminUserId, memberEmails: members }));
-      // Fetch updated members list
-      await dispatch(fetchWorkspaceMembersAsync(workspaceId));
-      setOpenAddedMembersModal(true);
-      handleClose();
-    } catch (error) {
-      console.error('Error adding member:', error);
-    }
+  const handleAddButtonClick = () => {
+    setOpenAddedMembersModal(true);
+    handleClose();
   };
 
   const handleAddedMembersModalClose = () => {

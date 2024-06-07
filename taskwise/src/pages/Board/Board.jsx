@@ -12,7 +12,7 @@ import Divider from "@mui/material/Divider";
 import { Button } from "@mui/material";
 import { useSelector, useDispatch } from "react-redux";
 import { useEffect } from "react";
-import { fetchProjectByIdAsync, resetTaskAddStatus, moveTaskAsync, resetColumnAddStatus, fetchWorkspaceMembersAsync,resetColumnorderChangeStatus } from "../../features/project/projectSlice";
+import { fetchProjectByIdAsync, resetTaskAddStatus, moveTaskAsync, resetColumnAddStatus, fetchWorkspaceMembersAsync } from "../../features/project/projectSlice";
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import AddColumnModal from "./AddColumnModal";
@@ -62,33 +62,50 @@ function Board() {
   const dispatch = useDispatch();
   const [searchTerm, setSearchTerm] = useState("");
 
- 
+  useEffect(() => {
+    //console.log("useEffect for dispatch")
+    if (id) {
+      dispatch(fetchProjectByIdAsync(id));
+      dispatch(fetchWorkspaceMembersAsync(workspaceId))
+    }
+      // eslint-disable-next-line
+  }, [dispatch, id]);
  
   // console.log(id)
-  const initialData = useSelector((state) => state?.project?.selectedProject);
-  const columnAddStatus = useSelector((state)=>state.project?.columnAddStatus)
-  const taskAddStatus = useSelector((state) => state.project?.taskAddStatus);
-  const projectFetchStatus = useSelector((state) => state.project?.projectFetchStatus);
-  const workspaceId=useSelector((state) => state?.project?.selectedProject?.workspaceId);
-  const columnMovedStatus=useSelector((state)=>state?.project?.columnorderChangeStatus);
-
-  console.log(workspaceId,"workspaceId")
+  const initialData = useSelector((state) => state.project.selectedProject);
+  const columnAddStatus = useSelector((state)=>state.project.columnAddStatus)
+  const taskAddStatus = useSelector((state) => state.project.taskAddStatus);
+  const projectFetchStatus = useSelector((state) => state.project.projectFetchStatus);
+  const workspaceId=initialData?.workspaceId;
   const [order, setOrder] = useState(null)
   const [dataTask, setDataTask] = useState(null)
   const handleClick = () => {
     navigate(`/projects/${id}/new-task`);
   };
-
-
-  let user=useSelector((state)=>state?.user?.loggedInUser?.user);
-  let workspaceMembers=useSelector((state)=>state?.project?.workspaceMembers?.data)
-  // eslint-disable-next-line
-  const isAdmin = workspaceMembers?.find((member) => member.user.email === user.email)?.role === 'Admin';
-
-  
-  //console.log(isAdmin,"isAdmin")
- 
-  
+  const project = {
+    img: "https://img.freepik.com/free-vector/hand-drawn-minimal-background_23-2149001650.jpg?t=st=1716280160~exp=1716280760~hmac=f254cfeda21a263638253b9f6f0c0c9028bac218840dea34d6de5739054a4a96",
+  };
+  // const initialData = {
+  //   order: [1, 2, 3, 4, 5, 6],
+  //   columns: [
+  //     1: { id: 1, title: "To Do", taskIds: [1, 2] },
+  //     2: { id: 2, title: "In Progress", taskIds: [3] },
+  //     3: { id: 3, title: "Done", taskIds: [4] },
+  //     4: { id: 4, title: "Review", taskIds: [5, 6] },
+  //     5: { id: 5, title: "QA", taskIds: [7] },
+  //     6: { id: 6, title: "Deploy", taskIds: [8] },
+  //   ],
+  //   tasks: {
+  //     1: { id: 1, content: "Take out the garbage" },
+  //     2: { id: 2, content: "Watch my favorite show" },
+  //     3: { id: 3, content: "Charge my phone" },
+  //     4: { id: 4, content: "Cook dinner" },
+  //     5: { id: 5, content: "Finish report" },
+  //     6: { id: 6, content: "Clean the house" },
+  //     7: { id: 7, content: "Go for a run" },
+  //     8: { id: 8, content: "Attend meeting" },
+  //   },
+  // };
 
   const [columns, setColumns] = useState({});
   const [isAddColumnModalOpen, setIsAddColumnModalOpen] = useState(false);
@@ -100,21 +117,14 @@ function Board() {
     setIsAddColumnModalOpen(false);
   };
 
-
+  // const handleAddColumn = (newColumnName) => {
+  //   // Implement the logic to add a new column
+  //   // For example, you might want to update the state or dispatch an action
+  //   console.log("New column added:", newColumnName);
+  // };
 
   useEffect(() => {
-    console.log("useeffect for id,workspaceid")
-    if (id) {
-      dispatch(fetchProjectByIdAsync(id));
-    }
-    if(workspaceId){
-      dispatch(fetchWorkspaceMembersAsync(workspaceId))
-    }
-      // eslint-disable-next-line
-  }, [workspaceId, id]);
-
-  useEffect(()=>{
-    console.log("useEffect for column add status")
+    console.log("initial Data changed useeffect")
     if(columnAddStatus==="fulfilled"){
       toast.success("Column added successfully!");
     }
@@ -122,36 +132,13 @@ function Board() {
       toast.error("Column not added!");
     }
     dispatch(resetColumnAddStatus())
-    // eslint-disable-next-line
-  },[columnAddStatus])
-  useEffect(()=>{
-    if(columnMovedStatus==="fulfilled"){
-      toast.success("Column moved successfully!");
-    }
-    if(columnMovedStatus==="rejected"){
-      toast.error("Server error");
-    }
-    dispatch(resetColumnorderChangeStatus())
-    // eslint-disable-next-line
-  },[columnMovedStatus])
-
-  useEffect(() => {
-    console.log("initial Data changed useeffect")
-    if (taskAddStatus === "fulfilled") {
-      toast.success("Task added successfully!");
-      dispatch(resetTaskAddStatus());
-    }
-    if (taskAddStatus === "rejected") {
-      toast.error("Failed to add task.");
-      dispatch(resetTaskAddStatus());
-    }
     if (initialData) {
       setColumns(initialData?.columns);
       setOrder(initialData?.order);
       setDataTask(initialData?.tasks);
     }
       // eslint-disable-next-line
-  }, [initialData,taskAddStatus]);
+  }, [initialData]);
 
   const handleDrop = (taskId, newColumnId) => {
     //console.log("handleDrop", taskId, newColumnId);
@@ -199,17 +186,16 @@ function Board() {
     //console.log("updatedcolumns", updatedColumns);
   };
 
-  // useEffect(() => {
-  //   if (taskAddStatus === "fulfilled") {
-  //     toast.success("Task added successfully!");
-  //     dispatch(resetTaskAddStatus());
-  //   }
-  //   if (taskAddStatus === "rejected") {
-  //     toast.error("Failed to add task.");
-  //     dispatch(resetTaskAddStatus());
-  //   }
-
-  // }, [taskAddStatus, dispatch,id]);
+  useEffect(() => {
+    if (taskAddStatus === "fulfilled") {
+      toast.success("Task added successfully!");
+      dispatch(resetTaskAddStatus());
+    }
+    if (taskAddStatus === "rejected") {
+      toast.error("Failed to add task.");
+      dispatch(resetTaskAddStatus());
+    }
+  }, [taskAddStatus, dispatch,id]);
   if (projectFetchStatus === "loading") {
     return <div className="loading">Loading...</div>
   }
@@ -217,7 +203,6 @@ function Board() {
   const handleSearchChange = (event) => {
     setSearchTerm(event.target.value);
   };
-
 
 
   return (
@@ -251,7 +236,7 @@ function Board() {
           >
             <Box sx={{ display: "flex", alignItems: "center", flex: 1 }}>
               <img
-                src={initialData?.imgUrl}
+                src={project.img}
                 alt="project"
                 style={{
                   borderRadius: "8px",

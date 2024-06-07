@@ -1,27 +1,14 @@
-import { configureStore, combineReducers } from "@reduxjs/toolkit";
+import { configureStore } from "@reduxjs/toolkit";
 import projectreducer from "../features/project/projectSlice";
-import userreducer, {
-  rehydrate,
-  resetUserState,
-} from "../features/user/userSlice";
+import userreducer, { rehydrate } from "../features/user/userSlice";
 import workspacereducer from "../features/workspace/workspaceSlice";
 
-// Create a root reducer
-const appReducer = combineReducers({
-  project: projectreducer,
-  user: userreducer,
-  workspace: workspacereducer,
-});
-
-const rootReducer = (state, action) => {
-  if (action.type === resetUserState.type) {
-    state = undefined;
-  }
-  return appReducer(state, action);
-};
-
 const store = configureStore({
-  reducer: rootReducer,
+  reducer: {
+    project: projectreducer,
+    user: userreducer,
+    workspace: workspacereducer,
+  },
 });
 
 // Rehydrate the authentication state

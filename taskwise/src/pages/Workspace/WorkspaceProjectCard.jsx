@@ -35,7 +35,7 @@ const NoProjectsMessage = styled("div")(({ theme }) => ({
   color: theme.palette.text.secondary,
 }));
 
-function WorkspaceProjectCard({ workspace, projectData, membersData }) {
+function WorkspaceProjectCard({ projectData, membersData }) {
   const navigate = useNavigate();
   if (!Array.isArray(projectData)) {
     console.error("projectData is not an array", projectData);
@@ -90,7 +90,7 @@ function WorkspaceProjectCard({ workspace, projectData, membersData }) {
         </CustomBox>
       </Grid>
       <Grid item xs={12} md={3}>
-        <WorkspaceMembers height="365px" width="90%" membersData={membersData} workspace={workspace} />
+        <WorkspaceMembers height="365px" width="90%" membersData={membersData} />
       </Grid>
     </Grid>
   );
