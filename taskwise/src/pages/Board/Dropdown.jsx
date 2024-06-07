@@ -40,7 +40,14 @@ const Dropdown = ({task,columnId}) => {
 
   const handleMoveRight = () => {
     if (colIndex < order?.length - 1) {
-     
+      const sourceColumnId = columnId;
+      const destinationColumnId = order[colIndex + 1];
+      const data={
+        "sourceColumnId":sourceColumnId,
+        "destinationColumnId":destinationColumnId
+      }
+      const idObject = { id: id, taskId };
+      dispatch(moveTaskAsync({ data, idObject }));
     }
     handleClose();
   };
