@@ -35,7 +35,7 @@ const Dropdown = ({ task, columnId }) => {
     }
     dispatch(resetTaskDeleteStatus());
   }, [taskDeleteStatus, dispatch]);
-
+    // eslint-disable-next-line
   const handleMoveLeft = () => {
     if (colIndex > 0) {
       const sourceColumnId = columnId;
@@ -49,7 +49,7 @@ const Dropdown = ({ task, columnId }) => {
     }
     handleClose();
   };
-
+    // eslint-disable-next-line
   const handleMoveRight = () => {
     if (colIndex < order?.length - 1) {
       const sourceColumnId = columnId;
