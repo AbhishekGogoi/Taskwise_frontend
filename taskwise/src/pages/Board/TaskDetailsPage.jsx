@@ -612,7 +612,7 @@ const TaskDetailsPage = () => {
                       gutterBottom
                       sx={{ fontWeight: "700", mt: 1, fontSize: "1rem" }}
                     >
-                      Attachments ({filteredTask?.attachments.length})
+                      Attachments ({filteredTask?.attachments?.length})
                     </Typography>
 
                     <IconButton
@@ -743,7 +743,7 @@ const TaskDetailsPage = () => {
               </Grid>
               <Grid item xs={12}>
                 {dialogTab === 0 &&
-                  (filteredTask?.attachments.length > 0 ? (
+                  (filteredTask?.attachments?.length > 0 ? (
                     <ImageList cols={3} rowHeight={200}>
                       {filteredTask?.attachments.map((image, index) => (
                         <ImageListItem key={index}>

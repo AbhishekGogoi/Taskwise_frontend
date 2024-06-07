@@ -118,7 +118,7 @@ function Column({ column, tasks, onDrop }) {
         }}
       >
         {tasks.map((task) => (
-          <Task key={task._id} task={task} />
+          <Task key={task._id} task={task} column={column}/>
         ))}
       </Box>
     </Box>

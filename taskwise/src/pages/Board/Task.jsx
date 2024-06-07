@@ -6,7 +6,8 @@ import { DateRange, AttachFile } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import Dropdown from "./Dropdown";
 
-function Task({ task }) {
+
+function Task({ task,column }) {
   const navigate = useNavigate();
   const [{ isDragging }, drag] = useDrag({
     type: "task",
@@ -15,7 +16,7 @@ function Task({ task }) {
       isDragging: !!monitor.isDragging(),
     }),
   });
-
+  console.log(column,"column task")
   let formattedDate;
   if (task?.dueDate) {
     try {
@@ -31,6 +32,10 @@ function Task({ task }) {
   } else {
     formattedDate = 'No due date';
   }
+
+  const handleDropdownClick = (e) => {
+    e.stopPropagation();
+  };
 
   const handleCardClick = (e) => {
     // Only navigate if the click target is not the dropdown button
@@ -76,8 +81,8 @@ function Task({ task }) {
               size="small"
               sx={{ fontSize: "0.4rem", height: "15px" }}
             />
-            <Box className="dropdown">
-              <Dropdown />
+            <Box className="dropdown" onClick={handleDropdownClick}>
+              <Dropdown columnId={column?._id} task={task} />
             </Box>
           </Box>
           <Typography variant="h6" component="div" sx={{ fontSize: "1rem" }}>
