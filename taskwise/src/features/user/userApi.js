@@ -65,3 +65,13 @@ export const resetPassword = async (cred) => {
     throw error.response.data;
   }
 };
+
+// Update User Profile
+export const updateProfile = async (cred) => {
+  try {
+    const res = await axiosi.put(`/auth/updateprofile`, cred);
+    return res.data;
+  } catch (error) {
+    throw error.response.data;
+  }
+};

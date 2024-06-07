@@ -11,6 +11,8 @@ import {
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import ChangePasswordModal from "../../components/ChangePasswordModal";
+import { useDispatch, useSelector } from "react-redux";
+import { updateProfileAsync } from "../../features/user/userSlice";
 
 const Container = styled(Box)({
   display: "flex",
@@ -82,6 +84,18 @@ const PageWrapper = styled(Box)({
 });
 
 const ProfileSettingsPage = () => {
+  const dispatch = useDispatch();
+  const email = useSelector((state) => state.user.loggedInUser?.user?.email);
+  const username = useSelector(
+    (state) => state.user.loggedInUser?.user?.username
+  );
+
+  const tempTitle = useSelector(
+    (state) => state.user.loggedInUser?.user?.title
+  );
+
+  const [title, setTitle] = useState(tempTitle);
+
   const [changePasswordModalOpen, setChangePasswordModalOpen] = useState(false);
 
   const handleOpenChangePasswordModal = () => {
@@ -92,23 +106,10 @@ const ProfileSettingsPage = () => {
     setChangePasswordModalOpen(false);
   };
 
-  const handleUpdatePassword = (newFormData) => {
-    // Handle actual password update logic here (e.g., API calls, validation)
-    console.log("New password data:", newFormData);
-    // After successful update:
-    handleCloseChangePasswordModal();
-  };
+  const userId = useSelector((state) => state.user.loggedInUser?.user?._id);
 
-  const [isEditing, setIsEditing] = useState({ email: false, title: false });
-  const [email, setEmail] = useState("smith@gmail.com");
-  const [title, setTitle] = useState("Product Designer");
-
-  const handleEditClick = (field) => {
-    setIsEditing({ ...isEditing, [field]: true });
-  };
-
-  const handleSaveClick = (field) => {
-    setIsEditing({ ...isEditing, [field]: false });
+  const handleSubmit = () => {
+    dispatch(updateProfileAsync({ title, userId }));
   };
 
   return (
@@ -128,10 +129,10 @@ const ProfileSettingsPage = () => {
               sx={{ width: 80, height: 80 }}
             />
             <Stack spacing={0.5}>
-              <Typography variant="h6">Smith</Typography>
-              <Typography variant="body2" color="textSecondary">
+              <Typography variant="h6">{username}</Typography>
+              {/* <Typography variant="body2" color="textSecondary">
                 @tantriono213
-              </Typography>
+              </Typography> */}
             </Stack>
           </Grid>
           <Grid
@@ -151,6 +152,7 @@ const ProfileSettingsPage = () => {
                 minWidth: "200px",
                 height: "40px",
               }}
+              onClick={handleSubmit}
             >
               Save User Profile
             </Button>
@@ -161,30 +163,9 @@ const ProfileSettingsPage = () => {
           <Grid item xs={12}>
             <InfoBox>
               <EditField sx={{ paddingBottom: "2rem" }}>
-                <TextField
-                  id="email"
-                  label="Email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  variant="standard"
-                  fullWidth
-                />
-                {isEditing.email ? (
-                  <Button
-                    variant="contained"
-                    color="primary"
-                    onClick={() => handleSaveClick("email")}
-                  >
-                    Save
-                  </Button>
-                ) : (
-                  <Button
-                    variant="outlined"
-                    onClick={() => handleEditClick("email")}
-                  >
-                    Edit
-                  </Button>
-                )}
+                <Typography variant="body1" component="div">
+                  Email: {email}
+                </Typography>
               </EditField>
               <EditField>
                 <TextField
@@ -195,22 +176,6 @@ const ProfileSettingsPage = () => {
                   variant="standard"
                   fullWidth
                 />
-                {isEditing.title ? (
-                  <Button
-                    variant="contained"
-                    color="primary"
-                    onClick={() => handleSaveClick("title")}
-                  >
-                    Save
-                  </Button>
-                ) : (
-                  <Button
-                    variant="outlined"
-                    onClick={() => handleEditClick("title")}
-                  >
-                    Edit
-                  </Button>
-                )}
               </EditField>
             </InfoBox>
           </Grid>
@@ -236,10 +201,7 @@ const ProfileSettingsPage = () => {
           onClose={handleCloseChangePasswordModal}
           aria-labelledby="change-password-modal-title"
         >
-          <ChangePasswordModal
-            handleClose={handleCloseChangePasswordModal}
-            onUpdatePassword={handleUpdatePassword}
-          />
+          <ChangePasswordModal handleClose={handleCloseChangePasswordModal} />
         </Modal>
       </Container>
     </PageWrapper>

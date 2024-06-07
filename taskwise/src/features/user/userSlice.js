@@ -7,6 +7,7 @@ import {
   verifyResetCode,
   resendOTP,
   resetPassword,
+  updateProfile,
 } from "./userApi";
 
 const initialState = {
@@ -77,6 +78,14 @@ export const resetPasswordAsync = createAsyncThunk(
   "user/resetPasswordAsync",
   async (cred) => {
     const res = await resetPassword(cred);
+    return res;
+  }
+);
+
+export const updateProfileAsync = createAsyncThunk(
+  "user/updateProfile",
+  async (cred) => {
+    const res = await updateProfile(cred);
     return res;
   }
 );
@@ -176,10 +185,10 @@ const userSlice = createSlice({
       })
       .addCase(signupAsync.fulfilled, (state, action) => {
         state.signupStatus = "fulfilled";
-        state.loggedInUser = action.payload;
-        state.isAuthenticated = true; // Set isAuthenticated to true upon successful signup
-        localStorage.setItem("user", JSON.stringify(action.payload)); // Store user in localStorage
-        localStorage.setItem("isAuthenticated", "true"); // Store isAuthenticated in localStorage
+        // state.loggedInUser = action.payload;
+        // state.isAuthenticated = true; // Set isAuthenticated to true upon successful signup
+        // localStorage.setItem("user", JSON.stringify(action.payload)); // Store user in localStorage
+        // localStorage.setItem("isAuthenticated", "true"); // Store isAuthenticated in localStorage
       })
       .addCase(signupAsync.rejected, (state, action) => {
         state.signupStatus = "rejected";
@@ -278,6 +287,18 @@ const userSlice = createSlice({
       .addCase(resendOTPAsync.rejected, (state, action) => {
         state.resendOTPStatus = "rejected";
         state.resendOTPError = action.error;
+      })
+      //for update profile
+      .addCase(updateProfileAsync.pending, (state) => {
+        state.status = "pending";
+      })
+      .addCase(updateProfileAsync.fulfilled, (state, action) => {
+        state.status = "fulfilled";
+        // state.loggedInUser = action.payload;
+      })
+      .addCase(updateProfileAsync.rejected, (state, action) => {
+        state.status = "rejected";
+        state.errors = action.error;
       });
   },
 });
