@@ -93,3 +93,14 @@ export const columnOrderChange=async({order,projectId})=>{
         throw error.response.data
     }
 }
+
+export const deactivateTask=async(idObject)=>{
+    const {projectId, taskId}=idObject;
+    console.log(idObject,"idObject")
+    try{
+        const res=await axiosi.put(`/projects/${projectId}/tasks/${taskId}/deactivate`);
+        return res.data
+    }catch(error){
+        throw error.response.data
+    }
+}

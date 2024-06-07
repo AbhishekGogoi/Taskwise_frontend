@@ -17,7 +17,7 @@ const ColumnDropdown = ({ column, id }) => {
   };
 
   const order = useSelector((state) => state.project.selectedProject.order);
-  const colId = column._id;
+  const colId = column?._id;
   const colIndex = order?.indexOf(colId);
   console.log(id,"id")
 
@@ -32,7 +32,7 @@ const ColumnDropdown = ({ column, id }) => {
   };
 
   const handleMoveRight = () => {
-    if (colIndex < order.length - 1) {
+    if (colIndex < order?.length - 1) {
       const newOrder = [...order];
       [newOrder[colIndex + 1], newOrder[colIndex]] = [newOrder[colIndex], newOrder[colIndex + 1]];
       dispatch(columnOrderChangeAsync({order:newOrder,projectId:id}))
@@ -62,7 +62,7 @@ const ColumnDropdown = ({ column, id }) => {
         {colIndex > 0 && (
           <MenuItem onClick={handleMoveLeft}>Move to left</MenuItem>
         )}
-        {colIndex < order.length - 1 && (
+        {colIndex < order?.length - 1 && (
           <MenuItem onClick={handleMoveRight}>Move to right</MenuItem>
         )}
         <MenuItem onClick={handleClose}>Delete</MenuItem>

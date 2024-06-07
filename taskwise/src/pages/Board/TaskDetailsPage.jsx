@@ -630,7 +630,7 @@ const handleSaveTask = () => {
                       gutterBottom
                       sx={{ fontWeight: "700", mt: 1, fontSize: "1rem" }}
                     >
-                      Attachments ({filteredTask?.attachments.length})
+                      Attachments ({filteredTask?.attachments?.length})
                     </Typography>
 
                     <IconButton
