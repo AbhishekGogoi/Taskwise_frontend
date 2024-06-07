@@ -210,9 +210,9 @@ function Board() {
   //   }
 
   // }, [taskAddStatus, dispatch,id]);
-  if (projectFetchStatus === "loading") {
-    return <div className="loading">Loading...</div>
-  }
+  // if (projectFetchStatus === "loading") {
+  //   return <div className="loading">Loading...</div>
+  // }
 
   const handleSearchChange = (event) => {
     setSearchTerm(event.target.value);
