@@ -178,8 +178,8 @@ function WorkspaceDetails() {
         </Box>
       </Paper>
       <CustomBox>
-        {selectedTab === 0 && <WorkspaceProjectCard projectData={projectData} membersData={membersData} />}
-        {selectedTab === 1 && <WorkspaceTasks tasksData={tasksData} membersData={membersData} />}
+        {selectedTab === 0 && <WorkspaceProjectCard workspace={workspace} projectData={projectData} membersData={membersData} />}
+        {selectedTab === 1 && <WorkspaceTasks workspace={workspace} tasksData={tasksData} membersData={membersData} />}
         {selectedTab === 2 && <WorkspaceSettings workspace={workspace} membersData={membersData}/>}
       </CustomBox>
     </Box>

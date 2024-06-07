@@ -1,9 +1,12 @@
-import React from 'react';
-import { List, ListItem, ListItemAvatar, Avatar, ListItemText, Typography, Box, Paper } from '@mui/material';
+import React, { useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { List, ListItem, ListItemAvatar, Avatar, ListItemText, Typography, Box, Paper, IconButton, Menu, MenuItem } from '@mui/material';
 import { styled } from '@mui/material/styles';
+import MoreVertIcon from '@mui/icons-material/MoreVert';
+import { updateMemberRoleAsync, fetchWorkspaceMembersAsync } from '../../features/workspace/workspaceSlice'; // Assuming you have a fetchMembers action
 
 const StyledPaper = styled(Paper)(({ theme }) => ({
-  height: '200px', // Adjust as needed
+  height: '200px',
   width: '150%',
   padding: theme.spacing(1),
   overflowY: 'auto',
@@ -21,11 +24,36 @@ const StyledPaper = styled(Paper)(({ theme }) => ({
   },
 }));
 
-function WorkspaceSettingsMembers({membersData}) {
-  // Sort members by role, prioritizing admins
+function WorkspaceSettingsMembers({ membersData, workspaceId }) {
+  const dispatch = useDispatch();
+  const [anchorEl, setAnchorEl] = useState(null);
+  const [selectedMember, setSelectedMember] = useState(null);
+  const adminUserId = useSelector((state) => state?.user?.loggedInUser?.user?._id);
+
+  const handleMenuOpen = (event, member) => {
+    setAnchorEl(event.currentTarget);
+    setSelectedMember(member);
+  };
+
+  const handleMenuClose = () => {
+    setAnchorEl(null);
+    setSelectedMember(null);
+  };
+
+  const handleRoleChange = async (role) => {
+    try {
+      await dispatch(updateMemberRoleAsync({ workspaceId, adminUserId, userId: selectedMember.user.id, role }));
+      // If the update is successful, fetch the updated member list
+      await dispatch(fetchWorkspaceMembersAsync(workspaceId)); // Assuming fetchMembers fetches the updated member list
+    } catch (error) {
+      console.error('Failed to update member role:', error);
+    }
+    handleMenuClose();
+  };
+
   const sortedMembers = [...membersData].sort((a, b) => {
-    if (a.role === 'admin' && b.role !== 'admin') return -1;
-    if (a.role !== 'admin' && b.role === 'admin') return 1;
+    if (a.role === 'Admin' && b.role !== 'Admin') return -1;
+    if (a.role !== 'Admin' && b.role === 'Admin') return 1;
     return 0;
   });
 
@@ -37,7 +65,7 @@ function WorkspaceSettingsMembers({membersData}) {
   ) : (
     <List sx={{ width: '100%' }}>
       {sortedMembers.map((member) => (
-        <ListItem key={member.id} sx={{ justifyContent: 'space-evenly'}}>
+        <ListItem key={member.id} sx={{ justifyContent: 'space-evenly' }}>
           <ListItemAvatar>
             <Avatar alt={member.user.email} src={member.user.imgUrl} sx={{ fontWeight: 10 }} />
           </ListItemAvatar>
@@ -45,11 +73,20 @@ function WorkspaceSettingsMembers({membersData}) {
             primary={member.user.email}
             sx={{ fontSize: 12, display: 'flex', justifyContent: 'space-between' }}
           />
-          {member.role !== 'Member' && (
+          {member.role !== 'Member' ? (
             <ListItemText
               primary={member.role}
               sx={{ fontSize: 12, display: 'flex', justifyContent: 'end' }}
             />
+          ) : (
+            <IconButton
+              aria-label="more"
+              aria-controls="long-menu"
+              aria-haspopup="true"
+              onClick={(event) => handleMenuOpen(event, member)}
+            >
+              <MoreVertIcon />
+            </IconButton>
           )}
         </ListItem>
       ))}
@@ -57,13 +94,20 @@ function WorkspaceSettingsMembers({membersData}) {
   );
 
   return (
-    <StyledPaper sx={{marginTop:2}}>
+    <StyledPaper sx={{ marginTop: 2 }}>
       <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderRadius: 2 }}>
         <Typography sx={{ paddingTop: 0.5, paddingLeft: 1, fontSize: 15, fontWeight: 'bold' }}>
           Members ({memberCount})
         </Typography>
       </Box>
       {memberList}
+      <Menu
+        anchorEl={anchorEl}
+        open={Boolean(anchorEl)}
+        onClose={handleMenuClose}
+      >
+        <MenuItem onClick={() => handleRoleChange('Admin')}>Make Admin</MenuItem>
+      </Menu>
     </StyledPaper>
   );
 }
