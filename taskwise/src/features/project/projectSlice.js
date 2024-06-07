@@ -156,7 +156,7 @@ const projectSlice = createSlice({
             .addCase(moveTaskAsync.fulfilled, (state, action) => {
                 state.taskMoveStatus = "fulfilled"
                 state.projectFetchStatus = "idle"
-                //state.selectedProject=action.payload
+                state.selectedProject=action.payload
             })
             .addCase(moveTaskAsync.rejected, (state, action) => {
                 state.taskMoveStatus = "rejected"

@@ -39,7 +39,7 @@ const Dropdown = ({task,columnId}) => {
   };
 
   const handleMoveRight = () => {
-    if (colIndex < order.length - 1) {
+    if (colIndex < order?.length - 1) {
      
     }
     handleClose();
@@ -71,7 +71,7 @@ const Dropdown = ({task,columnId}) => {
         {colIndex > 0 && (
           <MenuItem onClick={handleMoveLeft}>Move to left</MenuItem>
         )}
-        {colIndex < order.length - 1 && (
+        {colIndex < order?.length - 1 && (
           <MenuItem onClick={handleMoveRight}>Move to right</MenuItem>
         )}
         <MenuItem onClick={handleDelete}>Delete</MenuItem>

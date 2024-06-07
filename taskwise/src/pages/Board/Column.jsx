@@ -60,7 +60,7 @@ function Column({ column, tasks, onDrop }) {
   };
 
   useEffect(() => {
-    const updatedColumn = columns.find((col) => col._id === column._id);
+    const updatedColumn = columns?.find((col) => col._id === column._id);
     if (updatedColumn) {
       setTitle(updatedColumn.title);
       setEditTitle(updatedColumn.title);
