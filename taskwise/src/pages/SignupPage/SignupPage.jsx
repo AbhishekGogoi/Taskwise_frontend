@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { signupAsync } from "../../features/user/userSlice";
+import { resetSignupStatus, signupAsync } from "../../features/user/userSlice";
 import {
   Container,
   Box,
@@ -124,7 +124,7 @@ const SignupPage = () => {
   const loggedInUser = useSelector((state) => state.user.loggedInUser);
   const signupError = useSelector((state) => state.user.signupError);
   // console.log(signupError?.message);
-
+  const signupStatus=useSelector((state)=>state.user.signupStatus)
   const schema = Joi.object({
     username: Joi.string().min(3).required().messages({
       "string.empty": "Username is required",
@@ -207,10 +207,11 @@ const SignupPage = () => {
   }, [signupError]);
 
   useEffect(() => {
-    if (loggedInUser) {
-      navigate("/projects");
+    if (signupStatus==="fulfilled") {
+      navigate("/login");
     }
-  }, [loggedInUser, navigate]);
+    dispatch(resetSignupStatus())
+  }, [signupStatus, navigate]);
 
   const handleLoginClick = () => {
     navigate("/login");
