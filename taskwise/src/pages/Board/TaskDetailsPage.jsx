@@ -790,7 +790,7 @@ const handleSaveTask = () => {
                   </Grid>
                 ) : (
                   <Typography sx={{ p: 2, textAlign: "center", color: "#888" }}>
-                    No Data available
+                    No media available
                   </Typography>
                 )}
               </Grid>
