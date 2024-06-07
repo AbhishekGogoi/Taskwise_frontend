@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { fetchWorkspaceMembers, fetchProjects, fetchProjectById, addProject, addTask, moveTask, addColumn, editColumn, editTask, columnOrderChange } from "./projectApi";
+import { fetchWorkspaceMembers, fetchProjects, fetchProjectById, addProject, addTask, moveTask, addColumn, editColumn, editTask, columnOrderChange, deactivateTask } from "./projectApi";
 
 
 const initialState = {
@@ -17,7 +17,8 @@ const initialState = {
     taskEditStatus: "idle",
     workspaceMembers: null,
     workspaceMembersFetchStatus: "idle",
-    columnorderChangeStatus:"idle"
+    columnorderChangeStatus:"idle",
+    taskDeleteStatus:"idle"
 }
 
 export const fetchProjectAsync = createAsyncThunk("projects/fetchProjects", async (userId) => {
@@ -71,6 +72,11 @@ export const columnOrderChangeAsync = createAsyncThunk(`projects/columnOrderChan
     return projects;
 })
 
+export const deactivateTaskAsync = createAsyncThunk(`projects/deactivateTaskAsync`, async (idObject)=>{
+    const project=await deactivateTask(idObject);
+    return project
+})
+
 const projectSlice = createSlice({
     name: "projectSlice",
     initialState: initialState,
@@ -101,6 +107,9 @@ const projectSlice = createSlice({
         },
         resetColumnorderChangeStatus: (state)=>{
             state.columnorderChangeStatus="idle"
+        },
+        resetTaskDeleteStatus: (state)=>{
+            state.taskDeleteStatus="idle"
         }
     },
     extraReducers: (builder) => {
@@ -210,6 +219,16 @@ const projectSlice = createSlice({
             .addCase(columnOrderChangeAsync.rejected,(state,action)=>{
                 state.columnorderChangeStatus="rejected"
             })
+            .addCase(deactivateTaskAsync.pending,(state)=>{
+                state.taskDeleteStatus="loading"
+            })
+            .addCase(deactivateTaskAsync.fulfilled,(state,action)=>{
+                state.taskDeleteStatus="fulfilled"
+                state.selectedProject=action.payload
+            })
+            .addCase(deactivateTaskAsync.rejected,(state,action)=>{
+                state.taskDeleteStatus="rejected"
+            })
     }
 })
 
@@ -223,6 +242,7 @@ export const {
     resetColumnAddStatus,
     resetColumnEditStatus,
     resetColumnorderChangeStatus,
+    resetTaskDeleteStatus
 } = projectSlice.actions;
 
 export default projectSlice.reducer;

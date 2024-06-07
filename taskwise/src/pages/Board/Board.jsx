@@ -64,15 +64,14 @@ function Board() {
 
  
  
-  // console.log(id)
   const initialData = useSelector((state) => state?.project?.selectedProject);
   const columnAddStatus = useSelector((state)=>state.project?.columnAddStatus)
   const taskAddStatus = useSelector((state) => state.project?.taskAddStatus);
+    // eslint-disable-next-line
   const projectFetchStatus = useSelector((state) => state.project?.projectFetchStatus);
   const workspaceId=useSelector((state) => state?.project?.selectedProject?.workspaceId);
   const columnMovedStatus=useSelector((state)=>state?.project?.columnorderChangeStatus);
 
-  console.log(workspaceId,"workspaceId")
   const [order, setOrder] = useState(null)
   const [dataTask, setDataTask] = useState(null)
   const handleClick = () => {
@@ -84,12 +83,6 @@ function Board() {
   let workspaceMembers=useSelector((state)=>state?.project?.workspaceMembers?.data)
   // eslint-disable-next-line
   const isAdmin = workspaceMembers?.find((member) => member.user.email === user.email)?.role === 'Admin';
-
-  
-  //console.log(isAdmin,"isAdmin")
- 
-  
-
   const [columns, setColumns] = useState({});
   const [isAddColumnModalOpen, setIsAddColumnModalOpen] = useState(false);
   const handleOpenAddColumnModal = () => {
@@ -103,7 +96,6 @@ function Board() {
 
 
   useEffect(() => {
-    console.log("useeffect for id,workspaceid")
     if (id) {
       dispatch(fetchProjectByIdAsync(id));
     }
@@ -113,8 +105,8 @@ function Board() {
       // eslint-disable-next-line
   }, [workspaceId, id]);
 
+
   useEffect(()=>{
-    console.log("useEffect for column add status")
     if(columnAddStatus==="fulfilled"){
       toast.success("Column added successfully!");
     }
@@ -136,7 +128,6 @@ function Board() {
   },[columnMovedStatus])
 
   useEffect(() => {
-    console.log("initial Data changed useeffect")
     if (taskAddStatus === "fulfilled") {
       toast.success("Task added successfully!");
       dispatch(resetTaskAddStatus());
@@ -154,10 +145,8 @@ function Board() {
   }, [initialData,taskAddStatus]);
 
   const handleDrop = (taskId, newColumnId) => {
-    //console.log("handleDrop", taskId, newColumnId);
     // Clone the columns state
     const updatedColumns = JSON.parse(JSON.stringify(columns));
-    //console.log("updatedcolumn", columns);
 
     // Find the previous column where the task was located
     const previousColumn = updatedColumns.find((column) =>
@@ -210,9 +199,9 @@ function Board() {
   //   }
 
   // }, [taskAddStatus, dispatch,id]);
-  if (projectFetchStatus === "loading") {
-    return <div className="loading">Loading...</div>
-  }
+  // if (projectFetchStatus === "loading") {
+  //   return <div className="loading">Loading...</div>
+  // }
 
   const handleSearchChange = (event) => {
     setSearchTerm(event.target.value);
