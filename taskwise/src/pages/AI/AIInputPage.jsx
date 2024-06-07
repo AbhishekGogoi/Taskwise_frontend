@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Box, TextField, Button, Typography, Paper } from "@mui/material";
 import { styled } from "@mui/system";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { createProjectAIASync } from "../../features/AI/projectAISlice";
 
 const Container = styled(Box)(({ theme }) => ({
