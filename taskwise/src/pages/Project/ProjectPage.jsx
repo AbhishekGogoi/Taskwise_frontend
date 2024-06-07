@@ -20,6 +20,7 @@ import { fetchWorkspaceByUserIDAsync } from "../../features/workspace/workspaceS
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import NoWorkspacePage from "../../components/NoWorkspacePage";
+import { useNavigate } from "react-router-dom";
 
 const SearchIconWrapper = styled("div")(({ theme }) => ({
   padding: theme.spacing(0, 2),
@@ -156,6 +157,12 @@ function ProjectPage() {
     project.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
+  const navigate = useNavigate();
+
+  const handleButtonClick = () => {
+    navigate("/createai");
+  };
+
   //console.log(userId)
   useEffect(() => {
     dispatch(fetchProjectAsync(userId));
@@ -220,6 +227,7 @@ function ProjectPage() {
               variant="contained"
               size="small"
               sx={{ fontSize: "0.70rem", padding: "4px 8px" }}
+              onClick={handleButtonClick}
             >
               Create with AI
             </Button>
