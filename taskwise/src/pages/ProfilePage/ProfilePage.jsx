@@ -90,7 +90,11 @@ const ProfileSettingsPage = () => {
     (state) => state.user.loggedInUser?.user?.username
   );
 
-  const [title, setTitle] = useState("");
+  const tempTitle = useSelector(
+    (state) => state.user.loggedInUser?.user?.title
+  );
+
+  const [title, setTitle] = useState(tempTitle);
 
   const [changePasswordModalOpen, setChangePasswordModalOpen] = useState(false);
 
@@ -100,13 +104,6 @@ const ProfileSettingsPage = () => {
 
   const handleCloseChangePasswordModal = () => {
     setChangePasswordModalOpen(false);
-  };
-
-  const handleUpdatePassword = (newFormData) => {
-    // Handle actual password update logic here (e.g., API calls, validation)
-    console.log("New password data:", newFormData);
-    // After successful update:
-    handleCloseChangePasswordModal();
   };
 
   const userId = useSelector((state) => state.user.loggedInUser?.user?._id);
@@ -204,10 +201,7 @@ const ProfileSettingsPage = () => {
           onClose={handleCloseChangePasswordModal}
           aria-labelledby="change-password-modal-title"
         >
-          <ChangePasswordModal
-            handleClose={handleCloseChangePasswordModal}
-            onUpdatePassword={handleUpdatePassword}
-          />
+          <ChangePasswordModal handleClose={handleCloseChangePasswordModal} />
         </Modal>
       </Container>
     </PageWrapper>

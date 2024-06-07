@@ -294,7 +294,7 @@ const userSlice = createSlice({
       })
       .addCase(updateProfileAsync.fulfilled, (state, action) => {
         state.status = "fulfilled";
-        state.loggedInUser = action.payload;
+        // state.loggedInUser = action.payload;
       })
       .addCase(updateProfileAsync.rejected, (state, action) => {
         state.status = "rejected";
