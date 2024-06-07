@@ -11,31 +11,43 @@ import {
 import Drawer from "@mui/material/Drawer";
 import Protected from "./components/Protected";
 import useMediaQuery from "@mui/material/useMediaQuery";
-import Loading from "./components/Loading"
+import Loading from "./components/Loading";
+import AIInputPage from "./pages/AI/AIInputPage";
 // Lazy load the pages
 const ProjectPage = lazy(() => import("./pages/Project/ProjectPage"));
 const LandingPage = lazy(() => import("./pages/landingPage/LandingPage"));
 const WorkspacesPage = lazy(() => import("./pages/Workspace/WorkspacePage"));
 const MyTaskPage = lazy(() => import("./pages/MyTaskPage/MyTaskPage"));
 const CalendarPage = lazy(() => import("./pages/CalendarPage/CalendarPage"));
-const WorkspaceDetails = lazy(() => import("./pages/Workspace/WorkspaceDetails"));
+const WorkspaceDetails = lazy(() =>
+  import("./pages/Workspace/WorkspaceDetails")
+);
 const NewTaskPage = lazy(() => import("./pages/Board/NewTaskPage"));
 const TaskDetailsPage = lazy(() => import("./pages/Board/TaskDetailsPage"));
 const Board = lazy(() => import("./pages/Board/Board"));
 const LoginPage = lazy(() => import("./pages/LoginPage/LoginPage"));
 const SignupPage = lazy(() => import("./pages/SignupPage/SignupPage"));
-const ForgotPasswordPage = lazy(() => import("./pages/ForgotPassword/ForgotPasswordPage"));
-const VerificationPage = lazy(() => import("./pages/ForgotPassword/VerificationPage"));
-const ResetPasswordPage = lazy(() => import("./pages/ForgotPassword/ResetPasswordPage"));
-const ConfirmationPage = lazy(() => import("./pages/ForgotPassword/ConfirmationPage"));
-const ProfileSettingsPage = lazy(() => import("./pages/ProfilePage/ProfilePage"));
+const ForgotPasswordPage = lazy(() =>
+  import("./pages/ForgotPassword/ForgotPasswordPage")
+);
+const VerificationPage = lazy(() =>
+  import("./pages/ForgotPassword/VerificationPage")
+);
+const ResetPasswordPage = lazy(() =>
+  import("./pages/ForgotPassword/ResetPasswordPage")
+);
+const ConfirmationPage = lazy(() =>
+  import("./pages/ForgotPassword/ConfirmationPage")
+);
+const ProfileSettingsPage = lazy(() =>
+  import("./pages/ProfilePage/ProfilePage")
+);
 
 const theme = createTheme({
   typography: {
     fontFamily: "Manrope, sans-serif",
   },
 });
-
 
 function AppLayout() {
   const location = useLocation();
@@ -87,26 +99,30 @@ function AppLayout() {
           }
         >
           <Suspense fallback={<Loading />}>
-          <Routes>
-            <Route path="/" element={<LandingPage />} />
-            <Route path="/login" element={<LoginPage />} />
-            <Route path="/signup" element={<SignupPage />} />
-            <Route path="/forgotpassword" element={<ForgotPasswordPage />} />
-            <Route path="/verification" element={<VerificationPage />} />
-            <Route path="/resetpassword" element={<ResetPasswordPage />} />
-            <Route path="/confirmation" element={<ConfirmationPage />} />
-            <Route element={<Protected />}>
-              <Route path="/projects" element={<ProjectPage />} />
-              <Route path="/projects/:id" element={<Board />} />
-              <Route path="/projects/:id/new-task" element={<NewTaskPage />} />
-              <Route path="/tasks/:taskID" element={<TaskDetailsPage />} />
-              <Route path="/workspaces" element={<WorkspacesPage />} />
-              <Route path="/workspaces/:id" element={<WorkspaceDetails />} />
-              <Route path="/my-tasks" element={<MyTaskPage />} />
-              <Route path="/calendar" element={<CalendarPage />} />
-              <Route path="/settings" element={<ProfileSettingsPage />} />
-            </Route>
-          </Routes>
+            <Routes>
+              <Route path="/" element={<LandingPage />} />
+              <Route path="/login" element={<LoginPage />} />
+              <Route path="/signup" element={<SignupPage />} />
+              <Route path="/forgotpassword" element={<ForgotPasswordPage />} />
+              <Route path="/verification" element={<VerificationPage />} />
+              <Route path="/resetpassword" element={<ResetPasswordPage />} />
+              <Route path="/confirmation" element={<ConfirmationPage />} />
+              <Route element={<Protected />}>
+                <Route path="/projects" element={<ProjectPage />} />
+                <Route path="/projects/:id" element={<Board />} />
+                <Route
+                  path="/projects/:id/new-task"
+                  element={<NewTaskPage />}
+                />
+                <Route path="/tasks/:taskID" element={<TaskDetailsPage />} />
+                <Route path="/workspaces" element={<WorkspacesPage />} />
+                <Route path="/workspaces/:id" element={<WorkspaceDetails />} />
+                <Route path="/my-tasks" element={<MyTaskPage />} />
+                <Route path="/calendar" element={<CalendarPage />} />
+                <Route path="/settings" element={<ProfileSettingsPage />} />
+                <Route path="/createai" element={<AIInputPage />} />
+              </Route>
+            </Routes>
           </Suspense>
         </main>
       </div>

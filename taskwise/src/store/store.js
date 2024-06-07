@@ -5,12 +5,14 @@ import userreducer, {
   resetUserState,
 } from "../features/user/userSlice";
 import workspacereducer from "../features/workspace/workspaceSlice";
+import aireducer from "../features/AI/projectAISlice";
 
 // Create a root reducer
 const appReducer = combineReducers({
   project: projectreducer,
   user: userreducer,
   workspace: workspacereducer,
+  ai: aireducer,
 });
 
 const rootReducer = (state, action) => {
