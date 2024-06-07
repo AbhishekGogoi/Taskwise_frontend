@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { fetchWorkspaceMembers, fetchProjects, fetchProjectById, addProject, addTask, moveTask, addColumn, editColumn, editTask, columnOrderChange } from "./projectApi";
+import { fetchWorkspaceMembers, fetchProjects, fetchProjectById, addProject, addTask, moveTask, addColumn, editColumn, editTask, columnOrderChange, deactivateTask } from "./projectApi";
 
 
 const initialState = {
@@ -17,7 +17,8 @@ const initialState = {
     taskEditStatus: "idle",
     workspaceMembers: null,
     workspaceMembersFetchStatus: "idle",
-    columnorderChangeStatus:"idle"
+    columnorderChangeStatus:"idle",
+    taskDeleteStatus:"idle"
 }
 
 export const fetchProjectAsync = createAsyncThunk("projects/fetchProjects", async (userId) => {
@@ -69,6 +70,11 @@ export const fetchWorkspaceMembersAsync = createAsyncThunk('projects/fetchWorksp
 export const columnOrderChangeAsync = createAsyncThunk(`projects/columnOrderChangeAsync`, async ({order,projectId}) => {
     const projects = await columnOrderChange({order,projectId});
     return projects;
+})
+
+export const deactivateTaskAsync = createAsyncThunk(`projects/deactivateTaskAsync`, async (idObject)=>{
+    const project=await deactivateTask(idObject);
+    return project
 })
 
 const projectSlice = createSlice({
@@ -209,6 +215,16 @@ const projectSlice = createSlice({
             })
             .addCase(columnOrderChangeAsync.rejected,(state,action)=>{
                 state.columnorderChangeStatus="rejected"
+            })
+            .addCase(deactivateTaskAsync.pending,(state)=>{
+                state.taskDeleteStatus="loading"
+            })
+            .addCase(deactivateTaskAsync.fulfilled,(state,action)=>{
+                state.taskDeleteStatus="fulfilled"
+                state.selectedProject=action.payload
+            })
+            .addCase(deactivateTaskAsync.rejected,(state,action)=>{
+                state.taskDeleteStatus="rejected"
             })
     }
 })

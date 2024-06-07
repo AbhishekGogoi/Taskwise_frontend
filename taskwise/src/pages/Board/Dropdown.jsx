@@ -2,20 +2,20 @@ import React, { useState } from 'react';
 import { IconButton, Menu, MenuItem } from '@mui/material';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import { useSelector } from 'react-redux';
-import { moveTaskAsync } from "../../features/project/projectSlice";
+import { moveTaskAsync, deactivateTaskAsync } from "../../features/project/projectSlice";
 import { useParams } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 
-const Dropdown = ({task,columnId}) => {
+const Dropdown = ({ task, columnId }) => {
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
   const order = useSelector((state) => state?.project?.selectedProject?.order);
   const colIndex = order?.indexOf(columnId);
   //console.log(colIndex,"colIndex")
   const { id } = useParams();
-  const taskId=task._id;
-  const dispatch=useDispatch();
-  
+  const taskId = task._id;
+  const dispatch = useDispatch();
+  console.log(id,taskId)
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
@@ -28,9 +28,9 @@ const Dropdown = ({task,columnId}) => {
     if (colIndex > 0) {
       const sourceColumnId = columnId;
       const destinationColumnId = order[colIndex - 1];
-      const data={
-        "sourceColumnId":sourceColumnId,
-        "destinationColumnId":destinationColumnId
+      const data = {
+        "sourceColumnId": sourceColumnId,
+        "destinationColumnId": destinationColumnId
       }
       const idObject = { id: id, taskId };
       dispatch(moveTaskAsync({ data, idObject }));
@@ -42,9 +42,9 @@ const Dropdown = ({task,columnId}) => {
     if (colIndex < order?.length - 1) {
       const sourceColumnId = columnId;
       const destinationColumnId = order[colIndex + 1];
-      const data={
-        "sourceColumnId":sourceColumnId,
-        "destinationColumnId":destinationColumnId
+      const data = {
+        "sourceColumnId": sourceColumnId,
+        "destinationColumnId": destinationColumnId
       }
       const idObject = { id: id, taskId };
       dispatch(moveTaskAsync({ data, idObject }));
@@ -52,8 +52,9 @@ const Dropdown = ({task,columnId}) => {
     handleClose();
   };
 
-  const handleDelete =()=>{
-      
+  const handleDelete = () => {
+    const idObject = { "projectId":id, "taskId":taskId };
+    dispatch(deactivateTaskAsync(idObject))
   }
 
   return (
@@ -82,7 +83,7 @@ const Dropdown = ({task,columnId}) => {
           <MenuItem onClick={handleMoveRight}>Move to right</MenuItem>
         )}
         <MenuItem onClick={handleDelete}>Delete</MenuItem>
-        </Menu>
+      </Menu>
     </div>
   );
 };
