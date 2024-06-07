@@ -7,6 +7,7 @@ import {
   verifyResetCode,
   resendOTP,
   resetPassword,
+  updateProfile,
 } from "./userApi";
 
 const initialState = {
@@ -286,6 +287,18 @@ const userSlice = createSlice({
       .addCase(resendOTPAsync.rejected, (state, action) => {
         state.resendOTPStatus = "rejected";
         state.resendOTPError = action.error;
+      })
+      //for update profile
+      .addCase(updateProfileAsync.pending, (state) => {
+        state.status = "pending";
+      })
+      .addCase(updateProfileAsync.fulfilled, (state, action) => {
+        state.status = "fulfilled";
+        state.loggedInUser = action.payload;
+      })
+      .addCase(updateProfileAsync.rejected, (state, action) => {
+        state.status = "rejected";
+        state.errors = action.error;
       });
   },
 });
