@@ -39,6 +39,7 @@ function NewTaskPage() {
     const membersData = useSelector((state) => state?.project?.workspaceMembers?.data);
     const users = membersData?.map(item => item.user);
     const [options] = useState(users);
+
     console.log(users, "membersdata")
     //const [options, setOptions] = useState(membersData.map(item => item.user));
     const handleStatusChange = (event) => {
@@ -94,53 +95,62 @@ function NewTaskPage() {
     const handleUploadClick = () => {
         fileInputRef.current.click();
     };
+
     const handleFileChange = async (event) => {
-        const newFiles = Array.from(event.target.files).map((file) => ({
-            url: URL.createObjectURL(file),
-            type: file.type,
-            name: file.name,
-        }));
-        setFiles((prevFiles) => [...prevFiles, ...newFiles]);
-
-
-        const file = event.target.files[0];
-        if (file) {
-            const formData = new FormData();
-            formData.append('file', file);
-            const response = await dispatch(uploadFileAsync(formData));
-            const newFileUrls = response.payload.presignedUrl;
-            setUploadedFileUrls((prevUrls) => [...prevUrls, newFileUrls]);
+      const newFiles = Array.from(event.target.files).map((file) => ({
+        url: URL.createObjectURL(file),
+        type: file.type,
+        name: file.name,
+      }));
+      setFiles((prevFiles) => [...prevFiles, ...newFiles]);
+    
+      // Iterate over each file in the event
+      Array.from(event.target.files).forEach(async (file) => {
+        const formData = new FormData();
+        formData.append('file', file);
+        const response = await dispatch(uploadFileAsync(formData));
+        const newFileUrl = response.payload.presignedUrl;
+        let newFileKey, docType;
+        if (file.type.startsWith('image/')) {
+          newFileKey = response.payload.imgKey;
+          docType = 'image';
+        } else {
+          newFileKey = response.payload.fileKey;
+          docType = 'document';
         }
+        setUploadedFileUrls((prevUrls) => [
+          ...prevUrls,
+          { docType, docName: file.name, docKey: newFileKey, docUrl: newFileUrl }
+        ]);
+      });
     };
+    
     const handleDelete = (index) => {
         setFiles((prevFiles) => prevFiles.filter((file, i) => i !== index));
         setUploadedFileUrls((prevUrls) => prevUrls.filter((url, i) => i !== index));
     };
 
-
-    const handleCreateTask = async () => {
-        // const assigne=users?.filter((item)=>item.email===assignees)
-        // console.log(assigne,"assigne")
-        console.log(files, "selected files")
+    const handleCreateTask = async () => {    
         const user = users?.find(user => user.email === assignees);
-        console.log(user, "user")
+    
+        console.log(uploadedFileUrls)
         if (validateFields()) {
-
             const task = {
                 taskName: title,
                 content: description,
                 columnId: status,
                 dueDate: dueDate,
                 priority: priority,
-                assigneeUserID: user,
-                comments: currentComment !== "" ? [{ user: userId, comment: currentComment }] : [],
+                assigneeUserID: user._id,
                 createdBy: userId,
-                attachments: uploadedFileUrls
+                attachments: uploadedFileUrls // Include all uploaded file URLs in the task object
             };
-            setLoading(true)
+    
+            setLoading(true);
             await dispatch(addTaskAsync({ task, id }));
         }
     };
+    
 
     const handleTitleChange = (e) => {
         setTitle(e.target.value);
