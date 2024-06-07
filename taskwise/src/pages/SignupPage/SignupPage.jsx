@@ -121,10 +121,10 @@ const SignupPage = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const loggedInUser = useSelector((state) => state.user.loggedInUser);
+  // const loggedInUser = useSelector((state) => state.user.loggedInUser);
   const signupError = useSelector((state) => state.user.signupError);
   // console.log(signupError?.message);
-  const signupStatus=useSelector((state)=>state.user.signupStatus)
+  const signupStatus = useSelector((state) => state.user.signupStatus);
   const schema = Joi.object({
     username: Joi.string().min(3).required().messages({
       "string.empty": "Username is required",
@@ -207,10 +207,11 @@ const SignupPage = () => {
   }, [signupError]);
 
   useEffect(() => {
-    if (signupStatus==="fulfilled") {
+    if (signupStatus === "fulfilled") {
       navigate("/login");
     }
-    dispatch(resetSignupStatus())
+    dispatch(resetSignupStatus());
+    // eslint-disable-next-line
   }, [signupStatus, navigate]);
 
   const handleLoginClick = () => {
