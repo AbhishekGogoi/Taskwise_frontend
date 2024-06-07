@@ -1,21 +1,22 @@
-import React, { useState } from 'react';
-import { IconButton, Menu, MenuItem } from '@mui/material';
+import React, { useState, useEffect } from 'react';
+import { IconButton, Menu, MenuItem, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Button } from '@mui/material';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
-import { useSelector } from 'react-redux';
-import { moveTaskAsync, deactivateTaskAsync } from "../../features/project/projectSlice";
+import { useSelector, useDispatch } from 'react-redux';
 import { useParams } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { moveTaskAsync, deactivateTaskAsync, resetTaskDeleteStatus } from "../../features/project/projectSlice";
 
 const Dropdown = ({ task, columnId }) => {
   const [anchorEl, setAnchorEl] = useState(null);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
   const open = Boolean(anchorEl);
   const order = useSelector((state) => state?.project?.selectedProject?.order);
   const colIndex = order?.indexOf(columnId);
-  //console.log(colIndex,"colIndex")
   const { id } = useParams();
   const taskId = task._id;
   const dispatch = useDispatch();
-  console.log(id,taskId)
+
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
@@ -24,15 +25,26 @@ const Dropdown = ({ task, columnId }) => {
     setAnchorEl(null);
   };
 
+  const taskDeleteStatus = useSelector((state) => state?.project?.taskDeleteStatus);
+  useEffect(() => {
+    if (taskDeleteStatus === "fulfilled") {
+      toast.success("Task deleted successfully");
+    }
+    if (taskDeleteStatus === "rejected") {
+      toast.error("Task is not deleted");
+    }
+    dispatch(resetTaskDeleteStatus());
+  }, [taskDeleteStatus, dispatch]);
+
   const handleMoveLeft = () => {
     if (colIndex > 0) {
       const sourceColumnId = columnId;
       const destinationColumnId = order[colIndex - 1];
       const data = {
-        "sourceColumnId": sourceColumnId,
-        "destinationColumnId": destinationColumnId
-      }
-      const idObject = { id: id, taskId };
+        sourceColumnId,
+        destinationColumnId
+      };
+      const idObject = { id, taskId };
       dispatch(moveTaskAsync({ data, idObject }));
     }
     handleClose();
@@ -43,22 +55,34 @@ const Dropdown = ({ task, columnId }) => {
       const sourceColumnId = columnId;
       const destinationColumnId = order[colIndex + 1];
       const data = {
-        "sourceColumnId": sourceColumnId,
-        "destinationColumnId": destinationColumnId
-      }
-      const idObject = { id: id, taskId };
+        sourceColumnId,
+        destinationColumnId
+      };
+      const idObject = { id, taskId };
       dispatch(moveTaskAsync({ data, idObject }));
     }
     handleClose();
   };
 
   const handleDelete = () => {
-    const idObject = { "projectId":id, "taskId":taskId };
-    dispatch(deactivateTaskAsync(idObject))
-  }
+    setIsDialogOpen(true);
+  };
+
+  const handleDialogClose = () => {
+    setIsDialogOpen(false);
+    handleClose();
+  };
+
+  const handleConfirmDelete = () => {
+    const idObject = { projectId: id, taskId };
+    dispatch(deactivateTaskAsync(idObject));
+    handleDialogClose();
+    handleClose();
+  };
 
   return (
     <div>
+      <ToastContainer />
       <IconButton
         aria-controls={open ? 'dropdown-menu' : undefined}
         aria-haspopup="true"
@@ -66,7 +90,7 @@ const Dropdown = ({ task, columnId }) => {
         onClick={handleClick}
         variant="outlined"
         color="neutral"
-        size="small" // Set size to small
+        size="small"
       >
         <MoreHorizIcon />
       </IconButton>
@@ -84,6 +108,28 @@ const Dropdown = ({ task, columnId }) => {
         )}
         <MenuItem onClick={handleDelete}>Delete</MenuItem>
       </Menu>
+
+      <Dialog
+        open={isDialogOpen}
+        onClose={handleDialogClose}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">{"Confirm Deletion"}</DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+            Are you sure you want to delete this task?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleDialogClose} color="primary">
+            Cancel
+          </Button>
+          <Button onClick={handleConfirmDelete} color="primary" autoFocus>
+            Confirm
+          </Button>
+        </DialogActions>
+      </Dialog>
     </div>
   );
 };

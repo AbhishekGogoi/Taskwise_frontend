@@ -107,6 +107,9 @@ const projectSlice = createSlice({
         },
         resetColumnorderChangeStatus: (state)=>{
             state.columnorderChangeStatus="idle"
+        },
+        resetTaskDeleteStatus: (state)=>{
+            state.taskDeleteStatus="idle"
         }
     },
     extraReducers: (builder) => {
@@ -239,6 +242,7 @@ export const {
     resetColumnAddStatus,
     resetColumnEditStatus,
     resetColumnorderChangeStatus,
+    resetTaskDeleteStatus
 } = projectSlice.actions;
 
 export default projectSlice.reducer;
