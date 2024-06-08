@@ -4,6 +4,7 @@ import { Box, Paper, Typography, InputBase, Divider, Tabs, Tab, Button } from '@
 import { styled } from '@mui/material/styles';
 import SearchIcon from '@mui/icons-material/Search';
 import AddIcon from '@mui/icons-material/Add';
+import Modal from "@mui/material/Modal";
 import WorkspaceTasks from './WorkspaceTasks';
 import WorkspaceSettings from './WorkspaceSettings';
 import WorkspaceProjectCard from './WorkspaceProjectCard';
@@ -14,6 +15,12 @@ import {
   fetchWorkspaceTasksAsync,
   fetchWorkspaceMembersAsync
 } from '../../features/workspace/workspaceSlice';
+import {
+  resetProjectAddStatus,
+} from "../../features/project/projectSlice";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import NewWorkspaceProjectModel from './Models/NewWorkspaceProjectModel';
 
 const SearchIconWrapper = styled('div')(({ theme }) => ({
   padding: theme.spacing(0, 2),
@@ -71,6 +78,38 @@ function WorkspaceDetails() {
   const projectData = useSelector((state) => state.workspace.selectedProjects);
   const tasksData = useSelector((state) => state.workspace.selectedTasks);
   const membersData = useSelector((state) => state.workspace.selectedMembers);
+  const [isModalOpen, setModalOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [isFilter, setIsFilter] = useState(false);
+
+  const handleSearchChange = (event) => {
+    setSearchQuery(event.target.value);
+    setIsFilter(true);
+  };
+  
+  const filteredProjects = projectData.filter((project) =>
+    project.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  const handleOpenModal = () => {
+    setModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setModalOpen(false);
+  };
+
+  const projectAddStatus = useSelector(
+    (state) => state.project.projectAddStatus
+  );
+
+  useEffect(() => {
+    if (projectAddStatus === "fulfilled") {
+      toast.success("Project created successfully!");
+      dispatch(resetProjectAddStatus());
+    }
+    // eslint-disable-next-line
+  }, [projectAddStatus]);
 
   const [selectedTab, setSelectedTab] = useState(0);
 
@@ -85,6 +124,12 @@ function WorkspaceDetails() {
 
   const handleTabChange = (event, newValue) => {
     setSelectedTab(newValue);
+    setSearchQuery(""); // Clear search input when tab changes
+  };
+
+  const handleProjectCreated = () => {
+    dispatch(fetchWorkspaceProjectsAsync(id));
+    setSelectedTab(0); // Change to "Projects" tab after creating a project
   };
 
   if (!workspace) {
@@ -113,6 +158,7 @@ function WorkspaceDetails() {
           justifyContent: 'space-between',
         }}
       >
+        <ToastContainer />
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
             <img src={workspace.imgUrl} alt="Workspace"
@@ -131,15 +177,19 @@ function WorkspaceDetails() {
             </Box>
           </Box>
           <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', pr: 2, p: 2 }}>
-            <Search sx={{ mb: 1 }}>
-              <SearchIconWrapper>
-                <SearchIcon sx={{ color: 'gray' }} />
-              </SearchIconWrapper>
-              <StyledInputBase
-                placeholder="Search…"
-                inputProps={{ 'aria-label': 'search' }}
-              />
-            </Search>
+            {selectedTab === 0 && (
+              <Search sx={{ mb: 1 }}>
+                <SearchIconWrapper>
+                  <SearchIcon sx={{ color: 'gray' }} />
+                </SearchIconWrapper>
+                <StyledInputBase
+                    placeholder="Search projects…"
+                    inputProps={{ 'aria-label': 'search' }}
+                    value={searchQuery}
+                    onChange={handleSearchChange}
+                  />
+              </Search>
+            )}
           </Box>
         </Box>
         <Divider />
@@ -168,20 +218,25 @@ function WorkspaceDetails() {
             />
           </Tabs>
           <Button
-            variant="contained"
-            size="small"
-            startIcon={<AddIcon />}
-            sx={{ fontSize: '0.70rem', padding: '4px 8px', mr: 2 }}
-          >
-            New Project
-          </Button>
+              variant="contained"
+              startIcon={<AddIcon />}
+              sx={{ fontSize: '0.70rem', padding: '4px 8px', mr: 2 }}
+              onClick={handleOpenModal}
+            >
+              New Project
+            </Button>
         </Box>
       </Paper>
       <CustomBox>
-        {selectedTab === 0 && <WorkspaceProjectCard workspace={workspace} projectData={projectData} membersData={membersData} />}
+        {selectedTab === 0 && <WorkspaceProjectCard workspace={workspace} projectData={filteredProjects} membersData={membersData} isFilter={isFilter} />}
         {selectedTab === 1 && <WorkspaceTasks workspace={workspace} tasksData={tasksData} membersData={membersData} />}
         {selectedTab === 2 && <WorkspaceSettings workspace={workspace} membersData={membersData}/>}
       </CustomBox>
+      <Modal open={isModalOpen} onClose={handleCloseModal}>
+        <Box>
+          <NewWorkspaceProjectModel handleClose={handleCloseModal} workspace={workspace} onProjectCreated={handleProjectCreated} />
+        </Box>
+      </Modal>
     </Box>
   );
 }

@@ -32,7 +32,7 @@ const AddMemberToWorkspaceModal = ({ handleClose, workspaceId }) => {
   const [inputValue, setInputValue] = useState('');
   const [membersError, setMembersError] = useState('');
   const [openAddedMembersModal, setOpenAddedMembersModal] = useState(false);
-  const dispatch = useDispatch(); // Initialize useDispatch hook
+  const dispatch = useDispatch();
   const adminUserId = useSelector((state) => state?.user?.loggedInUser?.user?._id);
 
   const handleAddMember = (event) => {
@@ -40,7 +40,10 @@ const AddMemberToWorkspaceModal = ({ handleClose, workspaceId }) => {
       event.preventDefault();
       const email = inputValue.trim();
       if (email && emailRegex.test(email) && !members.includes(email)) {
-        setMembers([...members, email]);
+        setMembers((prevMembers) => {
+          const newMembers = [...prevMembers, email];
+          return newMembers;
+        });
         setInputValue('');
         setMembersError('');
       } else if (!emailRegex.test(email)) {
@@ -55,9 +58,11 @@ const AddMemberToWorkspaceModal = ({ handleClose, workspaceId }) => {
 
   const handleAddButtonClick = async () => {
     try {
-      // Dispatch the addMemberAsync action creator
+      if (members.length === 0) {
+        console.warn('Please click on enter, after entering the email. No members to add.');
+        return;
+      }
       await dispatch(addMemberAsync({ workspaceId, adminUserId, memberEmails: members }));
-      // Fetch updated members list
       await dispatch(fetchWorkspaceMembersAsync(workspaceId));
       setOpenAddedMembersModal(true);
       handleClose();
@@ -75,7 +80,7 @@ const AddMemberToWorkspaceModal = ({ handleClose, workspaceId }) => {
       <Modal open onClose={handleClose}>
         <Box sx={style}>
           <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-            <Typography id="workspace-title" variant="h5" component="h2" style={{ fontWeight: 550 , fontSize: 20}}>
+            <Typography id="workspace-title" variant="h5" component="h2" style={{ fontWeight: 550, fontSize: 20 }}>
               Add people to my workspace
             </Typography>
             <IconButton onClick={handleClose}>
@@ -130,6 +135,7 @@ const AddMemberToWorkspaceModal = ({ handleClose, workspaceId }) => {
 
 AddMemberToWorkspaceModal.propTypes = {
   handleClose: PropTypes.func.isRequired,
+  workspaceId: PropTypes.string.isRequired,
 };
 
 export default AddMemberToWorkspaceModal;

@@ -7,12 +7,12 @@ import { styled } from '@mui/material/styles';
 import InputBase from '@mui/material/InputBase';
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
-import { Grid } from '@mui/material';
+import Grid from '@mui/material/Grid';
 import WorkspaceCard from './WorkspaceCard';
 import AddIcon from '@mui/icons-material/Add';
 import NewWorkspaceModel from './Models/NewWorkspaceModel';
 import Modal from '@mui/material/Modal';
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch, useSelector } from 'react-redux';
 import { fetchWorkspaceByUserIDAsync } from '../../features/workspace/workspaceSlice';
 import { useNavigate } from 'react-router-dom';
 
@@ -40,7 +40,7 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 const Search = styled('div')(({ theme }) => ({
   position: 'relative',
   borderRadius: theme.shape.borderRadius,
-  backgroundColor: "#f0f0f0",
+  backgroundColor: '#f0f0f0',
   marginLeft: 0,
   width: '200px',
   height: '30px',
@@ -72,38 +72,43 @@ const CustomBox = styled(Box)(({ theme }) => ({
   'scrollbar-color': '#888 #e0e0e0',
 }));
 
-// Styled message for no workspaces
-const NoWorkspacesMessage = styled("div")(({ theme }) => ({
-  display: "flex",
-  justifyContent: "center",
-  alignItems: "center",
-  height: "100%",
-  width: "100%",
-  fontSize: "1.5rem",
+const NoWorkspacesMessage = styled('div')(({ theme }) => ({
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'center',
+  height: '100%',
+  width: '100%',
+  fontSize: '1.5rem',
   color: theme.palette.text.secondary,
 }));
 
 function WorkspacePage() {
   const [openModal, setOpenModal] = useState(false);
-  const handleNewWorkspaceClick = () => {
-    setOpenModal(true);
-  };
-
-  const handleCloseModal = () => {
-    setOpenModal(false);
-  };
+  const handleNewWorkspaceClick = () => setOpenModal(true);
+  const handleCloseModal = () => setOpenModal(false);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const WorkspaceData = useSelector((state) => state.workspace.workspaces);
   const userId = useSelector((state) => state?.user?.loggedInUser?.user?._id);
+  const [searchQuery, setSearchQuery] = useState('');
+
+  const handleSearchChange = (event) => setSearchQuery(event.target.value);
+
+  const filteredWorkspaces = WorkspaceData.filter((workspace) =>
+    workspace.name && workspace.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   useEffect(() => {
-    dispatch(fetchWorkspaceByUserIDAsync(userId));
+    if (userId) {
+      dispatch(fetchWorkspaceByUserIDAsync(userId));
+    }
   }, [dispatch, userId]);
 
   const handleWorkspaceCreated = () => {
-    dispatch(fetchWorkspaceByUserIDAsync(userId));
+    if (userId) {
+      dispatch(fetchWorkspaceByUserIDAsync(userId));
+    }
   };
 
   return (
@@ -129,38 +134,45 @@ function WorkspacePage() {
           <Typography variant="body1" component="div" sx={{ p: 2, fontWeight: 'bold' }}>
             Workspaces
           </Typography>
-          <Stack spacing={2} direction="row" sx={{ pr: 2}}>
-            <Button 
-              variant="contained" 
-              size="small" 
+          <Stack spacing={2} direction="row" sx={{ pr: 2 }}>
+            <Button
+              variant="contained"
+              size="small"
               startIcon={<AddIcon />}
               onClick={handleNewWorkspaceClick}
-              sx={{ fontSize: '0.70rem', padding: '4px 8px' }}>New Workspace</Button>
+              sx={{ fontSize: '0.70rem', padding: '4px 8px' }}
+            >
+              New Workspace
+            </Button>
           </Stack>
         </Box>
-        <Box sx={{ width: '300px', height: '30px', paddingLeft: "15px" }}>
+        <Box sx={{ width: '300px', height: '30px', paddingLeft: '15px' }}>
           <Search>
             <SearchIconWrapper>
-              <SearchIcon sx={{ color: "gray" }} />
+              <SearchIcon sx={{ color: 'gray' }} />
             </SearchIconWrapper>
             <StyledInputBase
-              placeholder="Search…"
+              placeholder="Search..."
               inputProps={{ 'aria-label': 'search' }}
+              value={searchQuery}
+              onChange={handleSearchChange}
             />
           </Search>
         </Box>
       </Paper>
       <CustomBox>
-        {WorkspaceData.length > 0 ? (
+        {filteredWorkspaces.length > 0 ? (
           <Grid container spacing={3} alignItems="center">
-            {WorkspaceData.map((workspace) => (
+            {filteredWorkspaces.map((workspace) => (
               <Grid item key={workspace.id} xs={6} sm={6} md={3} lg={3} xl={2}>
                 <WorkspaceCard workspace={workspace} onClick={() => navigate(`/workspaces/${workspace.id}`)} />
               </Grid>
             ))}
           </Grid>
         ) : (
-          <NoWorkspacesMessage>Start by adding a new workspace.</NoWorkspacesMessage>
+          <NoWorkspacesMessage>
+            {WorkspaceData.length > 0 ? "No matching workspaces found" : "Start by adding a new Workspace"}
+          </NoWorkspacesMessage>
         )}
       </CustomBox>
       <Modal
