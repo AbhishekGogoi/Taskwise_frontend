@@ -16,7 +16,7 @@ import { styled } from "@mui/system";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Joi from "joi";
-import googleiconnew from "../../assets/googleiconnew.png";
+// import googleiconnew from "../../assets/googleiconnew.png";
 import TaskWiseLogo from "../../assets/TaskWiseLogo.png";
 import { getImageUrlAsync } from "../../features/workspace/workspaceSlice";
 
@@ -37,7 +37,7 @@ const StyledForm = styled("form")(({ theme }) => ({
   paddingLeft: "4rem",
   paddingRight: "4rem",
   paddingBottom: "1.5rem",
-  paddingTop: "4rem",
+  paddingTop: "2rem", //change this while uncommenting the google button
   border: "1px solid #e0e0e0",
   borderRadius: "40px",
 
@@ -55,16 +55,16 @@ const StyledForm = styled("form")(({ theme }) => ({
   },
 }));
 
-const StyledGoogleButton = styled(Button)({
-  height: 50, // Increase button height
-  fontSize: "1rem",
-  backgroundColor: "#ffffff",
-  color: "#000000",
-  "&:hover": {
-    backgroundColor: "",
-  },
-  textTransform: "none", // Remove uppercase transformation
-});
+// const StyledGoogleButton = styled(Button)({
+//   height: 50, // Increase button height
+//   fontSize: "1rem",
+//   backgroundColor: "#ffffff",
+//   color: "#000000",
+//   "&:hover": {
+//     backgroundColor: "",
+//   },
+//   textTransform: "none", // Remove uppercase transformation
+// });
 
 const StyledTypography = styled(Typography)({
   fontFamily: "Manrope, sans-serif", // Example font (adjust as needed)
@@ -78,21 +78,21 @@ const StyledTitleContainer = styled(Box)({
   textAlign: "center", // Center align the title
 });
 
-const StyledDivider = styled(Typography)({
-  display: "flex",
-  alignItems: "center",
-  textAlign: "center",
-  color: "#808080", // Light gray color
-  fontSize: "20px", // Adjust font size as needed
-  fontWeight: 700, // Lighter font weight
-  "&::before, &::after": {
-    // Create lines on both sides
-    content: '""',
-    flex: 1,
-    borderBottom: "1px solid #e0e0e0", // Use a light gray border
-    margin: "3px", // Add spacing between lines and text
-  },
-});
+// const StyledDivider = styled(Typography)({
+//   display: "flex",
+//   alignItems: "center",
+//   textAlign: "center",
+//   color: "#808080", // Light gray color
+//   fontSize: "20px", // Adjust font size as needed
+//   fontWeight: 700, // Lighter font weight
+//   "&::before, &::after": {
+//     // Create lines on both sides
+//     content: '""',
+//     flex: 1,
+//     borderBottom: "1px solid #e0e0e0", // Use a light gray border
+//     margin: "3px", // Add spacing between lines and text
+//   },
+// });
 
 const StyledSignUpLink = styled(Link)({
   color: "#0062ff", // Blue link color
@@ -338,9 +338,9 @@ const SignupPage = () => {
           Sign Up
         </StyledButton>
 
-        <StyledDivider sx={{ margin: "1rem 0" }}>or</StyledDivider>
+        {/* <StyledDivider sx={{ margin: "1rem 0" }}>or</StyledDivider> */}
 
-        <StyledGoogleButton
+        {/* <StyledGoogleButton
           fullWidth
           variant="contained"
           startIcon={
@@ -352,7 +352,7 @@ const SignupPage = () => {
           }
         >
           Sign in with Google
-        </StyledGoogleButton>
+        </StyledGoogleButton> */}
       </StyledForm>
       <Box
         sx={{
