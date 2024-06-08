@@ -1,7 +1,7 @@
 import React, { useState, useCallback, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
-import { Box, Typography, Paper, Button } from "@mui/material";
-import { styled } from "@mui/material/styles";
+import { Box, Typography, Paper, Button, useMediaQuery } from "@mui/material";
+import { styled, useTheme } from "@mui/material/styles";
 import { AgGridReact } from "@ag-grid-community/react"; // React Grid Logic
 import "@ag-grid-community/styles/ag-grid.css"; // Core CSS
 import "@ag-grid-community/styles/ag-theme-quartz.css"; // Theme
@@ -20,16 +20,25 @@ const StyledAgGridContainer = styled("div")({
   paddingTop: "3rem",
 });
 
-const ButtonContainer = styled("div")({
+const ButtonContainer = styled("div")(({ theme }) => ({
   display: "flex",
   justifyContent: "space-between",
-  width: "99%",
-  padding: "1rem",
+  padding: "6px",
   paddingTop: "5rem", // Adjust to add space above the buttons
   alignItems: "center",
-});
+  [theme.breakpoints.down("sm")]: {
+    flexDirection: "column", // Stack buttons vertically on small screens
+    width: "100%", // Ensure full width for small screens
+    gap: "1rem", // Add gap between buttons on small screens
+  },
+  [theme.breakpoints.up("sm")]: {
+    flexDirection: "row", // Row layout on medium and large screens
+    width: "auto", // Default width for medium and large screens
+    gap: "0", // No gap between buttons on medium and large screens
+  },
+}));
 
-const GradientButton = styled(Button)({
+const GradientButton = styled(Button)(({ theme }) => ({
   background: "linear-gradient(90deg, #3EC8FE 0%, #8A4EFF 100%)",
   color: "white",
   borderRadius: "20px", // Make the corners rounded
@@ -37,9 +46,15 @@ const GradientButton = styled(Button)({
   "&:hover": {
     background: "linear-gradient(90deg, #3EC8FE 0%, #8A4EFF 100%)", // Ensure the gradient stays the same on hover
   },
-});
+  [theme.breakpoints.down("sm")]: {
+    width: "100%", // Full width on small screens
+  },
+  [theme.breakpoints.up("sm")]: {
+    width: "auto", // Auto width on medium and large screens
+  },
+}));
 
-const BackButton = styled(Button)({
+const BackButton = styled(Button)(({ theme }) => ({
   backgroundColor: "#e0e0e0", // Light gray color
   color: "black",
   borderRadius: "20px", // Rounded corners
@@ -48,8 +63,15 @@ const BackButton = styled(Button)({
   "&:hover": {
     backgroundColor: "#d5d5d5", // Slightly darker on hover
   },
-});
-
+  [theme.breakpoints.down("sm")]: {
+    width: "100%", // Full width on small screens
+    minWidth: "auto", // Remove minimum width on small screens
+  },
+  [theme.breakpoints.up("sm")]: {
+    width: "auto", // Auto width on medium and large screens
+    minWidth: "200px", // Default minimum width on medium and large screens
+  },
+}));
 // const Toolbar = styled(Box)({
 //   display: "flex",
 //   justifyContent: "space-between",
@@ -60,6 +82,11 @@ const BackButton = styled(Button)({
 // });
 
 const AIResultPage = () => {
+  const theme = useTheme();
+  const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
+  const isMediumScreen = useMediaQuery(theme.breakpoints.between("sm", "md"));
+  const isLargeScreen = useMediaQuery(theme.breakpoints.up("md"));
+
   const navigate = useNavigate();
 
   const gridStyle = useMemo(() => ({ height: "100%", width: "100%" }), []);
@@ -143,12 +170,13 @@ const AIResultPage = () => {
       <Paper
         elevation={3}
         sx={{
-          height: 50, // Adjust height to fit both texts
+          height: isSmallScreen ? "auto" : 50, // Adjust height for small screens
           display: "flex",
           justifyContent: "flex-start",
           alignItems: "flex-start",
           flexDirection: "column", // Change flex direction to column
-          padding: 2, // Add padding for better spacing
+          padding: isSmallScreen ? 1 : 2, // Add padding for better spacing
+          width: isSmallScreen ? "100%" : "auto", // Adjust width for small screens
         }}
       >
         <Typography
