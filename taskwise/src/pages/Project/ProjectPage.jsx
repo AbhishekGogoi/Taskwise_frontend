@@ -160,7 +160,7 @@ function ProjectPage() {
   const navigate = useNavigate();
 
   const handleButtonClick = () => {
-    navigate("/createai");
+    navigate("/ai-create-project");
   };
 
   //console.log(userId)
