@@ -50,16 +50,17 @@ const AIInputPage = () => {
 
   const [prompt, setPrompt] = useState("");
 
-  const handleButtonClick = () => {
+  const handleButtonClick = async () => {
     const data = {
       prompt: prompt,
     };
-    dispatch(createProjectAIASync(data));
+    const res= await dispatch(createProjectAIASync(data));
+    console.log(res)
   };
 
   return (
     <>
-      <Paper
+      {/* <Paper
         elevation={3}
         sx={{
           width: "100%",
@@ -76,7 +77,7 @@ const AIInputPage = () => {
         >
           Workspace A
         </Typography>
-      </Paper>
+      </Paper> */}
       <Container>
         <WhiteBox>
           <FormBox>
