@@ -110,8 +110,8 @@ export const addMemberAsync = createAsyncThunk(
 
 export const updateWorkspaceAsync = createAsyncThunk(
   "workspaces/updateWorkspace",
-  async (workspaceId, name, imgUrl, imgKey) => {
-    const response = await updateWorkspace(workspaceId, name, imgUrl, imgKey);
+  async ({ id, updatedWorkspace }) => {
+    const response = await updateWorkspace({id, updatedWorkspace});
     return response.data;
   }
 );
