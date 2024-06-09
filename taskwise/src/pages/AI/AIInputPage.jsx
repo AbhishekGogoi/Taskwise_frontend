@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Box, TextField, Button, Typography, FormControl, InputLabel, Select, MenuItem } from "@mui/material";
+import { Box, TextField, Button, Typography, FormControl, InputLabel, Select, MenuItem,FormHelperText } from "@mui/material";
 import { styled } from "@mui/system";
 import { useDispatch, useSelector } from "react-redux";
 import { createProjectAIASync } from "../../features/AI/projectAISlice";
@@ -36,33 +36,67 @@ const AIInputPage = () => {
   const [workspace, setWorkspace] = useState('');
   const [projectName, setProjectName] = useState(null);
   const [description, setDescription] = useState(null);
+  const [errors, setErrors] = useState({});
+
+  const validate = () => {
+    let tempErrors = {};
+    tempErrors.projectName = projectName ? "" : "Project Name is required";
+    tempErrors.description = description ? "" : "Project Description is required";
+    tempErrors.workspace = workspace ? "" : "Workspace assignment is required";
+    setErrors(tempErrors);
+    return Object.values(tempErrors).every(x => x === "");
+  };
+
   const handleButtonClick = async () => {
-    const data = {
-      prompt: `I am building a "${projectName}" project. Come up with
-      set of development tasks  needed to build this project.
-       give the result in json format example as as below.{
-       project : ${projectName},
-       description : ${description},
-       tasks: [
-         {
-           title : "Setup Repo",
-           description : "setup both fronttend and backed repo "
-         },
-         {
-           title : "Config Database",
-           description : "setup Database Mysql "
-         }
-       ] create minimum 15 task`,
-    };
-    const res = await dispatch(createProjectAIASync(data));
-    console.log(res)
+    if (validate()) {
+      const data = {
+        prompt: `I am building a "${projectName}" project. Come up with
+        set of development tasks  needed to build this project.
+         give the result in json format example as as below.{
+         project : ${projectName},
+         description : ${description},
+         tasks: [
+           {
+             title : "Setup Repo",
+             description : "setup both fronttend and backed repo "
+           },
+           {
+             title : "Config Database",
+             description : "setup Database Mysql "
+           }
+         ] create minimum 15 task`,
+      };
+      const res = await dispatch(createProjectAIASync(data));
+      console.log(res)
+    }
+
   };
   const handleWorkspaceChange = (event) => {
-    setWorkspace(event.target.value);
-    if (event.target.value) {
-      //setErrors((prevErrors) => ({ ...prevErrors, workspace: null }));
-    }
+    const { value } = event.target;
+    setWorkspace(value);
+    setErrors((prevErrors) => ({
+      ...prevErrors,
+      workspace: value ? "" : "Workspace assignment is required",
+    }));
   };
+  const handleProjectNameChange = (event) => {
+    const { value } = event.target;
+    setProjectName(value);
+    setErrors((prevErrors) => ({
+      ...prevErrors,
+      projectName: value ? "" : "Project Name is required",
+    }));
+  };
+
+  const handleDescriptionChange = (event) => {
+    const { value } = event.target;
+    setDescription(value);
+    setErrors((prevErrors) => ({
+      ...prevErrors,
+      description: value ? "" : "Project Description is required",
+    }));
+  };
+
   return (
     <>
       <Container >
@@ -95,8 +129,10 @@ const AIInputPage = () => {
                 label="Enter Project Name"
                 value={projectName}
                 variant="outlined"
-                onChange={(e) => setProjectName(e.target.value)}
+                onChange={handleProjectNameChange}
                 fullWidth
+                error={!!errors.projectName}
+                helperText={errors.projectName}
                 sx={{ marginBottom: "1.6rem" }}
               />
               <TextField
@@ -106,13 +142,16 @@ const AIInputPage = () => {
                 rows={4}
                 fullWidth
                 value={description}
-                onChange={(e) => setDescription(e.target.value)}
+                error={!!errors.description}
+                helperText={errors.description}
+                onChange={handleDescriptionChange}
                 sx={{ marginBottom: "1.6rem" }}
               />
               <FormControl
                 fullWidth
                 margin="normal"
                 style={{ marginBottom: "40px" }}
+                error={!!errors.workspace}
               >
                 <InputLabel id="assign-workspace-label">
                   Assign Workspace
@@ -133,6 +172,7 @@ const AIInputPage = () => {
                     </MenuItem>
                   ))}
                 </Select>
+                {!!errors.workspace && <FormHelperText>{errors.workspace}</FormHelperText>}
               </FormControl>
               <Button
                 variant="contained"
