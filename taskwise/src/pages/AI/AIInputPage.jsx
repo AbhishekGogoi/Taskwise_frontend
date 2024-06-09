@@ -33,27 +33,26 @@ const WhiteBox = styled(Box)(({ theme }) => ({
 const AIInputPage = () => {
   const dispatch = useDispatch();
   const workspaces = useSelector((state) => state?.workspace?.workspaces);
-  const [prompt, setPrompt] = useState("");
   const [workspace, setWorkspace] = useState('');
   const [projectName, setProjectName] = useState(null);
   const [description, setDescription] = useState(null);
   const handleButtonClick = async () => {
-    setPrompt(`I am building a "${projectName}" project. Come up with
-     set of development tasks  needed to build this project{
-      project : ${projectName},
-      description : ${description},
-      tasks: [
-        {
-          title : "Setup Repo",
-          description : "setup both fronttend and backed repo "
-        },
-        {
-          title : "Config Database",
-          description : "setup Database Mysql "
-        }
-      ] create minimum 15 task`)
     const data = {
-      prompt: prompt,
+      prompt: `I am building a "${projectName}" project. Come up with
+      set of development tasks  needed to build this project.
+       give the result in json format example as as below.{
+       project : ${projectName},
+       description : ${description},
+       tasks: [
+         {
+           title : "Setup Repo",
+           description : "setup both fronttend and backed repo "
+         },
+         {
+           title : "Config Database",
+           description : "setup Database Mysql "
+         }
+       ] create minimum 15 task`,
     };
     const res = await dispatch(createProjectAIASync(data));
     console.log(res)
