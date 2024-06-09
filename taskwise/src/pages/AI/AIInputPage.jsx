@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Box, TextField, Button, Typography, FormControl, InputLabel, Select, MenuItem } from "@mui/material";
 import { styled } from "@mui/system";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { createProjectAIASync } from "../../features/AI/projectAISlice";
 import IllustrationImage from "../../assets/IllustrationImage.jpeg"
 const Container = styled(Box)(({ theme }) => ({
@@ -32,18 +32,38 @@ const WhiteBox = styled(Box)(({ theme }) => ({
 
 const AIInputPage = () => {
   const dispatch = useDispatch();
-
+  const workspaces = useSelector((state) => state?.workspace?.workspaces);
   const [prompt, setPrompt] = useState("");
+  const [workspace, setWorkspace] = useState('');
   const [projectName, setProjectName] = useState(null);
   const [description, setDescription] = useState(null);
   const handleButtonClick = async () => {
+    setPrompt(`I am building a "${projectName}" project. Come up with
+     set of development tasks  needed to build this project{
+      project : ${projectName},
+      description : ${description},
+      tasks: [
+        {
+          title : "Setup Repo",
+          description : "setup both fronttend and backed repo "
+        },
+        {
+          title : "Config Database",
+          description : "setup Database Mysql "
+        }
+      ] create minimum 15 task`)
     const data = {
       prompt: prompt,
     };
     const res = await dispatch(createProjectAIASync(data));
     console.log(res)
   };
-
+  const handleWorkspaceChange = (event) => {
+    setWorkspace(event.target.value);
+    if (event.target.value) {
+      //setErrors((prevErrors) => ({ ...prevErrors, workspace: null }));
+    }
+  };
   return (
     <>
       <Container >
@@ -96,27 +116,24 @@ const AIInputPage = () => {
                 style={{ marginBottom: "40px" }}
               >
                 <InputLabel id="assign-workspace-label">
-                  Enter Team Size
+                  Assign Workspace
                 </InputLabel>
                 <Select
                   labelId="assign-workspace-label"
                   id="assign-workspace"
                   label="Assign Workspace"
+                  value={workspace}
+                  onChange={handleWorkspaceChange}
                 >
-
-                  <MenuItem >
-                    Option 1
+                  <MenuItem value="">
+                    <em>None</em>
                   </MenuItem>
-                  <MenuItem >
-                    Option 2
-                  </MenuItem>
-                  <MenuItem >
-                    Option 3
-                  </MenuItem>
+                  {workspaces.map((workspace) => (
+                    <MenuItem key={workspace.id} value={workspace.id}>
+                      {workspace.name}
+                    </MenuItem>
+                  ))}
                 </Select>
-                {/* {!!errors.workspace && (
-                  <Typography color="error">{errors.workspace}</Typography>
-                )} */}
               </FormControl>
               <Button
                 variant="contained"
