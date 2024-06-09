@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
-import { Box, Typography, Paper, Button, useMediaQuery } from "@mui/material";
+import { Typography, Paper, Button, useMediaQuery } from "@mui/material";
 import { styled, useTheme } from "@mui/material/styles";
 import { AgGridReact } from "@ag-grid-community/react"; // React Grid Logic
 import "@ag-grid-community/styles/ag-grid.css"; // Core CSS
