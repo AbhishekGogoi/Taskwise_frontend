@@ -35,12 +35,8 @@ const NoProjectsMessage = styled("div")(({ theme }) => ({
   color: theme.palette.text.secondary,
 }));
 
-function WorkspaceProjectCard({ workspace, projectData, membersData }) {
+function WorkspaceProjectCard({ workspace, projectData, membersData, isFilter }) {
   const navigate = useNavigate();
-  if (!Array.isArray(projectData)) {
-    console.error("projectData is not an array", projectData);
-    return null;
-  }
 
   return (
     <Grid container spacing={3}>
@@ -85,7 +81,17 @@ function WorkspaceProjectCard({ workspace, projectData, membersData }) {
               ))}
             </Grid>
           ) : (
-            <NoProjectsMessage>Start by adding a new project.</NoProjectsMessage>
+            <NoProjectsMessage>
+                {isFilter && projectData.length === 0 ? (
+                  <NoProjectsMessage>
+                    No matching projects found
+                  </NoProjectsMessage>
+                ) : (
+                  <NoProjectsMessage>
+                    Start by adding a new project
+                  </NoProjectsMessage>
+                )}
+            </NoProjectsMessage>
           )}
         </CustomBox>
       </Grid>
@@ -102,6 +108,8 @@ WorkspaceProjectCard.propTypes = {
     name: PropTypes.string.isRequired,
     imgUrl: PropTypes.string,
   })).isRequired,
+  membersData: PropTypes.array.isRequired,
+  workspace: PropTypes.object.isRequired,
 };
 
 export default WorkspaceProjectCard;
