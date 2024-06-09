@@ -101,12 +101,7 @@ const AIInputPage = () => {
                 onChange={(e) => setPrompt(e.target.value)}
                 sx={{ marginBottom: "1.6rem" }}
               />
-              <TextField
-                label="Enter Team Size"
-                variant="outlined"
-                fullWidth
-                sx={{ marginBottom: "1.6rem" }}
-              />
+              
               <Button
                 variant="contained"
                 sx={{
