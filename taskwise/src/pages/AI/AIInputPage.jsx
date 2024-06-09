@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Box, TextField, Button, Typography } from "@mui/material";
+import { Box, TextField, Button, Typography, FormControl, InputLabel, Select, MenuItem } from "@mui/material";
 import { styled } from "@mui/system";
 import { useDispatch } from "react-redux";
 import { createProjectAIASync } from "../../features/AI/projectAISlice";
@@ -29,26 +29,13 @@ const WhiteBox = styled(Box)(({ theme }) => ({
   paddingTop: "4rem",
 }));
 
-const FormBox = styled(Box)(({ theme }) => ({
-  display: "flex",
-  flexDirection: "column",
-  gap: theme.spacing(8),
-  width: "30%",
-  paddingLeft: "3rem",
-}));
-
-const ImageBox = styled(Box)(({ theme }) => ({
-  display: "flex",
-  justifyContent: "center",
-  alignItems: "center",
-  width: "50%",
-}));
 
 const AIInputPage = () => {
   const dispatch = useDispatch();
 
   const [prompt, setPrompt] = useState("");
-
+  const [projectName, setProjectName] = useState(null);
+  const [description, setDescription] = useState(null);
   const handleButtonClick = async () => {
     const data = {
       prompt: prompt,
@@ -87,7 +74,9 @@ const AIInputPage = () => {
               </Typography>
               <TextField
                 label="Enter Project Name"
+                value={projectName}
                 variant="outlined"
+                onChange={(e) => setProjectName(e.target.value)}
                 fullWidth
                 sx={{ marginBottom: "1.6rem" }}
               />
@@ -97,11 +86,38 @@ const AIInputPage = () => {
                 multiline
                 rows={4}
                 fullWidth
-                value={prompt}
-                onChange={(e) => setPrompt(e.target.value)}
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
                 sx={{ marginBottom: "1.6rem" }}
               />
-              
+              <FormControl
+                fullWidth
+                margin="normal"
+                style={{ marginBottom: "40px" }}
+              >
+                <InputLabel id="assign-workspace-label">
+                  Enter Team Size
+                </InputLabel>
+                <Select
+                  labelId="assign-workspace-label"
+                  id="assign-workspace"
+                  label="Assign Workspace"
+                >
+
+                  <MenuItem >
+                    Option 1
+                  </MenuItem>
+                  <MenuItem >
+                    Option 2
+                  </MenuItem>
+                  <MenuItem >
+                    Option 3
+                  </MenuItem>
+                </Select>
+                {/* {!!errors.workspace && (
+                  <Typography color="error">{errors.workspace}</Typography>
+                )} */}
+              </FormControl>
               <Button
                 variant="contained"
                 sx={{
