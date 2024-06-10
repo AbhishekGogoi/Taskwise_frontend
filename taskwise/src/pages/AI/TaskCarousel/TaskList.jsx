@@ -3,10 +3,11 @@ import Typography from '@mui/material/Typography';
 import { styled } from '@mui/material/styles';
 import TaskCard from './TaskCard';
 import { BsChevronLeft, BsChevronRight } from 'react-icons/bs'; 
-import { data } from './data';
 import './TaskList.css';
 import { Button, Paper } from '@mui/material';
 import Box from '@mui/material/Box';
+import { useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const CustomBox = styled(Box)(({ theme }) => ({
   width: '100%',
@@ -29,9 +30,20 @@ const CustomBox = styled(Box)(({ theme }) => ({
 }));
 
 function TaskList() {
+  const location = useLocation();
+  const taskList = location.state;
   const [currentPage, setCurrentPage] = useState(0);
-  const [tasks, setTasks] = useState([...data]);
-  const tasksPerRow = 4;
+  const [tasks, setTasks] = useState([]);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (taskList) {
+      setTasks(taskList);
+      console.log("tasks: ", taskList)
+    }
+  }, [taskList]);
+
+  const tasksPerRow = 3;
   const rowsPerPage = 1;
   const tasksPerPage = tasksPerRow * rowsPerPage;
   const totalPages = Math.ceil(tasks.length / tasksPerPage);
@@ -62,6 +74,14 @@ function TaskList() {
   const startIndex = currentPage * tasksPerPage;
   const endIndex = startIndex + tasksPerPage;
   const tasksToDisplay = tasks.slice(startIndex, endIndex);
+
+  const handleBackButtonClick = async () => {
+    navigate(`/createai`);
+  };
+
+  const handleCreateProjectButtonClick = async () => {
+    //
+  };
 
   return (
     <Box
@@ -96,11 +116,12 @@ function TaskList() {
         sx={{
           width: '100%',
           height: "auto",
+          pt: 4,
         }}
       >
         <CustomBox>
           <Box className="pagination">
-            <Button className="btn-link" onClick={handlePrevPage} disabled={currentPage === 0}>
+            <Button className="btn-link" onClick={handlePrevPage} disabled={currentPage === 0 || tasks.length === 0}>
               <BsChevronLeft className="arrow-icon" />
             </Button>
             <div className="task-list">
@@ -116,7 +137,7 @@ function TaskList() {
                 )}
               </div>
             </div>
-            <Button className="btn-link" onClick={handleNextPage} disabled={currentPage === totalPages - 1}>
+            <Button className="btn-link" onClick={handleNextPage} disabled={currentPage === totalPages - 1 || tasks.length === 0}>
               <BsChevronRight className="arrow-icon" />
             </Button>
           </Box>
@@ -134,6 +155,7 @@ function TaskList() {
             backgroundColor: '#f0f0f0',
             color: 'black',
           }}
+          onClick={handleBackButtonClick}
         >
           <BsChevronLeft sx={{ fontSize: '24px', marginRight: '20px' }} /> 
           <Typography sx={{ pl: '10px', }}>Back</Typography> 
@@ -147,6 +169,7 @@ function TaskList() {
             right: '0',
             borderRadius: '16px'
           }}
+          onClick={handleCreateProjectButtonClick}
         >
           Create Project
         </Button>

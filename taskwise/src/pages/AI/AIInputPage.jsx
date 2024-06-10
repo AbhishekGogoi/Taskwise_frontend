@@ -1,9 +1,11 @@
 import React, { useState } from "react";
-import { Box, TextField, Button, Typography, FormControl, InputLabel, Select, MenuItem,FormHelperText } from "@mui/material";
+import { Box, TextField, Button, Typography, FormControl, InputLabel, Select, MenuItem, FormHelperText } from "@mui/material";
 import { styled } from "@mui/system";
 import { useDispatch, useSelector } from "react-redux";
 import { createProjectAIASync } from "../../features/AI/projectAISlice";
-import IllustrationImage from "../../assets/IllustrationImage.jpeg"
+import IllustrationImage from "../../assets/IllustrationImage.jpeg";
+import { useNavigate } from "react-router-dom";
+
 const Container = styled(Box)(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
@@ -12,7 +14,6 @@ const Container = styled(Box)(({ theme }) => ({
     margin: theme.spacing(1),
     width: "98%",
   },
-  paddingTop: "2rem",
 }));
 
 const WhiteBox = styled(Box)(({ theme }) => ({
@@ -37,6 +38,7 @@ const AIInputPage = () => {
   const [projectName, setProjectName] = useState(null);
   const [description, setDescription] = useState(null);
   const [errors, setErrors] = useState({});
+  const navigate = useNavigate();
 
   const validate = () => {
     let tempErrors = {};
@@ -50,27 +52,34 @@ const AIInputPage = () => {
   const handleButtonClick = async () => {
     if (validate()) {
       const data = {
-        prompt: `I am building a "${projectName}" project. Come up with
-        set of development tasks  needed to build this project.
-         give the result in json format example as as below.{
-         project : ${projectName},
-         description : ${description},
-         tasks: [
-           {
-             title : "Setup Repo",
-             description : "setup both fronttend and backed repo "
-           },
-           {
-             title : "Config Database",
-             description : "setup Database Mysql "
-           }
-         ] create minimum 15 task`,
+        prompt: `I am building a "${projectName}" project. Come up with a set of development tasks needed to build this project. Give the result in JSON format example as below.
+        {
+          "project": "${projectName}",
+          "description": "${description}",
+          "tasks": [
+            {
+              "title": "Setup Repo",
+              "description": "setup both frontend and backend repo"
+            },
+            {
+              "title": "Config Database",
+              "description": "setup Database MySQL"
+            }
+            // Add more tasks as needed
+          ]
+        }`,
       };
-      const res = await dispatch(createProjectAIASync(data));
-      console.log(res)
+  
+      try {
+        const res = await dispatch(createProjectAIASync(data));
+        console.log(res);
+        navigate(`/task-carousel`, { state: res.payload.data.tasks }); // Pass data here
+      } catch (error) {
+        console.error('Error fetching task list:', error);
+      }
     }
-
   };
+  
   const handleWorkspaceChange = (event) => {
     const { value } = event.target;
     setWorkspace(value);
@@ -110,7 +119,7 @@ const AIInputPage = () => {
           >
             <Box sx={{
               flex: 1,
-              padding: '2rem',
+              pl: '2rem',
               order: { xs: 2, md: 1 },
             }}>
               <Typography
@@ -118,7 +127,7 @@ const AIInputPage = () => {
                 component="h3"
                 gutterBottom
                 sx={{
-                  paddingLeft: "6rem",
+                  paddingLeft: "5rem",
                   color: "#3780ED",
                   mb: 4
                 }}

@@ -1,9 +1,9 @@
 .task-card {
   border: 2px solid transparent; /* Add a thick transparent border */
-  border-image: linear-gradient(120deg, #00c6ff, #8e71df) 1; /* Apply gradient as border */
+  border-color: #00c6ff; /* Apply gradient as border */
   border-radius: 5; /* Add border radius for rounded corners */
   margin-bottom: 16px; /* Add spacing between cards */
-  width: 300px; /* Fix the card width */
+  width: 350px; /* Fix the card width */
   height: 200px; /* Fix the card height */
   display: flex;
   flex-direction: column;

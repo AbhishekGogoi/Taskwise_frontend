@@ -8,12 +8,12 @@ import './TaskCard.css';
 const TaskCard = ({ task, onClose, onEdit }) => {
   return (
     <Card className="task-card" sx={{
-        width: 200,
+        width: 280,
         borderRadius: 2,
       }}>
       <div className="task-header">
         <IconButton className="robot-icon">
-          <FaRobot size={20} style={{
+          <FaRobot size={15} style={{
             backgroundColor: "#00c6ff",
             backgroundImage: "linear-gradient(120deg, #00c6ff, #8e71df)",
             color: "#fff",
@@ -25,7 +25,7 @@ const TaskCard = ({ task, onClose, onEdit }) => {
         <div className="task-actions">
           <Tooltip title="Edit">
             <IconButton className="edit-icon" onClick={onEdit}>
-              <EditIcon size={15} style={{
+              <EditIcon size={10} style={{
                 color: "#00c6ff",
                 fontWeight: "bold",
                 borderRadius: "10px",
@@ -34,7 +34,7 @@ const TaskCard = ({ task, onClose, onEdit }) => {
           </Tooltip>
           <Tooltip title="Remove">
             <IconButton className="close-icon" onClick={onClose}>
-              <CloseIcon size={15} style={{
+              <CloseIcon size={10} style={{
                 color: "#00c6ff",
                 fontWeight: "bold",
                 borderRadius: "10px",
