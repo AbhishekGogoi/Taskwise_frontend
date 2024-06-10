@@ -71,7 +71,6 @@ const AIInputPage = () => {
   
       try {
         const res = await dispatch(createProjectAIASync(data));
-        console.log(res);
         navigate(`/task-carousel`); // Pass data here
       } catch (error) {
         console.error('Error fetching task list:', error);

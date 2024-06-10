@@ -7,6 +7,8 @@ import './TaskList.css';
 import { Button, Paper } from '@mui/material';
 import Box from '@mui/material/Box';
 import { useNavigate } from "react-router-dom";
+import { useSelector } from 'react-redux';
+
 import { data } from './data';
 
 const CustomBox = styled(Box)(({ theme }) => ({
@@ -31,22 +33,22 @@ const CustomBox = styled(Box)(({ theme }) => ({
 
 function TaskList() {
   const [currentPage, setCurrentPage] = useState(0);
-  const [tasks, setTasks] = useState([...data]);
+  const [tasks, setTasks] = useState([]);
   const navigate = useNavigate();
-
+  const aiData = useSelector((state) => state.ai?.aiData?.tasks);
   useEffect(() => {
-    if (tasks) {
-      setTasks(tasks);
+    if (aiData) {
+      setTasks(aiData);
     }
-  }, [tasks]);
+  }, [aiData]);
 
   const tasksPerRow = 3;
   const rowsPerPage = 1;
   const tasksPerPage = tasksPerRow * rowsPerPage;
-  const totalPages = Math.ceil(tasks.length / tasksPerPage);
+  const totalPages = Math.ceil(tasks?.length / tasksPerPage);
 
   useEffect(() => {
-    const newTotalPages = Math.ceil(tasks.length / tasksPerPage);
+    const newTotalPages = Math.ceil(tasks?.length / tasksPerPage);
     if (currentPage >= newTotalPages) {
       setCurrentPage(Math.max(0, newTotalPages - 1));
     }
@@ -70,7 +72,7 @@ function TaskList() {
 
   const startIndex = currentPage * tasksPerPage;
   const endIndex = startIndex + tasksPerPage;
-  const tasksToDisplay = tasks.slice(startIndex, endIndex);
+  const tasksToDisplay = tasks?.slice(startIndex, endIndex);
 
   const handleBackButtonClick = async () => {
     navigate(`/createai`);
@@ -118,15 +120,15 @@ function TaskList() {
       >
         <CustomBox>
           <Box className="pagination">
-            <Button className="btn-link" onClick={handlePrevPage} disabled={currentPage === 0 || tasks.length === 0}>
+            <Button className="btn-link" onClick={handlePrevPage} disabled={currentPage === 0 || tasks?.length === 0}>
               <BsChevronLeft className="arrow-icon" />
             </Button>
             <div className="task-list">
               <div className="tasks-container">
-                {tasksToDisplay.length === 0 ? (
+                {tasksToDisplay?.length === 0 ? (
                   <Typography variant="body1" className="text-center">No tasks to display</Typography>
                 ) : (
-                  tasksToDisplay.map((task, index) => (
+                  tasksToDisplay?.map((task, index) => (
                     <div key={index} className="task-card-container">
                       <TaskCard task={task} onClose={() => handleTaskClose(task)} onEdit={() => handleTaskEdit(task)} />
                     </div>
@@ -134,7 +136,7 @@ function TaskList() {
                 )}
               </div>
             </div>
-            <Button className="btn-link" onClick={handleNextPage} disabled={currentPage === totalPages - 1 || tasks.length === 0}>
+            <Button className="btn-link" onClick={handleNextPage} disabled={currentPage === totalPages - 1 || tasks?.length === 0}>
               <BsChevronRight className="arrow-icon" />
             </Button>
           </Box>
