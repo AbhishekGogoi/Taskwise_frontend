@@ -5,6 +5,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { createProjectAIASync } from "../../features/AI/projectAISlice";
 import IllustrationImage from "../../assets/IllustrationImage.jpeg";
 import { useNavigate } from "react-router-dom";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const Container = styled(Box)(({ theme }) => ({
   display: "flex",
@@ -39,6 +41,7 @@ const AIInputPage = () => {
   const [description, setDescription] = useState(null);
   const [errors, setErrors] = useState({});
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(false); 
 
   const validate = () => {
     let tempErrors = {};
@@ -51,6 +54,7 @@ const AIInputPage = () => {
 
   const handleButtonClick = async () => {
     if (validate()) {
+      setLoading(true);
       const data = {
         prompt: `I am building a "${projectName}" project. Come up with
         set of development tasks  needed to build this project.
@@ -73,7 +77,11 @@ const AIInputPage = () => {
         const res = await dispatch(createProjectAIASync(data));
         navigate(`/task-carousel`); // Pass data here
       } catch (error) {
-        console.error('Error fetching task list:', error);
+        //console.error('Error fetching task list:', error);
+        toast.error('Error fetching task list.');
+      }
+      finally {
+        setLoading(false); // Hide loader
       }
     }
   };
@@ -191,9 +199,10 @@ const AIInputPage = () => {
                   borderRadius: "10px",
                   width: "100%",
                 }}
+                disabled={loading}
                 onClick={handleButtonClick}
               >
-                Generate with TaskWise AI
+                {loading ? `Loading` : "Generate with TaskWise AI"}
               </Button>
             </Box>
             <Box
@@ -212,6 +221,7 @@ const AIInputPage = () => {
                 style={{ maxWidth: "80%", height: "auto", backgroundColor: "transparent" }}
               />
             </Box>
+            <ToastContainer />
           </Box>
         </WhiteBox>
       </Container>
