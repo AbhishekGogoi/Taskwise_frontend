@@ -13,6 +13,7 @@ import Protected from "./components/Protected";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import Loading from "./components/Loading";
 import AIInputPage from "./pages/AI/AIInputPage";
+import TaskList from "./pages/AI/TaskCarousel/TaskList";
 // Lazy load the pages
 const ProjectPage = lazy(() => import("./pages/Project/ProjectPage"));
 const LandingPage = lazy(() => import("./pages/landingPage/LandingPage"));
@@ -121,6 +122,7 @@ function AppLayout() {
                 <Route path="/calendar" element={<CalendarPage />} />
                 <Route path="/settings" element={<ProfileSettingsPage />} />
                 <Route path="/createai" element={<AIInputPage />} />
+                <Route path="/task-carousel" element={<TaskList />} />
               </Route>
             </Routes>
           </Suspense>
