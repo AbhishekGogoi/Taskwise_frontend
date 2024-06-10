@@ -52,28 +52,27 @@ const AIInputPage = () => {
   const handleButtonClick = async () => {
     if (validate()) {
       const data = {
-        prompt: `I am building a "${projectName}" project. Come up with a set of development tasks needed to build this project. Give the result in JSON format example as below.
-        {
-          "project": "${projectName}",
-          "description": "${description}",
-          "tasks": [
-            {
-              "title": "Setup Repo",
-              "description": "setup both frontend and backend repo"
-            },
-            {
-              "title": "Config Database",
-              "description": "setup Database MySQL"
-            }
-            // Add more tasks as needed
-          ]
-        }`,
+        prompt: `I am building a "${projectName}" project. Come up with
+        set of development tasks  needed to build this project.
+         give the result in json format example as as below.{
+         project : ${projectName},
+         description : ${description},
+         tasks: [
+           {
+             title : "Setup Repo",
+             description : "setup both fronttend and backed repo "
+           },
+           {
+             title : "Config Database",
+             description : "setup Database Mysql "
+           }
+         ] create minimum 15 task`,
       };
   
       try {
         const res = await dispatch(createProjectAIASync(data));
         console.log(res);
-        navigate(`/task-carousel`, { state: res.payload.data.tasks }); // Pass data here
+        navigate(`/task-carousel`); // Pass data here
       } catch (error) {
         console.error('Error fetching task list:', error);
       }

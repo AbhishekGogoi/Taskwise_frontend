@@ -6,8 +6,8 @@ import { BsChevronLeft, BsChevronRight } from 'react-icons/bs';
 import './TaskList.css';
 import { Button, Paper } from '@mui/material';
 import Box from '@mui/material/Box';
-import { useLocation } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
+import { data } from './data';
 
 const CustomBox = styled(Box)(({ theme }) => ({
   width: '100%',
@@ -30,18 +30,15 @@ const CustomBox = styled(Box)(({ theme }) => ({
 }));
 
 function TaskList() {
-  const location = useLocation();
-  const taskList = location.state;
   const [currentPage, setCurrentPage] = useState(0);
-  const [tasks, setTasks] = useState([]);
+  const [tasks, setTasks] = useState([...data]);
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (taskList) {
-      setTasks(taskList);
-      console.log("tasks: ", taskList)
+    if (tasks) {
+      setTasks(tasks);
     }
-  }, [taskList]);
+  }, [tasks]);
 
   const tasksPerRow = 3;
   const rowsPerPage = 1;
