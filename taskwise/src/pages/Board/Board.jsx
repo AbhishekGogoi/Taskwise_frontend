@@ -115,17 +115,17 @@ function Board() {
     }
     dispatch(resetColumnAddStatus())
     // eslint-disable-next-line
-  },[columnAddStatus])
-  useEffect(()=>{
-    if(columnMovedStatus==="fulfilled"){
-      toast.success("Column moved successfully!");
-    }
-    if(columnMovedStatus==="rejected"){
-      toast.error("Server error");
-    }
-    dispatch(resetColumnorderChangeStatus())
-    // eslint-disable-next-line
-  },[columnMovedStatus])
+  },[columnAddStatus,dispatch])
+  // useEffect(()=>{
+  //   if(columnMovedStatus==="fulfilled"){
+  //     toast.success("Column moved successfully!");
+  //   }
+  //   if(columnMovedStatus==="rejected"){
+  //     toast.error("Server error");
+  //   }
+  //   dispatch(resetColumnorderChangeStatus())
+  //   // eslint-disable-next-line
+  // },[columnMovedStatus,dispatch])
 
   useEffect(() => {
     if (taskAddStatus === "fulfilled") {
@@ -142,7 +142,7 @@ function Board() {
       setDataTask(initialData?.tasks);
     }
       // eslint-disable-next-line
-  }, [initialData,taskAddStatus]);
+  }, [initialData,taskAddStatus,dispatch]);
 
   const handleDrop = (taskId, newColumnId) => {
     // Clone the columns state
