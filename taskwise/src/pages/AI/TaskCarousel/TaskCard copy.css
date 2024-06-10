@@ -1,0 +1,139 @@
+/* TaskCard.css
+.custom-card {
+    width: 18rem;
+    border: 1px solid #dee2e6;
+    border-radius: 10px;
+    background-color: #f8f9fa;
+    transition: all 0.3s ease;
+  }
+  
+  .custom-card .card-body {
+    height: 150px; 
+    overflow: hidden; 
+  }
+  
+  .custom-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+
+.custom-card:hover {
+  border: 2px solid #ff69b4;
+  box-shadow: 0 0 15px rgba(255, 105, 180, 0.7), 0 0 20px rgba(0, 198, 255, 0.8);
+  transition: all 0.3s ease;
+} */
+/* TaskCard.css */
+/* .task-card {
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 16px;
+  margin-bottom: 16px;
+}
+
+.task-title {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 8px;
+}
+
+.task-description {
+  font-size: 14px;
+  color: #666;
+}
+
+.task-footer {
+  margin-top: 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.task-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.task-action {
+  cursor: pointer;
+  color: #555;
+}
+
+.task-action:hover {
+  color: #333;
+} */
+
+/* TaskCard.css */
+.task-card {
+  background-color: #fff;
+  border-radius: 10px;
+  border-color: linear-gradient(120deg, #00c6ff, #8e71df);
+  transition: box-shadow 0.3s ease;
+  width: 250px; /* Set a fixed width for the card */
+  height: 200px; /* Set a fixed height for the card */
+  padding: 16px;
+  margin-bottom: 16px;
+  position: relative; /* Make position relative for absolute positioning of pseudo-elements */
+}
+
+.task-card:before,
+.task-card:after {
+  content: '';
+  position: absolute;
+  top: -2px; /* Adjust top and left to create border */
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  z-index: -1;
+}
+
+.task-card:before {
+  background: linear-gradient(120deg, #00c6ff, #8e71df); /* Apply gradient background */
+  border-radius: 10px; /* Maintain border radius */
+}
+
+/* .task-card:after {
+  background: #fff; 
+  border: 2px solid transparent; 
+  border-radius: 12px; 
+} */
+
+.task-card:hover {
+  border: 2px solid linear-gradient(120deg, #00c6ff, #ec8ac7);
+  box-shadow: 0 0 15px linear-gradient(120deg, #00c6ff, #ec8ac7);
+  transition: all 0.3s ease;
+}
+
+.task-title {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 8px;
+}
+
+.task-description {
+  font-size: 14px;
+  color: #666;
+}
+
+.task-footer {
+  margin-top: 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.task-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.task-action {
+  cursor: pointer;
+  color: #555;
+}
+
+.task-action:hover {
+  border: 2px solid linear-gradient(120deg, #00c6ff, #8e71df);
+  box-shadow: 0 0 15px linear-gradient(120deg, #00c6ff, #8e71df);
+  transition: all 0.3s ease;
+}
