@@ -12,7 +12,7 @@ import Divider from "@mui/material/Divider";
 import { Button } from "@mui/material";
 import { useSelector, useDispatch } from "react-redux";
 import { useEffect } from "react";
-import { fetchProjectByIdAsync, resetTaskAddStatus, moveTaskAsync, resetColumnAddStatus, fetchWorkspaceMembersAsync,resetColumnorderChangeStatus } from "../../features/project/projectSlice";
+import { fetchProjectByIdAsync, resetTaskAddStatus, moveTaskAsync, resetColumnAddStatus, fetchWorkspaceMembersAsync } from "../../features/project/projectSlice";
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import AddColumnModal from "./AddColumnModal";
@@ -70,6 +70,7 @@ function Board() {
     // eslint-disable-next-line
   const projectFetchStatus = useSelector((state) => state.project?.projectFetchStatus);
   const workspaceId=useSelector((state) => state?.project?.selectedProject?.workspaceId);
+  // eslint-disable-next-line
   const columnMovedStatus=useSelector((state)=>state?.project?.columnorderChangeStatus);
 
   const [order, setOrder] = useState(null)
