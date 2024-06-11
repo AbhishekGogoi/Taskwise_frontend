@@ -17,8 +17,8 @@ const initialState = {
     taskEditStatus: "idle",
     workspaceMembers: null,
     workspaceMembersFetchStatus: "idle",
-    columnorderChangeStatus:"idle",
-    taskDeleteStatus:"idle"
+    columnorderChangeStatus: "idle",
+    taskDeleteStatus: "idle"
 }
 
 export const fetchProjectAsync = createAsyncThunk("projects/fetchProjects", async (userId) => {
@@ -67,13 +67,13 @@ export const fetchWorkspaceMembersAsync = createAsyncThunk('projects/fetchWorksp
 }
 );
 
-export const columnOrderChangeAsync = createAsyncThunk(`projects/columnOrderChangeAsync`, async ({order,projectId}) => {
-    const projects = await columnOrderChange({order,projectId});
+export const columnOrderChangeAsync = createAsyncThunk(`projects/columnOrderChangeAsync`, async ({ order, projectId }) => {
+    const projects = await columnOrderChange({ order, projectId });
     return projects;
 })
 
-export const deactivateTaskAsync = createAsyncThunk(`projects/deactivateTaskAsync`, async (idObject)=>{
-    const project=await deactivateTask(idObject);
+export const deactivateTaskAsync = createAsyncThunk(`projects/deactivateTaskAsync`, async (idObject) => {
+    const project = await deactivateTask(idObject);
     return project
 })
 
@@ -105,17 +105,18 @@ const projectSlice = createSlice({
         resetColumnEditStatus: (state) => {
             state.columnEditStatus = "idle"
         },
-        resetColumnorderChangeStatus: (state)=>{
-            state.columnorderChangeStatus="idle"
+        resetColumnorderChangeStatus: (state) => {
+            state.columnorderChangeStatus = "idle"
         },
-        resetTaskDeleteStatus: (state)=>{
-            state.taskDeleteStatus="idle"
+        resetTaskDeleteStatus: (state) => {
+            state.taskDeleteStatus = "idle"
         }
     },
     extraReducers: (builder) => {
         builder
             .addCase(fetchProjectAsync.pending, (state) => {
                 state.projectFetchStatus = 'loading'
+                state.selectedProject=[];
             })
             .addCase(fetchProjectAsync.fulfilled, (state, action) => {
                 state.projectFetchStatus = "fulfilled"
@@ -131,6 +132,17 @@ const projectSlice = createSlice({
             .addCase(fetchProjectByIdAsync.fulfilled, (state, action) => {
                 state.projectFetchStatus = "fulfilled"
                 state.selectedProject = action.payload
+                // Clear or reset other state data here
+                state.workspaceMembers=null;
+                state.taskAddStatus = "idle";
+                state.taskMoveStatus = "idle";
+                state.columnAddStatus = "idle";
+                state.columnEditStatus = "idle";
+                state.taskEditStatus = "idle";
+                state.columnorderChangeStatus = "idle";
+                state.taskDeleteStatus = "idle";
+                state.errors = null;
+                state.sucessMessage = null;
             })
             .addCase(fetchProjectByIdAsync.rejected, (state, action) => {
                 state.projectFetchStatus = "rejected"
@@ -209,25 +221,25 @@ const projectSlice = createSlice({
             .addCase(fetchWorkspaceMembersAsync.rejected, (state, action) => {
                 state.workspaceMembersFetchStatus = "rejected"
             })
-            .addCase(columnOrderChangeAsync.pending,(state)=>{
-                state.columnorderChangeStatus="loading"
+            .addCase(columnOrderChangeAsync.pending, (state) => {
+                state.columnorderChangeStatus = "loading"
             })
-            .addCase(columnOrderChangeAsync.fulfilled,(state,action)=>{
-                state.columnorderChangeStatus="fulfilled"
-                state.selectedProject=action.payload
+            .addCase(columnOrderChangeAsync.fulfilled, (state, action) => {
+                state.columnorderChangeStatus = "fulfilled"
+                state.selectedProject = action.payload
             })
-            .addCase(columnOrderChangeAsync.rejected,(state,action)=>{
-                state.columnorderChangeStatus="rejected"
+            .addCase(columnOrderChangeAsync.rejected, (state, action) => {
+                state.columnorderChangeStatus = "rejected"
             })
-            .addCase(deactivateTaskAsync.pending,(state)=>{
-                state.taskDeleteStatus="loading"
+            .addCase(deactivateTaskAsync.pending, (state) => {
+                state.taskDeleteStatus = "loading"
             })
-            .addCase(deactivateTaskAsync.fulfilled,(state,action)=>{
-                state.taskDeleteStatus="fulfilled"
-                state.selectedProject=action.payload
+            .addCase(deactivateTaskAsync.fulfilled, (state, action) => {
+                state.taskDeleteStatus = "fulfilled"
+                state.selectedProject = action.payload
             })
-            .addCase(deactivateTaskAsync.rejected,(state,action)=>{
-                state.taskDeleteStatus="rejected"
+            .addCase(deactivateTaskAsync.rejected, (state, action) => {
+                state.taskDeleteStatus = "rejected"
             })
     }
 })
