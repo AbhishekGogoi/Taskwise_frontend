@@ -10,7 +10,8 @@ import { createWorkspace,
          exitMember,
          updateMemberRole, 
          addMember,
-         updateWorkspace } from "./workspaceApi";
+         updateWorkspace,
+         fetchTasksByUserID } from "./workspaceApi";
 
 const initialState = {
   workspaces: [],
@@ -19,9 +20,20 @@ const initialState = {
   selectedProjects: [],
   selectedTasks: [],
   selectedMembers: [],
-  projectsFetchStatus: 'idle',
-  tasksFetchStatus: 'idle',
-  membersFetchStatus: 'idle',
+  userTasks: [],
+  fetchWorkspaceByUserIDStatus: 'idle',
+  fetchTasksByUserIDStatus: 'idle',
+  fetchWorkspaceByIdStatus: 'idle',
+  fetchWorkspaceProjectsStatus: 'idle',
+  fetchWorkspaceTasksStatus: 'idle',
+  fetchWorkspaceMembersStatus: 'idle',
+  createWorkspaceStatus: 'idle',
+  uploadFileStatus: 'idle',
+  getImageUrlStatus: 'idle',
+  exitMemberStatus: 'idle',
+  updateMemberRoleStatus: 'idle',
+  addMemberStatus: 'idle',
+  updateWorkspaceStatus: 'idle',
   status: "idle",
   errors: null,
   successMessage: null
@@ -30,6 +42,11 @@ const initialState = {
 export const fetchWorkspaceByUserIDAsync = createAsyncThunk("workspaces/fetchWorkspaceByUserID", async (userId) => {
   const workspaces = await fetchWorkspaceByUserID(userId);
   return workspaces;
+});
+
+export const fetchTasksByUserIDAsync = createAsyncThunk("workspaces/fetchTasksByUserIDAsync", async (userId) => {
+  const userTasks = await fetchTasksByUserID(userId);
+  return userTasks;
 });
 
 export const fetchWorkspaceByIdAsync = createAsyncThunk("workspaces/fetchWorkspaceById", async (id) => {
@@ -48,14 +65,14 @@ export const fetchWorkspaceProjectsAsync = createAsyncThunk(
 export const fetchWorkspaceTasksAsync = createAsyncThunk(
   'workspace/fetchWorkspaceTasksAsync',
   async (workspaceId) => {
-    const selectedMembers = await fetchWorkspaceTasks(workspaceId);
-    return selectedMembers;
+    const selectedTasks = await fetchWorkspaceTasks(workspaceId);
+    return selectedTasks;
   }
 );
 
 export const fetchWorkspaceMembersAsync = createAsyncThunk('workspace/fetchWorkspaceMembers', async (workspaceId) => {
-    const workspaces = await fetchWorkspaceMembers(workspaceId);
-    return workspaces;
+    const selectedMembers = await fetchWorkspaceMembers(workspaceId);
+    return selectedMembers;
   }
 );
 
@@ -131,14 +148,54 @@ const workspaceSlice = createSlice({
     },
     resetworkspacesFetchStatus: (state) => {
       state.workspaceFetchStatus = 'idle';
-    }
+    },
+    resetfetchWorkspaceByUserIDStatus: (state) => {
+      state.fetchWorkspaceByUserIDStatus = 'idle';
+    },
+    resetfetchTasksByUserIDStatus: (state) => {
+      state.fetchTasksByUserIDStatus = 'idle';
+    },
+    resetfetchWorkspaceByIdStatus: (state) => {
+      state.fetchWorkspaceByIdStatus = 'idle';
+    },
+    resetfetchWorkspaceProjectsStatus: (state) => {
+      state.fetchWorkspaceProjectsStatus = 'idle';
+    },
+    resetfetchWorkspaceTasksStatus: (state) => {
+      state.fetchWorkspaceTasksStatus = 'idle';
+    },
+    resetfetchWorkspaceMembersStatus: (state) => {
+      state.fetchWorkspaceMembersStatus = 'idle';
+    },
+    resetcreateWorkspaceStatus: (state) => {
+      state.createWorkspaceStatus = 'idle';
+    },
+    resetuploadFileStatus: (state) => {
+      state.uploadFileStatus = 'idle';
+    },
+    resetgetImageUrlStatus: (state) => {
+      state.getImageUrlStatus = 'idle';
+    },
+    resetexitMemberStatus: (state) => {
+      state.exitMemberStatus = 'idle';
+    },
+    resetupdateMemberRoleStatus: (state) => {
+      state.updateMemberRoleStatus = 'idle';
+    },
+    resetaddMemberStatus: (state) => {
+      state.addMemberStatus = 'idle';
+    },
+    resetupdateWorkspaceStatus: (state) => {
+      state.updateWorkspaceStatus = 'idle';
+    },
   },
   extraReducers: (builder) => {
     builder
       .addCase(fetchWorkspaceByIdAsync.pending, (state) => {
-        state.workspaceFetchStatus = 'loading';
+        state.fetchWorkspaceByIdStatus = 'loading';
       })
       .addCase(fetchWorkspaceByIdAsync.fulfilled, (state, action) => {
+        state.fetchWorkspaceByIdStatus = 'fulfilled';
         const existingWorkspace = state.workspaces.find(
           (workspace) => workspace.id === action.payload.id
         );
@@ -149,107 +206,118 @@ const workspaceSlice = createSlice({
         }
       })
       .addCase(fetchWorkspaceByIdAsync.rejected, (state, action) => {
-        state.workspaceFetchStatus = "rejected";
+        state.fetchWorkspaceByIdStatus = "rejected";
         state.errors = action.error;
       })
       .addCase(fetchWorkspaceProjectsAsync.pending,(state)=>{
-          state.projectsFetchStatus="loading"
+          state.fetchWorkspaceProjectsStatus="loading"
       })
       .addCase(fetchWorkspaceProjectsAsync.fulfilled,(state,action)=>{
-          state.projectsFetchStatus="fulfilled"
+          state.fetchWorkspaceProjectsStatus="fulfilled"
           state.selectedProjects=action.payload.data
       })
       .addCase(fetchWorkspaceProjectsAsync.rejected,(state,action)=>{
-          state.projectsFetchStatus="rejected"
+          state.fetchWorkspaceProjectsStatus="rejected"
           state.errors=action.error
       })
       .addCase(fetchWorkspaceTasksAsync.pending,(state)=>{
-          state.tasksFetchStatus="loading"
+          state.fetchWorkspaceTasksStatus="loading"
       })
       .addCase(fetchWorkspaceTasksAsync.fulfilled,(state,action)=>{
-          state.tasksFetchStatus="fulfilled"
+          state.fetchWorkspaceTasksStatus="fulfilled"
           state.selectedTasks=action.payload.data
       })
       .addCase(fetchWorkspaceTasksAsync.rejected,(state,action)=>{
-          state.tasksFetchStatus="rejected"
+          state.fetchWorkspaceTasksStatus="rejected"
           state.errors=action.error
       })
       .addCase(fetchWorkspaceMembersAsync.pending,(state)=>{
-          state.membersFetchStatus="loading"
+          state.fetchWorkspaceMembersStatus="loading"
       })
       .addCase(fetchWorkspaceMembersAsync.fulfilled,(state,action)=>{
-          state.membersFetchStatus="fulfilled"
+          state.fetchWorkspaceMembersStatus="fulfilled"
           state.selectedMembers=action.payload.data
       })
       .addCase(fetchWorkspaceMembersAsync.rejected,(state,action)=>{
-          state.membersFetchStatus="rejected"
+          state.fetchWorkspaceMembersStatus="rejected"
           state.errors=action.error
       })
       .addCase(fetchWorkspaceByUserIDAsync.pending, (state) => {
-        state.workspaceFetchStatus = 'loading';
+        state.fetchWorkspaceByUserIDStatus = 'loading';
       })
       .addCase(fetchWorkspaceByUserIDAsync.fulfilled, (state, action) => {
-        state.workspaceFetchStatus = "fulfilled";
+        state.fetchWorkspaceByUserIDStatus = "fulfilled";
         state.workspaces = action.payload.data;
       })
       .addCase(fetchWorkspaceByUserIDAsync.rejected, (state, action) => {
-        state.workspaceFetchStatus = "rejected";
+        state.fetchWorkspaceByUserIDStatus = "rejected";
+        state.errors = action.error;
+      })
+      .addCase(fetchTasksByUserIDAsync.pending, (state) => {
+        state.fetchTasksByUserIDStatus = 'loading';
+      })
+      .addCase(fetchTasksByUserIDAsync.fulfilled, (state, action) => {
+        state.fetchTasksByUserIDStatus = "fulfilled";
+        state.userTasks = action.payload.data;
+      })
+      .addCase(fetchTasksByUserIDAsync.rejected, (state, action) => {
+        state.fetchTasksByUserIDStatus = "rejected";
         state.errors = action.error;
       })
       .addCase(createWorkspaceAsync.pending, (state) => {
-        state.status = 'loading';
+        state.createWorkspaceStatus = 'loading';
       })
       .addCase(createWorkspaceAsync.fulfilled, (state, action) => {
-        state.status = 'succeeded';
+        state.createWorkspaceStatus = 'fulfilled';
         state.workspaces.push(action.payload); // Update the state with the new workspace
         state.successMessage = 'Workspace created successfully!';
       })
       .addCase(createWorkspaceAsync.rejected, (state, action) => {
-        state.status = 'failed';
+        state.createWorkspaceStatus = 'failed';
         state.errors = action.error.message;
       })
       .addCase(exitMemberAsync.pending, (state) => {
-        state.status = 'loading';
+        state.exitMemberStatus = 'loading';
       })
       .addCase(exitMemberAsync.fulfilled, (state, action) => {
-        state.status = 'succeeded';
+        state.exitMemberStatus = 'fulfilled';
         state.successMessage = 'Member exited successfully!';
       })
       .addCase(exitMemberAsync.rejected, (state, action) => {
-        state.status = 'failed';
+        state.exitMemberStatus = 'failed';
         state.errors = action.error.message;
       })
       .addCase(updateMemberRoleAsync.pending, (state) => {
         state.status = 'loading';
       })
       .addCase(updateMemberRoleAsync.fulfilled, (state, action) => {
-        state.status = 'succeeded';
+        state.updateMemberRoleStatus = 'fulfilled';
         state.successMessage = 'Updated Member Role successfully!';
       })
       .addCase(updateMemberRoleAsync.rejected, (state, action) => {
-        state.status = 'failed';
+        state.updateMemberRoleStatus = 'failed';
         state.errors = action.error.message;
       })
       .addCase(addMemberAsync.pending, (state) => {
-        state.status = 'loading';
+        state.addMemberStatus = 'loading';
       })
       .addCase(addMemberAsync.fulfilled, (state, action) => {
-        state.status = 'succeeded';
+        state.addMemberStatus = 'fulfilled';
         state.successMessage = 'Added Member successfully!';
       })
       .addCase(addMemberAsync.rejected, (state, action) => {
-        state.status = 'failed';
+        state.addMemberStatus = 'failed';
         state.errors = action.error.message;
       })
       .addCase(updateWorkspaceAsync.pending, (state) => {
-        state.status = 'loading';
+        state.updateWorkspaceStatus = 'loading';
       })
       .addCase(updateWorkspaceAsync.fulfilled, (state, action) => {
-        state.status = 'succeeded';
+        state.updateWorkspaceStatus = 'fulfilled';
         state.successMessage = 'Workspace updated successfully!';
       })
       .addCase(updateWorkspaceAsync.rejected, (state, action) => {
-        state.status = 'failed';
+        state.updateWorkspaceStatus = 'failed';
         state.errors = action.error.message;
       });
   }
@@ -259,7 +327,20 @@ export const {
   clearworkspaceErrors,
   clearworkspaceSuccessMessage,
   resetworkspaceStatus,
-  resetworkspacesFetchStatus
+  resetworkspacesFetchStatus,
+  resetfetchWorkspaceByUserIDStatus,
+  resetfetchTasksByUserIDStatus,
+  resetfetchWorkspaceByIdStatus,
+  resetfetchWorkspaceProjectsStatus,
+  resetfetchWorkspaceTasksStatus,
+  resetfetchWorkspaceMembersStatus,
+  resetcreateWorkspaceStatus,
+  resetuploadFileStatus,
+  resetgetImageUrlStatus,
+  resetexitMemberStatus,
+  resetupdateMemberRoleStatus,
+  resetaddMemberStatus,
+  resetupdateWorkspaceStatus,
 } = workspaceSlice.actions;
 
 export default workspaceSlice.reducer;
