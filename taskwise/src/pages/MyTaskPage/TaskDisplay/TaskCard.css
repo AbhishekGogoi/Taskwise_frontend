@@ -1,0 +1,54 @@
+.task-card {
+  border: 1px solid transparent; /* Add a thick transparent border */
+  /* border-color: #4b4b4b; Apply gradient as border */
+  border-radius: 5; /* Add border radius for rounded corners */
+  /* margin-bottom: 16px; Add spacing between cards */
+  width: 35%; /* Fix the card width */
+  /* height: 200px; Fix the card height */
+  display: flex;
+  flex-direction: column;
+  position: relative; /* Set position to relative for absolute positioning of icons */
+  transition: box-shadow 0.3s; /* Add transition effect for smooth hover */
+}
+
+.task-card:hover {
+  box-shadow: rgba(66, 66, 66, 0.5), /* Add gradient color for hover shadow */
+}
+
+.task-header {
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  display: flex;
+  justify-content: space-between;
+  /* padding: 8px; */
+  background-color: white;
+}
+
+.task-actions {
+  display: flex;
+}
+
+.task-card-content {
+  padding: 1;
+  flex-grow: 1; /* Allow content to grow within the card */
+  /* padding-top: 40px; Adjust padding to create space for the header */
+}
+
+/* .task-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 16px;
+} */
+
+.task-status {
+  flex-grow: 1;
+  text-align: right;
+}
+
+.scrollable-content {
+  height: calc(100% - 50px); /* Adjust the height as needed */
+  overflow-y: auto;
+}

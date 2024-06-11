@@ -145,8 +145,9 @@ function ProjectPage() {
     (state) => state.project.projectAddStatus
   );
 
-  const workspaces = useSelector((state) => state.workspace.workspaces);
-
+  const workspaces = useSelector((state) => state?.workspace?.workspaces);
+  const workspaceFetchStatus=useSelector((state)=> state?.workspace?.workspaceFetchStatus)
+  const projectFetchStatus=useSelector((state)=>state?.project?.projectFetchStatus)
   // console.log(projectData);
   const userId = useSelector((state) => state?.user?.loggedInUser?.user?._id);
   const [searchQuery, setSearchQuery] = useState("");
@@ -183,7 +184,7 @@ function ProjectPage() {
     setModalOpen(false);
   };
 
-  if (workspaces.length <= 0) {
+  if (workspaces.length <= 0 && workspaceFetchStatus==="fulfilled") {
     return <NoWorkspacePage />;
   }
 
@@ -255,7 +256,7 @@ function ProjectPage() {
           </Search>
         </Box>
       </Paper>
-      {projectData.length <= 0 ? (
+      {(projectData.length <= 0 && projectFetchStatus==="fulfilled") ? (
         <Box
           sx={{
             display: "flex",

@@ -9,6 +9,15 @@ export const fetchWorkspaceByUserID=async(userId)=>{
     }
 }
 
+export const fetchTasksByUserID=async(userId)=>{
+    try{
+        const res=await axiosi.get(`/workspaces/user/${userId}/tasks`);
+        return {data:res.data}
+    }catch(error){
+        throw error.response.data
+    }
+}
+
 export const fetchWorkspaceById=async(id)=>{
     try{
         const res=await axiosi.get(`/workspaces/${id}`);
