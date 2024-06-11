@@ -80,22 +80,24 @@ const ChangePasswordModal = ({ handleClose }) => {
 
     setErrors({});
 
+    const apiUrl =
+      process.env.NODE_ENV === "production"
+        ? "https://taskwise-backend.onrender.com/api/auth/changepassword"
+        : "http://localhost:8080/api/auth/changepassword";
+
     try {
-      const response = await fetch(
-        "http://localhost:8080/api/auth/changepassword",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          credentials: "include", //Ensure cookies are sent with the request
-          body: JSON.stringify({
-            currentPassword: formData.currentPassword,
-            newPassword: formData.newPassword,
-            user: user,
-          }),
-        }
-      );
+      const response = await fetch(apiUrl, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include", //Ensure cookies are sent with the request
+        body: JSON.stringify({
+          currentPassword: formData.currentPassword,
+          newPassword: formData.newPassword,
+          user: user,
+        }),
+      });
 
       const data = await response.json();
 
