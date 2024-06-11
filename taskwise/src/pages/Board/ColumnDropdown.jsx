@@ -65,7 +65,7 @@ const ColumnDropdown = ({ column, id }) => {
         {colIndex < order?.length - 1 && (
           <MenuItem onClick={handleMoveRight}>Move to right</MenuItem>
         )}
-        <MenuItem onClick={handleClose}>Delete</MenuItem>
+        {/* <MenuItem onClick={handleClose}>Delete</MenuItem> */}
       </Menu>
     </div>
   );

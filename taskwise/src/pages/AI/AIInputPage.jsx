@@ -70,6 +70,7 @@ const AIInputPage = () => {
       };
   
       try {
+        // eslint-disable-next-line
         const res = await dispatch(createProjectAIASync(data));
         console.log(res);
         navigate(`/task-carousel`); // Pass data here
