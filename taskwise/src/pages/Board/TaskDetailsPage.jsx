@@ -23,7 +23,9 @@ import {
   Popover,
   List,
   ListItem,
+  Modal
 } from "@mui/material";
+import CloseIcon from "@mui/icons-material/Close";
 import { toast, ToastContainer } from "react-toastify";
 import AddOutlinedIcon from "@mui/icons-material/AddOutlined";
 import { editTaskAsync } from "../../features/project/projectSlice"; // Import the update task action
@@ -33,7 +35,7 @@ import { styled } from "@mui/material/styles";
 import ImageOutlinedIcon from "@mui/icons-material/ImageOutlined";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { uploadFileAsync } from "../../features/workspace/workspaceSlice";
-import { Card, CardMedia, CardActions } from "@mui/material";
+import { Card, CardMedia } from "@mui/material";
 
 const TabLabelWrapper = styled("div")({
   display: "flex",
@@ -76,21 +78,21 @@ const TaskDetailsPage = () => {
     setDialogTab(newValue);
   };
 
-  const selectedProject = useSelector((state) => state.project.selectedProject);
+  const selectedProject = useSelector((state) => state?.project?.selectedProject);
   const userId = useSelector((state) => state?.user?.loggedInUser?.user);
   const taskData = selectedProject ? selectedProject.tasks : [];
   const membersData = useSelector((state) => state?.project?.workspaceMembers?.data);
   console.log(membersData, "members in task details")
-  const filteredTask = taskData.find((eachData) => eachData._id === taskID);
+  const filteredTask = taskData?.find((eachData) => eachData?._id === taskID);
   console.log(filteredTask, "filteredTask");
   const [currentComment, setCurrentComment] = useState('');
   const handleAddNewComment = (event) => {
     const newComment = event.target.value;
     setCurrentComment(newComment);
   }
-  const isAdmin = membersData?.find((member) => member.user.email === userId.email)?.role === 'Admin';
-  const isCreator = userId.email === filteredTask.createdBy.email ? true : false;
-  const users = membersData?.map(item => item.user);
+  const isAdmin = membersData?.find((member) => member?.user?.email === userId?.email)?.role === 'Admin';
+  const isCreator = userId?.email === filteredTask?.createdBy?.email ? true : false;
+  const users = membersData?.map(item => item?.user);
   const [options] = useState(users);
   console.log(options, "options")
   const fileInputRef = useRef(null);
@@ -98,7 +100,7 @@ const TaskDetailsPage = () => {
   const [uploadedFileUrls, setUploadedFileUrls] = useState([]);
 
   const handleUploadClick = () => {
-      fileInputRef.current.click();
+    fileInputRef.current.click();
   };
 
   const handleFileChange = async (event) => {
@@ -108,7 +110,7 @@ const TaskDetailsPage = () => {
       name: file.name,
     }));
     setFiles((prevFiles) => [...prevFiles, ...newFiles]);
-  
+
     // Iterate over each file in the event
     Array.from(event.target.files).forEach(async (file) => {
       const formData = new FormData();
@@ -129,10 +131,20 @@ const TaskDetailsPage = () => {
       ]);
     });
   };
-  
+
   const handleDelete = (index) => {
-      setFiles((prevFiles) => prevFiles.filter((file, i) => i !== index));
-      setUploadedFileUrls((prevUrls) => prevUrls.filter((url, i) => i !== index));
+    setFiles((prevFiles) => prevFiles.filter((file, i) => i !== index));
+    setUploadedFileUrls((prevUrls) => prevUrls.filter((url, i) => i !== index));
+  };
+
+  const [selectedImage, setSelectedImage] = useState(null);
+
+  const handleImageClick = (imageURL) => {
+    setSelectedImage(imageURL);
+  };
+
+  const handleCloseModal = () => {
+    setSelectedImage(null);
   };
 
   useEffect(() => {
@@ -170,56 +182,56 @@ const TaskDetailsPage = () => {
     return changedFields;
   };
 
-const handleSaveTask = () => {
-  let updatedTaskDetails = { ...taskDetails };
+  const handleSaveTask = () => {
+    let updatedTaskDetails = { ...taskDetails };
 
-  // Check if there are new comments
-  if (currentComment.trim()) {
-    const newComment = {
-      user: userId,
-      comment: currentComment,
-    };
-    updatedTaskDetails = {
-      ...updatedTaskDetails,
-      comments: [...(updatedTaskDetails.comments || []), newComment],
-    };
-    setCurrentComment('');
-  }
-
-  // Check if there are new attachments
-  if (uploadedFileUrls.length > 0) {
-    const updatedAttachments = [
-      ...(updatedTaskDetails.attachments || []),
-      ...uploadedFileUrls,
-    ];
-    updatedTaskDetails = {
-      ...updatedTaskDetails,
-      attachments: updatedAttachments,
-    };
-  }
-
-  // Find the changed fields
-  const data = findChangedFields(initialTaskDetails, updatedTaskDetails);
-
-  // Save the task if there are changes
-  if (Object.keys(data).length > 0 || currentComment.trim()) {
-    if (currentComment.trim() && !data.comments) {
-      data.comments = updatedTaskDetails.comments;
+    // Check if there are new comments
+    if (currentComment.trim()) {
+      const newComment = {
+        user: userId,
+        comment: currentComment,
+      };
+      updatedTaskDetails = {
+        ...updatedTaskDetails,
+        comments: [...(updatedTaskDetails.comments || []), newComment],
+      };
+      setCurrentComment('');
     }
-    if (uploadedFileUrls.length > 0 && !data.attachments) {
-      data.attachments = updatedTaskDetails.attachments;
+
+    // Check if there are new attachments
+    if (uploadedFileUrls.length > 0) {
+      const updatedAttachments = [
+        ...(updatedTaskDetails.attachments || []),
+        ...uploadedFileUrls,
+      ];
+      updatedTaskDetails = {
+        ...updatedTaskDetails,
+        attachments: updatedAttachments,
+      };
     }
-    const idObject = {
-      taskId: taskID,
-      id: pid,
-    };
-    dispatch(editTaskAsync({ data, idObject, attachments: updatedTaskDetails.attachments }));
-    toast.success("Task updated successfully!");
-    navigate(-1);
-  } else {
-    toast.info("No changes to save.");
-  }
-};
+
+    // Find the changed fields
+    const data = findChangedFields(initialTaskDetails, updatedTaskDetails);
+
+    // Save the task if there are changes
+    if (Object.keys(data).length > 0 || currentComment.trim()) {
+      if (currentComment.trim() && !data.comments) {
+        data.comments = updatedTaskDetails.comments;
+      }
+      if (uploadedFileUrls.length > 0 && !data.attachments) {
+        data.attachments = updatedTaskDetails.attachments;
+      }
+      const idObject = {
+        taskId: taskID,
+        id: pid,
+      };
+      dispatch(editTaskAsync({ data, idObject, attachments: updatedTaskDetails.attachments }));
+      toast.success("Task updated successfully!");
+      navigate(-1);
+    } else {
+      toast.info("No changes to save.");
+    }
+  };
 
   const [anchorEl, setAnchorEl] = useState(null);
 
@@ -666,34 +678,34 @@ const handleSaveTask = () => {
                       },
                     }}
                   >
-                  {files.map((file, index) => (
-                    <Grid item xs={12} key={index} sx={{ mt: 2, ml: 3 }}>
-                      <Box sx={{ display: "flex", alignItems: "center" }}>
-                        {file.type.startsWith("image/") ? (
-                          <img
-                            src={file.url}
-                            alt={file.name}
-                            style={{
-                              maxWidth: "50%",
-                              height: "auto",
-                              marginRight: "1rem",
-                            }}
-                          />
-                        ) : (
-                          <embed
-                            src={file.url}
-                            type="application/pdf"
-                            width="50%"
-                            height="300px"
-                            style={{ marginRight: "1rem" }}
-                          />
-                        )}
-                        <IconButton onClick={() => handleDelete(index)}>
-                          <DeleteIcon />
-                        </IconButton>
-                      </Box>
-                    </Grid>
-                  ))}
+                    {files.map((file, index) => (
+                      <Grid item xs={12} key={index} sx={{ mt: 2, ml: 3 }}>
+                        <Box sx={{ display: "flex", alignItems: "center" }}>
+                          {file.type.startsWith("image/") ? (
+                            <img
+                              src={file.url}
+                              alt={file.name}
+                              style={{
+                                maxWidth: "50%",
+                                height: "auto",
+                                marginRight: "1rem",
+                              }}
+                            />
+                          ) : (
+                            <embed
+                              src={file.url}
+                              type="application/pdf"
+                              width="50%"
+                              height="300px"
+                              style={{ marginRight: "1rem" }}
+                            />
+                          )}
+                          <IconButton onClick={() => handleDelete(index)}>
+                            <DeleteIcon />
+                          </IconButton>
+                        </Box>
+                      </Grid>
+                    ))}
                   </Box>
                 </Grid>
               </Grid>
@@ -757,6 +769,17 @@ const handleSaveTask = () => {
                       </TabLabelWrapper>
                     }
                   />
+                  <IconButton
+                    sx={{
+                      mt: -6,
+                      "&:hover": {
+                        backgroundColor: "transparent",
+                      },
+                    }}
+                    onClick={handleDialogClose}
+                  >
+                    <CloseIcon />
+                  </IconButton>
                 </Tabs>
               </Grid>
               <Grid item xs={12} >
@@ -766,12 +789,14 @@ const handleSaveTask = () => {
                       .filter((attachment) => attachment.docType === "image")
                       .map((attachment, index) => (
                         <Grid item md={4} lg={3} key={index} sx={{ marginBottom: 1, justifyContent: "center" }}>
-                          <Card 
+                          <Card
                             sx={{
                               width: '100%',
                               maxWidth: 240,
                               borderRadius: 2,
+                              cursor: "pointer"
                             }}
+                            onClick={() => handleImageClick(attachment.docUrl)}
                           >
                             <CardMedia
                               component="img"
@@ -779,14 +804,39 @@ const handleSaveTask = () => {
                               alt={`Attachment ${index}`}
                               height="100"
                             />
-                            <CardActions>
+                            {/* <CardActions>
                               <Button size="small" href={attachment.docUrl} target="_blank">
                                 {attachment.docName}
                               </Button>
-                            </CardActions>
+                            </CardActions> */}
                           </Card>
                         </Grid>
                       ))}
+                    <Modal
+                      open={!!selectedImage}
+                      onClose={handleCloseModal}
+                      aria-labelledby="image-modal"
+                      aria-describedby="modal-to-display-selected-image"
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                      }}
+                    >
+                      <Box
+                        sx={{
+                          display: "flex",
+                          justifyContent: "center",
+                          maxWidth: "60%",
+                        }}
+                      >
+                        <img
+                          src={selectedImage}
+                          alt="Selected"
+                          style={{ maxWidth: "30%", maxHeight: "30%" }}
+                        />
+                      </Box>
+                    </Modal>
                   </Grid>
                 ) : (
                   <Typography sx={{ p: 2, textAlign: "center", color: "#888" }}>
