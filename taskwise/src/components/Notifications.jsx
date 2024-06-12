@@ -118,11 +118,13 @@ const Notifications = () => {
     setSelectedNotification(notification);
   };
 
+  // useCallback is used to memoize the handleMenuClose function
   const handleMenuClose = useCallback(() => {
     setAnchorEl(null);
     setSelectedNotification(null);
   }, []);
 
+  // useCallback is used to memoize the markAsRead function
   const markAsRead = useCallback(() => {
     handleMenuClose(); // Close the menu first
     dispatch(markNotificationAsReadAsync(selectedNotification.id))
@@ -202,4 +204,5 @@ const Notifications = () => {
   );
 };
 
+// React.memo is used to memoize the Notifications component
 export default React.memo(Notifications);
