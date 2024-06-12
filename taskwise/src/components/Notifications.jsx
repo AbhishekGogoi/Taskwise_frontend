@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
   Box,
   Typography,
   IconButton,
   Menu,
   MenuItem,
-  Divider,
+  Divider as MuiDivider,
   ListItem,
 } from "@mui/material";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
@@ -20,7 +20,7 @@ const NotificationItem = styled(ListItem)({
   display: "flex",
   justifyContent: "space-between",
   alignItems: "flex-start",
-  padding: "10px 16px",
+  padding: "20px 16px",
   width: "100%",
   boxSizing: "border-box",
   borderBottom: "1px solid #eee",
@@ -31,13 +31,69 @@ const NotificationContent = styled(Box)({
   paddingLeft: "16px",
 });
 
-const SeeAllNotifications = styled(Typography)({
-  textAlign: "center",
-  padding: "10px",
-  fontWeight: "bold",
-  color: "#0073e6",
-  cursor: "pointer",
+const Divider = styled(MuiDivider)({
+  margin: 0,
+  boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.1)",
 });
+
+const StyledSpan = styled("span")(({ color }) => ({
+  color: color || "inherit",
+}));
+
+const parseMessage = (message) => {
+  const taskNameRegex = /<taskName>(.*?)<\/taskName>/;
+  const projectNameRegex = /<projectName>(.*?)<\/projectName>/;
+  const workspaceNameRegex = /<workspaceName>(.*?)<\/workspaceName>/;
+
+  const parts = [];
+  let remainingMessage = message;
+
+  while (remainingMessage) {
+    const taskMatch = remainingMessage.match(taskNameRegex);
+    const projectMatch = remainingMessage.match(projectNameRegex);
+    const workspaceMatch = remainingMessage.match(workspaceNameRegex);
+
+    if (!taskMatch && !projectMatch && !workspaceMatch) {
+      parts.push(remainingMessage);
+      break;
+    }
+
+    const firstMatch = [taskMatch, projectMatch, workspaceMatch]
+      .filter(Boolean)
+      .sort((a, b) => a.index - b.index)[0];
+
+    if (firstMatch.index > 0) {
+      parts.push(remainingMessage.slice(0, firstMatch.index));
+    }
+
+    const [fullMatch, content] = firstMatch;
+    const color =
+      firstMatch === taskMatch
+        ? "blue"
+        : firstMatch === projectMatch
+        ? "green"
+        : "red";
+    parts.push(
+      <StyledSpan color={color} key={content}>
+        {content}
+      </StyledSpan>
+    );
+
+    remainingMessage = remainingMessage.slice(
+      firstMatch.index + fullMatch.length
+    );
+  }
+
+  return parts;
+};
+
+// const SeeAllNotifications = styled(Typography)({
+//   textAlign: "center",
+//   padding: "10px",
+//   fontWeight: "bold",
+//   color: "#0073e6",
+//   cursor: "pointer",
+// });
 
 const Notifications = () => {
   const dispatch = useDispatch();
@@ -62,21 +118,22 @@ const Notifications = () => {
     setSelectedNotification(notification);
   };
 
-  const handleMenuClose = () => {
+  const handleMenuClose = useCallback(() => {
     setAnchorEl(null);
     setSelectedNotification(null);
-  };
+  }, []);
 
-  const markAsRead = () => {
+  const markAsRead = useCallback(() => {
+    handleMenuClose(); // Close the menu first
     dispatch(markNotificationAsReadAsync(selectedNotification.id))
       .unwrap()
       .then(() => {
-        handleMenuClose();
+        // Menu is already closed, no additional action needed
       })
       .catch((error) => {
         console.error("Failed to mark notification as read: ", error);
       });
-  };
+  }, [dispatch, handleMenuClose, selectedNotification]);
 
   const deleteNotification = () => {};
 
@@ -92,7 +149,7 @@ const Notifications = () => {
       >
         Notifications
       </Typography>
-      <Divider style={{ margin: 0 }} />
+      <Divider />
 
       {notificationFetchStatus === "loading" ? (
         <Typography align="center" padding="20px">
@@ -107,7 +164,7 @@ const Notifications = () => {
           <NotificationItem key={notification.id}>
             <NotificationContent>
               <Typography variant="body2" fontWeight="bold" gutterBottom>
-                {notification.message}
+                {parseMessage(notification.message)}
               </Typography>
               <Typography variant="caption" color="textSecondary">
                 {new Date(notification.createdAt).toLocaleString()}
@@ -139,10 +196,10 @@ const Notifications = () => {
         <MenuItem onClick={markAsRead}>Mark As Read</MenuItem>
         <MenuItem onClick={deleteNotification}>Delete</MenuItem>
       </Menu>
-      <Divider style={{ margin: 0 }} />
-      <SeeAllNotifications>See All Notifications</SeeAllNotifications>
+      {/* <Divider style={{ margin: 0 }} />
+      <SeeAllNotifications>See All Notifications</SeeAllNotifications> */}
     </Box>
   );
 };
 
-export default Notifications;
+export default React.memo(Notifications);
