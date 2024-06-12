@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useEffect } from "react";
+import React, { useMemo, useState, useEffect, useCallback } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { AgGridReact } from "@ag-grid-community/react";
 import "@ag-grid-community/styles/ag-grid.css";
@@ -8,8 +8,8 @@ import { ClientSideRowModelModule } from "@ag-grid-community/client-side-row-mod
 import { styled } from "@mui/material/styles";
 import { format } from 'date-fns';
 import FlagIcon from '@mui/icons-material/Flag';
-import TaskCard from './TaskDisplay/TaskCard';
 import { fetchTasksByUserIDAsync } from '../../features/workspace/workspaceSlice';
+import TaskModal from "../../components/TaskModal";
 
 // Register the necessary modules with AG Grid
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
@@ -120,12 +120,16 @@ const TaskPage = () => {
 
   // State to track selected task and modal visibility
   const [selectedTask, setSelectedTask] = useState(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [modalOpen, setModalOpen] = useState(false);
 
-  // Handler for when a task item is clicked
-  const handleTaskItemClick = (task) => {
-    setSelectedTask(task);
-    setIsModalOpen(true);
+  const handleTaskItemClick = useCallback((params) => {
+    setSelectedTask(params.data);
+    setModalOpen(true);
+  }, []);
+
+  const handleModalClose = () => {
+    setModalOpen(false);
+    setSelectedTask(null);
   };
 
   // Default column properties
@@ -147,17 +151,18 @@ const TaskPage = () => {
             frameworkComponents={{ priorityRenderer }} // Register the custom cell renderer
             rowSelection="multiple"
             suppressRowClickSelection={true}
-            onRowClicked={(event) => handleTaskItemClick(event.data)} // Handle row click event
+            onRowClicked={handleTaskItemClick} // Handle row click event
           />
         </div>
       ) : (
         <NoTasksMessage>There are no tasks on your list at this moment</NoTasksMessage>
       )}
       {/* Render the task detail modal */}
-      {isModalOpen && selectedTask && (
-        <TaskCard
+      {selectedTask && (
+        <TaskModal
+          open={modalOpen}
+          handleClose={handleModalClose}
           task={selectedTask}
-          onClose={() => setIsModalOpen(false)}
         />
       )}
     </StyledAgGridContainer>
