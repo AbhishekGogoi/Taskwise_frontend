@@ -167,26 +167,6 @@ const LoginPage = () => {
       }),
   });
 
-  // const handleLogin = (e) => {
-  //   e.preventDefault();
-  //   const { error } = schema.validate(
-  //     { email, password },
-  //     { abortEarly: false }
-  //   );
-
-  //   if (error) {
-  //     const validationErrors = {};
-  //     error.details.forEach((detail) => {
-  //       validationErrors[detail.path[0]] = detail.message;
-  //     });
-  //     setErrors(validationErrors);
-  //     return;
-  //   }
-
-  //   setErrors({});
-  //   dispatch(loginAsync({ email, password }));
-  // };
-
   const handleLogin = (e) => {
     e.preventDefault();
     const { error } = schema.validate(
@@ -208,12 +188,6 @@ const LoginPage = () => {
     dispatch(loginAsync({ email, password }));
     setIsButtonDisabled(true); // Disable the button after login attempt
   };
-
-  // useEffect(() => {
-  //   if (loginError) {
-  //     toast.error(loginError.message);
-  //   }
-  // }, [loginError]);
 
   useEffect(() => {
     if (loginError) {

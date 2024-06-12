@@ -163,15 +163,6 @@ const SignupPage = () => {
     }),
   });
 
-  // const handleSignup = (e) => {
-  //   e.preventDefault();
-  //   if (password !== confirmPassword) {
-  //     alert("Passwords do not match");
-  //     return;
-  //   }
-  //   dispatch(signupAsync({ username, email, password }));
-  // };
-
   const handleSignup = async (e) => {
     e.preventDefault();
 
@@ -230,20 +221,6 @@ const SignupPage = () => {
     }
     dispatch(resetSignupStatus());
   }, [signupStatus, navigate, dispatch]);
-
-  // useEffect(() => {
-  //   if (signupStatus === "fulfilled") {
-  //     console.log("Success Message:", successMessage); // Check if the message is correct
-  //     toast.success(successMessage);
-  //     setLoading(false);
-  //     setIsButtonDisabled(false);
-
-  //     setTimeout(() => {
-  //       dispatch(resetSignupStatus());
-  //       navigate("/login");
-  //     }, 3000);
-  //   }
-  // }, [signupStatus, successMessage, navigate, dispatch]);
 
   const handleLoginClick = () => {
     navigate("/login");
