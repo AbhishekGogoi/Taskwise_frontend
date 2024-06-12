@@ -22,6 +22,7 @@ import {
   loginAsync,
   clearLoginError,
   resetLoginStatus,
+  clearAuthSuccessMessage,
 } from "../../features/user/userSlice";
 import { useSelector } from "react-redux";
 import { useEffect } from "react";
@@ -141,6 +142,7 @@ const LoginPage = () => {
 
   const loggedInUser = useSelector((state) => state.user.loggedInUser);
   const loginError = useSelector((state) => state.user.loginError);
+  const successMessage = useSelector((state) => state.user.successMessage);
   // console.log(loginError?.message);
 
   const schema = Joi.object({
@@ -231,6 +233,16 @@ const LoginPage = () => {
       navigate("/projects");
     }
   }, [loggedInUser, navigate]);
+
+  useEffect(() => {
+    if (successMessage) {
+      toast.success(successMessage, {
+        onClose: () => {
+          dispatch(clearAuthSuccessMessage());
+        },
+      });
+    }
+  }, [successMessage, dispatch]);
 
   const handleSignUpClick = () => {
     navigate("/signup"); // Navigate to signup page

@@ -132,6 +132,8 @@ const SignupPage = () => {
   const signupError = useSelector((state) => state.user.signupError);
   // console.log(signupError?.message);
   const signupStatus = useSelector((state) => state.user.signupStatus);
+  // const successMessage = useSelector((state) => state.user.successMessage); // Select success message from state
+
   const schema = Joi.object({
     username: Joi.string().min(3).required().messages({
       "string.empty": "Username is required",
@@ -227,8 +229,21 @@ const SignupPage = () => {
       navigate("/login");
     }
     dispatch(resetSignupStatus());
-    // eslint-disable-next-line
-  }, [signupStatus, navigate]);
+  }, [signupStatus, navigate, dispatch]);
+
+  // useEffect(() => {
+  //   if (signupStatus === "fulfilled") {
+  //     console.log("Success Message:", successMessage); // Check if the message is correct
+  //     toast.success(successMessage);
+  //     setLoading(false);
+  //     setIsButtonDisabled(false);
+
+  //     setTimeout(() => {
+  //       dispatch(resetSignupStatus());
+  //       navigate("/login");
+  //     }, 3000);
+  //   }
+  // }, [signupStatus, successMessage, navigate, dispatch]);
 
   const handleLoginClick = () => {
     navigate("/login");
