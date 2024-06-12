@@ -11,7 +11,8 @@ import { createWorkspace,
          updateMemberRole, 
          addMember,
          updateWorkspace,
-         fetchTasksByUserID } from "./workspaceApi";
+         fetchTasksByUserID,
+         getWorkspaceMediaAndDocs } from "./workspaceApi";
 
 const initialState = {
   workspaces: [],
@@ -21,6 +22,7 @@ const initialState = {
   selectedTasks: [],
   selectedMembers: [],
   userTasks: [],
+  selectedMediaAndDocs: [],
   fetchWorkspaceByUserIDStatus: 'idle',
   fetchTasksByUserIDStatus: 'idle',
   fetchWorkspaceByIdStatus: 'idle',
@@ -34,6 +36,7 @@ const initialState = {
   updateMemberRoleStatus: 'idle',
   addMemberStatus: 'idle',
   updateWorkspaceStatus: 'idle',
+  getWorkspaceMediaAndDocsStatus: 'idle',
   status: "idle",
   errors: null,
   successMessage: null
@@ -130,6 +133,12 @@ export const updateWorkspaceAsync = createAsyncThunk(
   async ({ id, updatedWorkspace }) => {
     const response = await updateWorkspace({id, updatedWorkspace});
     return response.data;
+  }
+);
+
+export const fetchWorkspaceMediaAndDocsAsync = createAsyncThunk('workspace/fetchWorkspaceMediaAndDocsAsync', async ({workspaceId}) => {
+    const selectedMediaAndDocs = await getWorkspaceMediaAndDocs({workspaceId});
+    return selectedMediaAndDocs;
   }
 );
 
@@ -318,6 +327,18 @@ const workspaceSlice = createSlice({
       })
       .addCase(updateWorkspaceAsync.rejected, (state, action) => {
         state.updateWorkspaceStatus = 'failed';
+        state.errors = action.error.message;
+      })
+      .addCase(fetchWorkspaceMediaAndDocsAsync.pending, (state) => {
+        state.getWorkspaceMediaAndDocsStatus = 'loading';
+      })
+      .addCase(fetchWorkspaceMediaAndDocsAsync.fulfilled, (state, action) => {
+        state.getWorkspaceMediaAndDocsStatus = 'fulfilled';
+        state.selectedMediaAndDocs=action.payload.data
+        state.successMessage = 'Workspace data fetched successfully!';
+      })
+      .addCase(fetchWorkspaceMediaAndDocsAsync.rejected, (state, action) => {
+        state.getWorkspaceMediaAndDocsStatus = 'failed';
         state.errors = action.error.message;
       });
   }

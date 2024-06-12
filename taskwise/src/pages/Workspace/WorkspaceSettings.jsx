@@ -1,7 +1,7 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import {
-  Box, Grid, IconButton, Typography, Paper, TextField, Dialog, DialogContent, DialogTitle, Tabs, Tab, Card, CardContent, CardActions,
-  ImageList, ImageListItem, Modal
+  Box, Grid, IconButton, Typography, Paper, TextField, Dialog, DialogContent, DialogTitle, Tabs, Tab, Card, CardContent, CardActions, Modal,
+  CardMedia
 } from '@mui/material';
 import PersonAddAltSharpIcon from '@mui/icons-material/PersonAddAltSharp';
 import LinkSharpIcon from '@mui/icons-material/LinkSharp';
@@ -19,6 +19,8 @@ import CloseIcon from '@mui/icons-material/Close';
 import ExitWorkspaceModal from './Models/ExitWorkspaceModal';
 import AddMemberToWorkspaceModal from './Models/AddMemberToWorkspaceModal';
 import ShareJoiningLinkModel from './Models/ShareJoiningLinkModel';
+import { updateWorkspaceAsync, uploadFileAsync, fetchWorkspaceMediaAndDocsAsync } from '../../features/workspace/workspaceSlice';
+import { useDispatch, useSelector } from 'react-redux';
 
 const StyledPaper = styled(Paper)(({ theme }) => ({
   height: '400px',
@@ -33,53 +35,53 @@ const TabLabelWrapper = styled('div')({
 });
 
 function WorkspaceSettings({ workspace, membersData }) {
+  const mediaAndDocs = useSelector((state) => state.workspace.selectedMediaAndDocs);
   const [selectedImage, setSelectedImage] = useState(workspace.imgUrl);
   const [workspaceText, setWorkspaceText] = useState(workspace.name);
   const [isEditing, setIsEditing] = useState(false);
   const [openDialog, setOpenDialog] = useState(false);
   const [dialogTitle, setDialogTitle] = useState("");
   const [dialogTab, setDialogTab] = useState(0);
-  const [mediaImages, setMediaImages] = useState([
-    'https://images.unsplash.com/photo-1506744038136-46273834b3fb',
-    'https://img.freepik.com/free-vector/hand-drawn-minimal-background_23-2149001650.jpg',
-  ]);
-
-  const [docs, setDocs] = useState([
-    'https://example.com/doc1.pdf',
-    'https://example.com/doc2.pdf',
-    'https://example.com/doc3.pdf',
-  ]);
-
+  const [mediaImages, setMediaImages] = useState([]);
+  const [docs, setDocs] = useState([]);
   const [open, setOpen] = useState(false);
+  const [openShareModel, setOpenShareModel] = useState(false);
+  const [openExitModal, setOpenExitModal] = useState(false);
+
+  const fileInputRef = useRef(null);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(fetchWorkspaceMediaAndDocsAsync({ workspaceId: workspace.id }));
+    setMediaImages(mediaAndDocs.imgUrls || []);
+    setDocs(mediaAndDocs.docUrls || []);
+  }, [dispatch, workspace.id, mediaAndDocs.imgUrls, mediaAndDocs.docUrls]);
 
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
-
-  const [openShareModel, setOpenShareModel] = useState(false);
-
   const handleOpenShareModel = () => setOpenShareModel(true);
   const handleCloseShareModel = () => setOpenShareModel(false);
-
-  const [openExitModal, setOpenExitModal] = useState(false);
-
   const handleOpenExitModal = () => setOpenExitModal(true);
   const handleCloseExitModal = () => setOpenExitModal(false);
-
-  const fileInputRef = useRef(null);
 
   const handleFileUploadClick = () => {
     fileInputRef.current.click();
   };
 
-  const handleFileChange = (event) => {
+  const handleFileChange = async (event) => {
     const file = event.target.files[0];
     if (file) {
-      const reader = new FileReader();
-      reader.onload = () => {
-        setSelectedImage(reader.result);
-        setMediaImages([...mediaImages, reader.result]);
-      };
-      reader.readAsDataURL(file);
+      const formData = new FormData();
+      formData.append('file', file);
+      try {
+        const response = await dispatch(uploadFileAsync(formData));
+        const { presignedUrl } = response.payload;
+        const updatedWorkspace = { ...workspace, imgUrl: presignedUrl };
+        dispatch(updateWorkspaceAsync({ id: workspace.id, updatedWorkspace }));
+        setSelectedImage(presignedUrl);
+      } catch (error) {
+        console.error('Error uploading image:', error);
+      }
     }
   };
 
@@ -88,6 +90,8 @@ function WorkspaceSettings({ workspace, membersData }) {
   };
 
   const handleSaveClick = () => {
+    const updatedWorkspace = { ...workspace, name: workspaceText };
+    dispatch(updateWorkspaceAsync({ id: workspace.id, updatedWorkspace }));
     setIsEditing(false);
   };
 
@@ -116,6 +120,14 @@ function WorkspaceSettings({ workspace, membersData }) {
     const updatedDocs = docs.filter((_, docIndex) => docIndex !== index);
     setDocs(updatedDocs);
   };
+  const loggedInUser = useSelector((state) => state?.user?.loggedInUser);
+  const loggedInUserEmail = loggedInUser?.user?.email;
+
+  const loggedInMember = membersData.find(member => member.user.email === loggedInUserEmail);
+  const isAdmin = loggedInMember?.role === 'Admin';
+
+  // Extract existing member emails
+  const existingMemberEmails = membersData.map(member => member.user.email);
 
   return (
     <Grid container spacing={2}>
@@ -177,24 +189,28 @@ function WorkspaceSettings({ workspace, membersData }) {
       </Grid>
       <Grid item xs={12} md={6}>
         <StyledPaper>
+        {isAdmin && (
+            <>
+              <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                <IconButton color="primary" onClick={handleOpen}>
+                  <PersonAddAltSharpIcon sx={{ color: "#000000" }} />
+                </IconButton>
+                <Typography sx={{ paddingTop: 0.5, paddingLeft: 1, fontSize: 15, fontWeight: 'bold' }}>
+                  Add Member
+                </Typography>
+              </Box>
+              <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                <IconButton onClick={handleOpenShareModel}>
+                  <LinkSharpIcon sx={{ color: "#000000", fontSize: 25, transform: 'rotate(135deg)' }} />
+                </IconButton>
+                <Typography sx={{ paddingBottom: 0.2, paddingLeft: 1, fontSize: 15, fontWeight: 'bold' }}>
+                  Invite to workspace via link
+                </Typography>
+              </Box>
+            </>
+          )}
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
-            <IconButton color="primary" onClick={handleOpen}>
-              <PersonAddAltSharpIcon sx={{ color: "#000000" }} />
-            </IconButton>
-            <Typography sx={{ paddingTop: 0.5, paddingLeft: 1, fontSize: 15, fontWeight: 'bold' }}>
-              Add Member
-            </Typography>
-          </Box>
-          <Box sx={{ display: 'flex', alignItems: 'center' }}>
-            <IconButton onClick={handleOpenShareModel}>
-              <LinkSharpIcon sx={{ color: "#000000", fontSize: 25, transform: 'rotate(135deg)' }} />
-            </IconButton>
-            <Typography sx={{ paddingBottom: 0.2, paddingLeft: 1, fontSize: 15, fontWeight: 'bold' }}>
-              Invite to workspace via link
-            </Typography>
-          </Box>
-          <Box sx={{ display: 'flex', alignItems: 'center' }}>
-            <WorkspaceSettingsMembers membersData={membersData} workspaceId={workspace.id}/>
+            <WorkspaceSettingsMembers membersData={membersData} workspaceId={workspace.id} />
           </Box>
           <Box sx={{ display: 'flex', alignItems: 'center', marginTop: 6 }}>
             <IconButton onClick={handleOpenExitModal}>
@@ -211,19 +227,19 @@ function WorkspaceSettings({ workspace, membersData }) {
             aria-describedby="add-member-modal-description"
           >
             <Box>
-              <AddMemberToWorkspaceModal handleClose={handleClose} workspaceId={workspace.id} />
+              <AddMemberToWorkspaceModal handleClose={handleClose} workspaceId={workspace.id} existingMemberEmails={existingMemberEmails} />
             </Box>
           </Modal>
-            <Modal
-              open={openShareModel}
-              onClose={handleCloseShareModel}
-              aria-labelledby="add-member-modal-title"
-              aria-describedby="add-member-modal-description"
-            >
-              <Box>
-                <ShareJoiningLinkModel handleClose={handleCloseShareModel} />
-              </Box>
-            </Modal>
+          <Modal
+            open={openShareModel}
+            onClose={handleCloseShareModel}
+            aria-labelledby="add-member-modal-title"
+            aria-describedby="add-member-modal-description"
+          >
+            <Box>
+              <ShareJoiningLinkModel handleClose={handleCloseShareModel} />
+            </Box>
+          </Modal>
           <Modal
             open={openExitModal}
             onClose={handleCloseExitModal}
@@ -254,34 +270,46 @@ function WorkspaceSettings({ workspace, membersData }) {
           <Grid container spacing={2} alignItems="center">
             <Grid item xs={12}>
               <Tabs value={dialogTab} onChange={handleTabChange} variant="fullWidth">
-                <Tab
-                  label={
-                    <TabLabelWrapper>
-                      <ImageOutlinedIcon sx={{ p: 1 }} />
-                      <span>Media</span>
-                    </TabLabelWrapper>
-                  }
-                />
-                <Tab
-                  label={
-                    <TabLabelWrapper>
-                      <DescriptionOutlinedIcon sx={{ p: 1 }} />
-                      <span>Docs</span>
-                    </TabLabelWrapper>
-                  }
-                />
+                {mediaImages.length > 0 && (
+                  <Tab
+                    label={
+                      <TabLabelWrapper>
+                        <ImageOutlinedIcon sx={{ p: 1 }} />
+                        <span>Media</span>
+                      </TabLabelWrapper>
+                    }
+                  />
+                )}
+                {docs.length > 0 && (
+                  <Tab
+                    label={
+                      <TabLabelWrapper>
+                        <DescriptionOutlinedIcon sx={{ p: 1 }} />
+                        <span>Docs</span>
+                      </TabLabelWrapper>
+                    }
+                  />
+                )}
               </Tabs>
             </Grid>
-            <Grid item xs={12}>
+            <Grid item xs={12} style={{ maxHeight: '300px', overflowY: 'auto' }}>
               {dialogTab === 0 && (
                 mediaImages.length > 0 ? (
-                  <ImageList cols={3} rowHeight={200}>
+                  <Grid container spacing={1}>
                     {mediaImages.map((image, index) => (
-                      <ImageListItem key={index}>
-                        <img src={image} alt={`Media ${index + 1}`} loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                      </ImageListItem>
+                      <Grid item xs={12} sm={6} md={4} lg={3} key={index}>
+                        <Card sx={{ height: '100%' }}>
+                          <CardMedia
+                            component="img"
+                            src={image.imgUrl}
+                            alt={`Media ${index + 1}`}
+                            height="100"
+                            sx={{ objectFit: 'cover' }}
+                          />
+                        </Card>
+                      </Grid>
                     ))}
-                  </ImageList>
+                  </Grid>
                 ) : (
                   <Typography sx={{ p: 2, textAlign: 'left', color: '#888' }}>No media available</Typography>
                 )
@@ -290,10 +318,10 @@ function WorkspaceSettings({ workspace, membersData }) {
                 docs.length > 0 ? (
                   <Box sx={{ p: 2 }}>
                     {docs.map((doc, index) => (
-                      <Card key={index} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 1 }}>
+                      <Card key={index} sx={{ mb: 1 }}>
                         <CardContent>
                           <Typography>
-                            <a href={doc} target="_blank" rel="noopener noreferrer">{doc}</a>
+                            <a href={doc.docUrl} target="_blank" rel="noopener noreferrer">{doc.docName}</a>
                           </Typography>
                         </CardContent>
                         <CardActions>
@@ -312,6 +340,7 @@ function WorkspaceSettings({ workspace, membersData }) {
           </Grid>
         </DialogContent>
       </Dialog>
+
     </Grid>
   );
 }
