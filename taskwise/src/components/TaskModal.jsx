@@ -37,23 +37,23 @@ const TaskModal = ({ open, handleClose, task }) => {
         },
         comment: currentComment,
       };
-
-      const updatedComments = [...(task.comments || []), newComment];
-
+  
+      const updatedComments = [...(task.comments || []), newComment]; // Merge new comment with existing comments
+  
       const updatedTaskDetails = {
         ...task,
         comments: updatedComments,
       };
-
+  
       const data = {
         ...updatedTaskDetails,
       };
-
+  
       const idObject = {
         taskId: task._id,
         id: task.projectID,
       };
-
+  
       dispatch(editTaskAsync({ data, idObject }));
       setCurrentComment("");
     } else {
