@@ -1,8 +1,9 @@
-import React from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
+import { CircularProgress } from "@mui/material";
 import { styled, ThemeProvider, createTheme } from "@mui/material/styles";
 import TaskWiseLogo from "../../assets/TaskWiseLogo.png";
 import confirmationlogo from "../../assets/confirmationlogo.jpeg"; // Assuming you have a different image for confirmation
@@ -49,9 +50,13 @@ const CopyrightText = styled(Typography)(({ theme }) => ({
 
 const ConfirmationPage = () => {
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = () => {
-    navigate("/login");
+    setLoading(true);
+    setTimeout(() => {
+      navigate("/login");
+    }, 2000); // Delay to show the loader for 2 seconds
   };
 
   return (
@@ -96,8 +101,13 @@ const ConfirmationPage = () => {
           onClick={handleSubmit}
           variant="contained"
           color="primary"
+          disabled={loading}
         >
-          Login
+          {loading ? (
+            <CircularProgress size={24} color="inherit" />
+          ) : (
+            "Go to Login"
+          )}
         </SubmitButton>
       </Container>
       <CopyrightText>

@@ -4,6 +4,7 @@ import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
+import { CircularProgress } from "@mui/material";
 import { styled, ThemeProvider, createTheme } from "@mui/material/styles";
 import TaskWiseLogo from "../../assets/TaskWiseLogo.png";
 import forgotpasswordlogo from "../../assets/forgotpasswordlogo.jpeg";
@@ -11,8 +12,10 @@ import { useDispatch, useSelector } from "react-redux";
 import {
   forgotPasswordAsync,
   resetForgotPasswordStatus,
+  clearForgotPasswordError,
 } from "../../features/user/userSlice";
 import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const theme = createTheme();
 
@@ -98,6 +101,11 @@ const CopyrightText = styled(Typography)(({ theme }) => ({
 // }));
 
 const ForgotPasswordPage = () => {
+  const [email, setEmail] = useState(""); // State for email
+  const [error, setError] = useState(""); // State for error message
+  const [isButtonDisabled, setIsButtonDisabled] = useState(false);
+  const [loading, setLoading] = useState(false);
+
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -112,9 +120,6 @@ const ForgotPasswordPage = () => {
   const forgotPasswordError = useSelector(
     (state) => state.user.forgotPasswordError
   );
-
-  const [email, setEmail] = useState(""); // State for email
-  const [error, setError] = useState(""); // State for error message
 
   const handleSubmit = (e) => {
     e.preventDefault(); // Prevent default form submission
@@ -131,7 +136,9 @@ const ForgotPasswordPage = () => {
     }
 
     setError(""); // Clear any previous error
+    setLoading(true);
     dispatch(forgotPasswordAsync({ email }));
+    setIsButtonDisabled(true);
   };
 
   useEffect(() => {
@@ -143,9 +150,16 @@ const ForgotPasswordPage = () => {
 
   useEffect(() => {
     if (forgotPasswordError) {
-      toast.error(forgotPasswordError.message);
+      toast.error(forgotPasswordError.message, {
+        onClose: () => {
+          setLoading(false);
+          setIsButtonDisabled(false);
+          dispatch(clearForgotPasswordError());
+          dispatch(resetForgotPasswordStatus());
+        },
+      });
     }
-  }, [forgotPasswordError]);
+  }, [forgotPasswordError, dispatch]);
 
   return (
     <ThemeProvider theme={theme}>
@@ -210,8 +224,13 @@ const ForgotPasswordPage = () => {
             color="primary"
             fullWidth
             onClick={handleSubmit}
+            disabled={isButtonDisabled}
           >
-            Continue
+            {loading ? (
+              <CircularProgress size={24} color="inherit" />
+            ) : (
+              "Continue"
+            )}
           </SubmitButton>
         </Form>
       </Container>

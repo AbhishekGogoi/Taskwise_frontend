@@ -5,6 +5,7 @@ import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 import Link from "@mui/material/Link";
 import Typography from "@mui/material/Typography";
+import { CircularProgress } from "@mui/material";
 import { styled, ThemeProvider, createTheme } from "@mui/material/styles";
 import TaskWiseLogo from "../../assets/TaskWiseLogo.png";
 import verificationlogo from "../../assets/verificationlogo.jpeg";
@@ -14,8 +15,10 @@ import {
   resetVerifyCodeStatus,
   resendOTPAsync,
   resetResendOTPStatus,
+  clearVerifyCodeError,
 } from "../../features/user/userSlice";
 import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const theme = createTheme();
 
@@ -117,6 +120,8 @@ const VerificationPage = () => {
 
   const [otp, setOtp] = useState(["", "", "", ""]);
   const [error, setError] = useState("");
+  const [isButtonDisabled, setIsButtonDisabled] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -127,7 +132,9 @@ const VerificationPage = () => {
     }
 
     setError("");
+    setLoading(true);
     dispatch(verifyResetCodeAsync({ email: resetEmail, code }));
+    setIsButtonDisabled(true);
   };
 
   // Function to mask email
@@ -166,9 +173,16 @@ const VerificationPage = () => {
 
   useEffect(() => {
     if (verifyCodeError) {
-      toast.error(verifyCodeError.message);
+      toast.error(verifyCodeError.message, {
+        onClose: () => {
+          setLoading(false);
+          setIsButtonDisabled(false);
+          dispatch(clearVerifyCodeError());
+          dispatch(resetVerifyCodeStatus());
+        },
+      });
     }
-  }, [verifyCodeError]);
+  }, [verifyCodeError, dispatch]);
 
   useEffect(() => {
     if (resendOTPStatus === "fulfilled") {
@@ -255,8 +269,9 @@ const VerificationPage = () => {
           variant="contained"
           color="primary"
           onClick={handleSubmit}
+          disabled={isButtonDisabled}
         >
-          Submit
+          {loading ? <CircularProgress size={24} color="inherit" /> : "Submit"}
         </SubmitButton>
 
         <CopyrightText>

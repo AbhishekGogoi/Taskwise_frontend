@@ -1,7 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { resetSignupStatus, signupAsync } from "../../features/user/userSlice";
+import {
+  resetSignupStatus,
+  signupAsync,
+  clearSignupError,
+} from "../../features/user/userSlice";
 import {
   Container,
   Box,
@@ -10,6 +14,7 @@ import {
   Button,
   Typography,
   Link,
+  CircularProgress,
 } from "@mui/material";
 import { Email, Lock, Person } from "@mui/icons-material"; // Import Person icon for username
 import { styled } from "@mui/system";
@@ -117,6 +122,8 @@ const SignupPage = () => {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [errors, setErrors] = useState({});
+  const [isButtonDisabled, setIsButtonDisabled] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -195,16 +202,25 @@ const SignupPage = () => {
     }
 
     setErrors({});
+    setLoading(true);
     dispatch(
       signupAsync({ username, email, password, finalImageUrl, finalImageKey })
     );
+    setIsButtonDisabled(true); // Disable the button after signup attempt
   };
 
   useEffect(() => {
     if (signupError) {
-      toast.error(signupError.message);
+      toast.error(signupError.message, {
+        onClose: () => {
+          setLoading(false);
+          setIsButtonDisabled(false);
+          dispatch(clearSignupError());
+          dispatch(resetSignupStatus());
+        }, // Re-enable button after toast closes
+      });
     }
-  }, [signupError]);
+  }, [signupError, dispatch]);
 
   useEffect(() => {
     if (signupStatus === "fulfilled") {
@@ -334,8 +350,9 @@ const SignupPage = () => {
             "&:hover": { backgroundColor: "#303f9f" }, // Darker hover
           }}
           onClick={handleSignup}
+          disabled={isButtonDisabled} // Disable button based on state
         >
-          Sign Up
+          {loading ? <CircularProgress size={24} color="inherit" /> : "Sign Up"}
         </StyledButton>
 
         {/* <StyledDivider sx={{ margin: "1rem 0" }}>or</StyledDivider> */}

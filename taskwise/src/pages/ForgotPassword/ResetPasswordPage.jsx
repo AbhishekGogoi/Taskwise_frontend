@@ -4,6 +4,7 @@ import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
+import { CircularProgress } from "@mui/material";
 import { styled, ThemeProvider, createTheme } from "@mui/material/styles";
 import TaskWiseLogo from "../../assets/TaskWiseLogo.png";
 import forgotpasswordlogo from "../../assets/forgotpasswordlogo.jpeg";
@@ -11,9 +12,11 @@ import { useDispatch, useSelector } from "react-redux";
 import {
   resetPasswordAsync,
   resetResetPasswordStatus,
+  clearResetPasswordError,
 } from "../../features/user/userSlice";
 import { ToastContainer, toast } from "react-toastify";
 import { useLocation } from "react-router-dom";
+import Joi from "joi";
 
 const theme = createTheme();
 
@@ -94,25 +97,56 @@ const ResetPasswordPage = () => {
 
   const [checkPassword, setCheckPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [error, setError] = useState(""); // State for error message
+  const [errors, setErrors] = useState({}); // State for error messages
+  const [isButtonDisabled, setIsButtonDisabled] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const { email, code } = location.state || {};
+
+  const schema = Joi.object({
+    checkPassword: Joi.string()
+      .pattern(
+        new RegExp(
+          "^[a-zA-Z0-9!@#\\$%\\^&\\*\\(\\)_\\+\\-=[\\]{};:'\",<>\\.\\?/`~]{7,}$"
+        )
+      )
+      .required()
+      .messages({
+        "string.empty": "Please fill out both password fields",
+        "string.pattern.base":
+          "Password must be at least 7 characters and contain only letters, numbers, and special characters",
+      }),
+    confirmPassword: Joi.any()
+      .valid(Joi.ref("checkPassword"))
+      .required()
+      .messages({
+        "any.only": "Passwords do not match",
+        "any.required": "Please fill out both password fields",
+      }),
+  });
 
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    if (!checkPassword.trim() || !confirmPassword.trim()) {
-      setError("Please fill out both password fields.");
-      return;
-    }
-    if (checkPassword !== confirmPassword) {
-      setError("Passwords do not match.");
+    const { error } = schema.validate(
+      { checkPassword, confirmPassword },
+      { abortEarly: false }
+    );
+
+    if (error) {
+      const validationErrors = {};
+      error.details.forEach((detail) => {
+        validationErrors[detail.path[0]] = detail.message;
+      });
+      setErrors(validationErrors);
       return;
     }
 
-    setError("");
+    setErrors({});
+    setLoading(true);
     const newPassword = checkPassword;
     dispatch(resetPasswordAsync({ email, code, newPassword }));
+    setIsButtonDisabled(true);
   };
 
   useEffect(() => {
@@ -124,9 +158,16 @@ const ResetPasswordPage = () => {
 
   useEffect(() => {
     if (resetPasswordError) {
-      toast.error(resetPasswordError.message);
+      toast.error(resetPasswordError.message, {
+        onClose: () => {
+          setLoading(false);
+          setIsButtonDisabled(false);
+          dispatch(clearResetPasswordError());
+          dispatch(resetResetPasswordStatus());
+        },
+      });
     }
-  }, [resetPasswordError]);
+  }, [resetPasswordError, dispatch]);
 
   return (
     <ThemeProvider theme={theme}>
@@ -169,8 +210,8 @@ const ResetPasswordPage = () => {
             margin="normal"
             value={checkPassword}
             onChange={(e) => setCheckPassword(e.target.value)}
-            error={!!error} // Show error border if there's an error
-            helperText={error} // Display error message
+            error={!!errors.checkPassword}
+            helperText={errors.checkPassword}
           />
           <StyledTextField
             label="Confirm Password"
@@ -179,8 +220,8 @@ const ResetPasswordPage = () => {
             margin="normal"
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
-            error={!!error} // Show error border if there's an error
-            helperText={error} // Display error message
+            error={!!errors.confirmPassword}
+            helperText={errors.confirmPassword}
           />
           <SubmitButton
             type="submit"
@@ -188,8 +229,13 @@ const ResetPasswordPage = () => {
             color="primary"
             fullWidth
             onClick={handleSubmit}
+            disabled={isButtonDisabled}
           >
-            Update
+            {loading ? (
+              <CircularProgress size={24} color="inherit" />
+            ) : (
+              "Update"
+            )}
           </SubmitButton>
         </Form>
       </Container>
