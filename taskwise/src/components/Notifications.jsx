@@ -69,10 +69,10 @@ const parseMessage = (message) => {
     const [fullMatch, content] = firstMatch;
     const color =
       firstMatch === taskMatch
-        ? "blue"
+        ? "#79bae8"
         : firstMatch === projectMatch
-        ? "green"
-        : "red";
+        ? "#79e8af"
+        : "#f07592";
     parts.push(
       <StyledSpan color={color} key={content}>
         {content}
