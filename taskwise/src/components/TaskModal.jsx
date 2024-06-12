@@ -193,6 +193,7 @@ const TaskModal = ({ open, handleClose, task }) => {
             variant="contained"
             color="primary"
             sx={{ mt: 2 }}
+            fullWidth
             onClick={handleUpdateTask}
           >
             Post
