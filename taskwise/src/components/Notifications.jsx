@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useCallback } from "react";
 import {
   Box,
   Typography,
@@ -11,10 +11,7 @@ import {
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import { styled } from "@mui/system";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  fetchUnreadNotificationsAsync,
-  markNotificationAsReadAsync,
-} from "../features/notification/notificationSlice";
+import { markNotificationAsReadAsync } from "../features/notification/notificationSlice";
 
 const NotificationItem = styled(ListItem)({
   display: "flex",
