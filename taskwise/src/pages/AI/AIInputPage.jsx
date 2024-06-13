@@ -76,7 +76,7 @@ const AIInputPage = () => {
       try {
         // eslint-disable-next-line
         const res = await dispatch(createProjectAIASync(data));
-        navigate(`/task-carousel`); // Pass data here
+        navigate(`/task-carousel`,{ state: { workspaceID: workspace } }); // Pass data here
       } catch (error) {
         //console.error('Error fetching task list:', error);
         toast.error('Error fetching task list.');

@@ -10,7 +10,7 @@ import { useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from 'react-redux';
 import { createProjectAIAsync } from "../../../features/project/projectSlice";
 import { getImageUrlAsync } from "../../../features/workspace/workspaceSlice"
-
+import { useLocation } from 'react-router-dom';
 
 const CustomBox = styled(Box)(({ theme }) => ({
   width: '100%',
@@ -37,7 +37,9 @@ function TaskList() {
   const [tasks, setTasks] = useState([]);
   const navigate = useNavigate();
   const aiData = useSelector((state) => state?.ai?.aiData);
-  const user = useSelector((state) => state?.user?.loggedInUser?.user)
+  const user = useSelector((state) => state?.user?.loggedInUser?.user);
+  const location = useLocation();
+  const { workspaceID } = location.state || {};
   useEffect(() => {
     if (aiData) {
       setTasks(aiData.tasks);
@@ -94,7 +96,7 @@ function TaskList() {
         "username":user?.username,
         "email":user?.email
       },
-      "workspaceID":"6663e33cbddb3175555164a8",
+      "workspaceID":workspaceID,
       "imgUrl": finalImageUrl,
       "imgKey": finalImageKey,
     }
