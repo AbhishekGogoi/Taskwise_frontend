@@ -39,6 +39,7 @@ function TaskList() {
   const aiData = useSelector((state) => state?.ai?.aiData);
   const user = useSelector((state) => state?.user?.loggedInUser?.user);
   const location = useLocation();
+  const [loading,setLoading]=useState(false);
   const { workspaceID } = location.state || {};
   useEffect(() => {
     if (aiData) {
@@ -100,7 +101,9 @@ function TaskList() {
       "imgUrl": finalImageUrl,
       "imgKey": finalImageKey,
     }
+    setLoading(true)
     await dispatch(createProjectAIAsync(data))
+    setLoading(false)
     navigate("/projects")
   };
 
@@ -190,9 +193,10 @@ function TaskList() {
             right: '0',
             borderRadius: '16px'
           }}
+          disabled={loading}
           onClick={handleCreateProjectButtonClick}
         >
-          Create Project
+          {loading ? "loading" : "Create Project"}
         </Button>
       </Box>
     </Box>
