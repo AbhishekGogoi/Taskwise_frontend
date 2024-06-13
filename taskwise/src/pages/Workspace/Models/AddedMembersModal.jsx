@@ -1,12 +1,8 @@
-// AddedMembersModal.js
 import React from 'react';
 import PropTypes from 'prop-types';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
-import IconButton from '@mui/material/IconButton';
-import CloseIcon from '@mui/icons-material/Close';
-import Avatar from '@mui/material/Avatar';
 
 const style = {
   position: 'absolute',
@@ -21,36 +17,39 @@ const style = {
   p: 4,
 };
 
-const AddedMembersModal = ({ open, handleClose, members }) => (
-  <Modal open={open} onClose={handleClose} aria-labelledby="added-members-title">
-    <Box sx={style}>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-        <Typography id="added-members-title" variant="h5" component="h2" style={{ fontWeight: 550 }}>
-          Added People to Workspace
+const AddedMembersModal = ({ open, handleClose, members, responseData }) => {
+  return (
+    <Modal open={open} onClose={handleClose}>
+      <Box sx={style}>
+        <Typography variant="h6" component="h2" gutterBottom>
+          Members Added
         </Typography>
-        <IconButton onClick={handleClose}>
-          <CloseIcon />
-        </IconButton>
+        <Typography variant="body1" gutterBottom>
+          The following members have been added:
+        </Typography>
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+          {members.map((member, index) => (
+            <Typography key={index} variant="body2">
+              {member}
+            </Typography>
+          ))}
+        </Box>
+        <Typography variant="body1" gutterBottom>
+          API Response:
+        </Typography>
+        <Typography variant="body2" gutterBottom>
+          {JSON.stringify(responseData, null, 2)}
+        </Typography>
       </Box>
-      <Typography variant="h6" style={{ marginBottom: '20px' }}>
-        You have added {members.length} people to the workspace
-      </Typography>
-      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-        {members.map((email, index) => (
-          <Box key={index} sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-            <Avatar>{email[0].toUpperCase()}</Avatar>
-            <Typography>{email}</Typography>
-          </Box>
-        ))}
-      </Box>
-    </Box>
-  </Modal>
-);
+    </Modal>
+  );
+};
 
 AddedMembersModal.propTypes = {
   open: PropTypes.bool.isRequired,
   handleClose: PropTypes.func.isRequired,
   members: PropTypes.arrayOf(PropTypes.string).isRequired,
+  responseData: PropTypes.object.isRequired,
 };
 
 export default AddedMembersModal;

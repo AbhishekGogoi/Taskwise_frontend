@@ -29,7 +29,8 @@ const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 const NewWorkspaceModel = ({ handleClose, onWorkspaceCreated }) => {
   const dispatch = useDispatch();
-  const userId = useSelector((state) => state?.user?.loggedInUser?.user?._id);
+  const loggedInUser = useSelector((state) => state?.user?.loggedInUser.user);
+  const loggedInUserEmail = loggedInUser?.email;
 
   const [workspaceName, setWorkspaceName] = useState('');
   const [description, setDescription] = useState('');
@@ -86,7 +87,7 @@ const NewWorkspaceModel = ({ handleClose, onWorkspaceCreated }) => {
       description,
       imgKey: finalImageKey,
       imgUrl: finalImageUrl,
-      creatorUserID: userId,
+      creatorUserID: loggedInUser?._id,
       memberEmails: members,
     };
 
@@ -103,11 +104,17 @@ const NewWorkspaceModel = ({ handleClose, onWorkspaceCreated }) => {
     if (event.key === 'Enter' || event.key === ',' || event.key === ' ') {
       event.preventDefault();
       const email = inputValue.trim();
-      if (email && emailRegex.test(email) && !members.includes(email)) {
-        setMembers([...members, email]);
-        setInputValue('');
-        setMembersError('');
-      } else if (!emailRegex.test(email)) {
+      if (email && emailRegex.test(email)) {
+        if (email === loggedInUserEmail) {
+          setMembersError('You cannot add your own email as a member.');
+        } else if (members.includes(email)) {
+          setMembersError('Email address already added.');
+        } else {
+          setMembers((prevMembers) => [...prevMembers, email]);
+          setInputValue('');
+          setMembersError('');
+        }
+      } else {
         setMembersError('Invalid email address.');
       }
     }
