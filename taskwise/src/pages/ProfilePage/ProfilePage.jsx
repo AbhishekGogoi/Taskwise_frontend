@@ -116,13 +116,13 @@ const ProfileSettingsPage = () => {
 
   // Display success message using toast
   const handlePasswordChangeSuccess = (message) => {
-    toast.success(message || "Password changed successfully");
+    toast.success(message);
     setChangePasswordModalOpen(false);
   };
 
   // Display error message using toast
   const handlePasswordChangeError = (message) => {
-    toast.error(message || "An error occurred while changing the password");
+    toast.error(message);
   };
 
   return (

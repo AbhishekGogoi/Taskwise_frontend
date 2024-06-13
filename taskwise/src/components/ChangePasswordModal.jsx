@@ -7,10 +7,8 @@ import CloseIcon from "@mui/icons-material/Close";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import PropTypes from "prop-types";
-// import { toast, ToastContainer } from "react-toastify";
 import { useSelector } from "react-redux";
 import Joi from "joi";
-// import "react-toastify/dist/ReactToastify.css";
 
 const style = {
   position: "absolute",
@@ -106,16 +104,14 @@ const ChangePasswordModal = ({
       const data = await response.json();
 
       if (!response.ok) {
-        onUpdatePasswordError(data.message || "An error occurred");
+        onUpdatePasswordError(data.message);
       } else {
         setFormData({
           currentPassword: "",
           newPassword: "",
           confirmPassword: "",
         });
-        onUpdatePasswordSuccess(
-          data.message || "Password changed successfully"
-        );
+        onUpdatePasswordSuccess(data.message);
         handleClose();
       }
     } catch (error) {
@@ -216,17 +212,6 @@ const ChangePasswordModal = ({
       >
         Update Password
       </Button>
-      {/* <ToastContainer
-        position="top-right"
-        autoClose={5000}
-        hideProgressBar={false}
-        newestOnTop={false}
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-      /> */}
     </Box>
   );
 };
