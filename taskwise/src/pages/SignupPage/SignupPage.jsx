@@ -1,7 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { resetSignupStatus, signupAsync } from "../../features/user/userSlice";
+import {
+  resetSignupStatus,
+  signupAsync,
+  clearSignupError,
+} from "../../features/user/userSlice";
 import {
   Container,
   Box,
@@ -10,6 +14,7 @@ import {
   Button,
   Typography,
   Link,
+  CircularProgress,
 } from "@mui/material";
 import { Email, Lock, Person } from "@mui/icons-material"; // Import Person icon for username
 import { styled } from "@mui/system";
@@ -117,6 +122,8 @@ const SignupPage = () => {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [errors, setErrors] = useState({});
+  const [isButtonDisabled, setIsButtonDisabled] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -125,6 +132,8 @@ const SignupPage = () => {
   const signupError = useSelector((state) => state.user.signupError);
   // console.log(signupError?.message);
   const signupStatus = useSelector((state) => state.user.signupStatus);
+  // const successMessage = useSelector((state) => state.user.successMessage); // Select success message from state
+
   const schema = Joi.object({
     username: Joi.string().min(3).required().messages({
       "string.empty": "Username is required",
@@ -153,15 +162,6 @@ const SignupPage = () => {
       "any.only": "Passwords do not match",
     }),
   });
-
-  // const handleSignup = (e) => {
-  //   e.preventDefault();
-  //   if (password !== confirmPassword) {
-  //     alert("Passwords do not match");
-  //     return;
-  //   }
-  //   dispatch(signupAsync({ username, email, password }));
-  // };
 
   const handleSignup = async (e) => {
     e.preventDefault();
@@ -195,24 +195,32 @@ const SignupPage = () => {
     }
 
     setErrors({});
+    setLoading(true);
     dispatch(
       signupAsync({ username, email, password, finalImageUrl, finalImageKey })
     );
+    setIsButtonDisabled(true); // Disable the button after signup attempt
   };
 
   useEffect(() => {
     if (signupError) {
-      toast.error(signupError.message);
+      toast.error(signupError.message, {
+        onClose: () => {
+          setLoading(false);
+          setIsButtonDisabled(false);
+          dispatch(clearSignupError());
+          dispatch(resetSignupStatus());
+        }, // Re-enable button after toast closes
+      });
     }
-  }, [signupError]);
+  }, [signupError, dispatch]);
 
   useEffect(() => {
     if (signupStatus === "fulfilled") {
       navigate("/login");
     }
     dispatch(resetSignupStatus());
-    // eslint-disable-next-line
-  }, [signupStatus, navigate]);
+  }, [signupStatus, navigate, dispatch]);
 
   const handleLoginClick = () => {
     navigate("/login");
@@ -334,8 +342,9 @@ const SignupPage = () => {
             "&:hover": { backgroundColor: "#303f9f" }, // Darker hover
           }}
           onClick={handleSignup}
+          disabled={isButtonDisabled} // Disable button based on state
         >
-          Sign Up
+          {loading ? <CircularProgress size={24} color="inherit" /> : "Sign Up"}
         </StyledButton>
 
         {/* <StyledDivider sx={{ margin: "1rem 0" }}>or</StyledDivider> */}

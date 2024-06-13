@@ -8,6 +8,7 @@ import {
   Button,
   Typography,
   Link,
+  CircularProgress,
 } from "@mui/material";
 import { Email, Lock } from "@mui/icons-material";
 import { ToastContainer, toast } from "react-toastify";
@@ -17,7 +18,12 @@ import { styled } from "@mui/system";
 // import googleiconnew from "../../assets/googleiconnew.png";
 import TaskWiseLogo from "../../assets/TaskWiseLogo.png";
 import { useDispatch } from "react-redux";
-import { loginAsync } from "../../features/user/userSlice";
+import {
+  loginAsync,
+  clearLoginError,
+  resetLoginStatus,
+  clearAuthSuccessMessage,
+} from "../../features/user/userSlice";
 import { useSelector } from "react-redux";
 import { useEffect } from "react";
 
@@ -127,6 +133,8 @@ const LoginPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errors, setErrors] = useState({});
+  const [isButtonDisabled, setIsButtonDisabled] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -134,6 +142,7 @@ const LoginPage = () => {
 
   const loggedInUser = useSelector((state) => state.user.loggedInUser);
   const loginError = useSelector((state) => state.user.loginError);
+  const successMessage = useSelector((state) => state.user.successMessage);
   // console.log(loginError?.message);
 
   const schema = Joi.object({
@@ -175,20 +184,39 @@ const LoginPage = () => {
     }
 
     setErrors({});
+    setLoading(true); // Set loading state to true
     dispatch(loginAsync({ email, password }));
+    setIsButtonDisabled(true); // Disable the button after login attempt
   };
 
   useEffect(() => {
     if (loginError) {
-      toast.error(loginError.message);
+      toast.error(loginError.message, {
+        onClose: () => {
+          setLoading(false); // Set loading state to false on error
+          setIsButtonDisabled(false);
+          dispatch(clearLoginError()); // Clear the error after displaying it
+          dispatch(resetLoginStatus());
+        },
+      });
     }
-  }, [loginError]);
+  }, [loginError, dispatch]);
 
   useEffect(() => {
     if (loggedInUser) {
       navigate("/projects");
     }
   }, [loggedInUser, navigate]);
+
+  useEffect(() => {
+    if (successMessage) {
+      toast.success(successMessage, {
+        onClose: () => {
+          dispatch(clearAuthSuccessMessage());
+        },
+      });
+    }
+  }, [successMessage, dispatch]);
 
   const handleSignUpClick = () => {
     navigate("/signup"); // Navigate to signup page
@@ -268,18 +296,19 @@ const LoginPage = () => {
           error={!!errors.password}
           helperText={errors.password}
         />
-        <StyledButton // Login button style adjustments
+        <StyledButton
           type="submit"
           fullWidth
           variant="contained"
           sx={{
             marginTop: "1rem",
-            backgroundColor: "#0062ff", // Example color
-            "&:hover": { backgroundColor: "#303f9f" }, // Darker hover
+            backgroundColor: "#0062ff",
+            "&:hover": { backgroundColor: "#303f9f" },
           }}
           onClick={handleLogin}
+          disabled={isButtonDisabled}
         >
-          Log In
+          {loading ? <CircularProgress size={24} color="inherit" /> : "Log In"}
         </StyledButton>
 
         <StyledLink

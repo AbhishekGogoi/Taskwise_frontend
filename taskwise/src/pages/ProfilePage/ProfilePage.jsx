@@ -13,6 +13,8 @@ import { styled } from "@mui/material/styles";
 import ChangePasswordModal from "../../components/ChangePasswordModal";
 import { useDispatch, useSelector } from "react-redux";
 import { updateProfileAsync } from "../../features/user/userSlice";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const Container = styled(Box)({
   display: "flex",
@@ -112,6 +114,17 @@ const ProfileSettingsPage = () => {
     dispatch(updateProfileAsync({ title, userId }));
   };
 
+  // Display success message using toast
+  const handlePasswordChangeSuccess = (message) => {
+    toast.success(message);
+    setChangePasswordModalOpen(false);
+  };
+
+  // Display error message using toast
+  const handlePasswordChangeError = (message) => {
+    toast.error(message);
+  };
+
   return (
     <PageWrapper>
       <ProfileText variant="h7">Profile</ProfileText>
@@ -201,8 +214,13 @@ const ProfileSettingsPage = () => {
           onClose={handleCloseChangePasswordModal}
           aria-labelledby="change-password-modal-title"
         >
-          <ChangePasswordModal handleClose={handleCloseChangePasswordModal} />
+          <ChangePasswordModal
+            handleClose={handleCloseChangePasswordModal}
+            onUpdatePasswordSuccess={handlePasswordChangeSuccess}
+            onUpdatePasswordError={handlePasswordChangeError}
+          />
         </Modal>
+        <ToastContainer />
       </Container>
     </PageWrapper>
   );

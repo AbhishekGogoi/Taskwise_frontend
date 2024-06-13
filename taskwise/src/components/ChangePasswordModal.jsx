@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
@@ -7,10 +7,10 @@ import CloseIcon from "@mui/icons-material/Close";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import PropTypes from "prop-types";
-import { toast, ToastContainer } from "react-toastify";
 import { useSelector } from "react-redux";
 import Joi from "joi";
-import "react-toastify/dist/ReactToastify.css";
+import { toast } from "react-toastify";
+import { CircularProgress } from "@mui/material";
 
 const style = {
   position: "absolute",
@@ -25,7 +25,11 @@ const style = {
   p: 4,
 };
 
-const ChangePasswordModal = ({ handleClose }) => {
+const ChangePasswordModal = ({
+  handleClose,
+  onUpdatePasswordSuccess,
+  onUpdatePasswordError,
+}) => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [formData, setFormData] = useState({
@@ -35,6 +39,8 @@ const ChangePasswordModal = ({ handleClose }) => {
   });
 
   const [errors, setErrors] = useState({});
+  const [isButtonDisabled, setIsButtonDisabled] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -79,6 +85,8 @@ const ChangePasswordModal = ({ handleClose }) => {
     }
 
     setErrors({});
+    setIsButtonDisabled(true);
+    setLoading(true);
 
     const apiUrl =
       process.env.NODE_ENV === "production"
@@ -102,21 +110,35 @@ const ChangePasswordModal = ({ handleClose }) => {
       const data = await response.json();
 
       if (!response.ok) {
-        toast.error(data.message || "An error occurred");
+        onUpdatePasswordError(data.message);
       } else {
         setFormData({
           currentPassword: "",
           newPassword: "",
           confirmPassword: "",
         });
-        toast.success(data.message || "Password changed successfully");
+        onUpdatePasswordSuccess(data.message);
         handleClose();
       }
     } catch (error) {
       console.error("Error changing password:", error.message);
-      toast.error("An unexpected error occurred. Please try again later.");
+      onUpdatePasswordError(
+        "An unexpected error occurred. Please try again later."
+      );
     }
   };
+
+  useEffect(() => {
+    const toastId = toast.onChange((payload) => {
+      if (payload.status === "removed") {
+        setIsButtonDisabled(false);
+        setLoading(false);
+      }
+    });
+    return () => {
+      toast.dismiss(toastId);
+    };
+  }, []);
 
   return (
     <Box sx={style}>
@@ -204,28 +226,23 @@ const ChangePasswordModal = ({ handleClose }) => {
           backgroundColor: "#0b5fae",
           ":hover": { backgroundColor: "#0a54a0" },
         }}
+        disabled={isButtonDisabled}
         fullWidth
       >
-        Update Password
+        {loading ? (
+          <CircularProgress size={24} color="inherit" />
+        ) : (
+          "Update Password"
+        )}
       </Button>
-      <ToastContainer
-        position="top-right"
-        autoClose={5000}
-        hideProgressBar={false}
-        newestOnTop={false}
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-      />
     </Box>
   );
 };
 
 ChangePasswordModal.propTypes = {
   handleClose: PropTypes.func.isRequired,
-  onUpdatePassword: PropTypes.func.isRequired, // Callback for password update
+  onUpdatePasswordSuccess: PropTypes.func.isRequired,
+  onUpdatePasswordError: PropTypes.func.isRequired, // Callback for password update
 };
 
 export default ChangePasswordModal;

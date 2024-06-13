@@ -185,10 +185,7 @@ const userSlice = createSlice({
       })
       .addCase(signupAsync.fulfilled, (state, action) => {
         state.signupStatus = "fulfilled";
-        // state.loggedInUser = action.payload;
-        // state.isAuthenticated = true; // Set isAuthenticated to true upon successful signup
-        // localStorage.setItem("user", JSON.stringify(action.payload)); // Store user in localStorage
-        // localStorage.setItem("isAuthenticated", "true"); // Store isAuthenticated in localStorage
+        state.successMessage = action.payload.message; // Extract and store the success message
       })
       .addCase(signupAsync.rejected, (state, action) => {
         state.signupStatus = "rejected";
