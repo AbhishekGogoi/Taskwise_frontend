@@ -35,11 +35,12 @@ function TaskList() {
   const [currentPage, setCurrentPage] = useState(0);
   const [tasks, setTasks] = useState([]);
   const navigate = useNavigate();
-  const aiData = useSelector((state) => state.ai?.aiData?.tasks);
+  const aiData = useSelector((state) => state?.ai?.aiData);
   useEffect(() => {
     if (aiData) {
-      setTasks(aiData);
+      setTasks(aiData.tasks);
     }
+    console.log(aiData?.tasks,"aiData")
   }, [aiData]);
 
   const tasksPerRow = 3;
