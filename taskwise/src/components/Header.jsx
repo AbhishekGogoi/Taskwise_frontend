@@ -9,6 +9,7 @@ import Menu from "@mui/material/Menu";
 import Avatar from "@mui/material/Avatar";
 import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
+import Popover from "@mui/material/Popover";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import LogoImage from "../assets/TaskWiseLogo.png";
 import ProfileImage from "../assets/sample-pi.png";
@@ -18,16 +19,24 @@ import LogoutModal from "./LogoutModal";
 import Modal from "@mui/material/Modal";
 import { useDispatch, useSelector } from "react-redux";
 import { logoutAsync, resetUserState } from "../features/user/userSlice";
+import Notifications from "./Notifications";
+import Badge from "@mui/material/Badge";
+import { fetchUnreadNotificationsAsync } from "../features/notification/notificationSlice";
 
 const settings = ["Settings", "Logout"];
 
 function Header({ isSmallScreen, toggleDrawer }) {
   const [anchorElUser, setAnchorElUser] = useState(null);
+  const [anchorElNotifications, setAnchorElNotifications] = useState(null);
   const [openLogoutModal, setOpenLogoutModal] = useState(false);
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
   const { status, loggedInUser } = useSelector((state) => state.user);
+  const userId = useSelector((state) => state.user.loggedInUser?.user?._id);
+  const unreadNotifications = useSelector(
+    (state) => state.notification.unreadNotifications
+  );
 
   const handleOpenUserMenu = (event) => {
     setAnchorElUser(event.currentTarget);
@@ -55,6 +64,21 @@ function Header({ isSmallScreen, toggleDrawer }) {
     dispatch(logoutAsync());
     dispatch(resetUserState());
   };
+
+  //for notifications
+  const handleOpenNotifications = (event) => {
+    setAnchorElNotifications(event.currentTarget);
+  };
+
+  const handleCloseNotifications = () => {
+    setAnchorElNotifications(null);
+  };
+
+  useEffect(() => {
+    if (userId) {
+      dispatch(fetchUnreadNotificationsAsync(userId));
+    }
+  }, [userId, dispatch]);
 
   useEffect(() => {
     if (loggedInUser === null) {
@@ -103,13 +127,23 @@ function Header({ isSmallScreen, toggleDrawer }) {
             }}
           >
             <Tooltip title="Notifications">
-              <IconButton sx={{ p: 1, mr: { xs: 1, md: 3, lg: 4, xl: 5 } }}>
-                <NotificationsIcon
-                  sx={{
-                    fontSize: { xs: 15, md: 20, lg: 25, xl: 30 },
-                    color: "black",
-                  }}
-                />
+              <IconButton
+                sx={{ p: 1, mr: { xs: 1, md: 3, lg: 4, xl: 5 } }}
+                onClick={handleOpenNotifications}
+              >
+                <Badge
+                  color="error"
+                  variant="dot"
+                  invisible={unreadNotifications.length === 0}
+                  badgeContent={unreadNotifications.length}
+                >
+                  <NotificationsIcon
+                    sx={{
+                      fontSize: { xs: 15, md: 20, lg: 25, xl: 30 },
+                      color: "black",
+                    }}
+                  />
+                </Badge>
               </IconButton>
             </Tooltip>
             <Tooltip title="Open settings">
@@ -158,6 +192,24 @@ function Header({ isSmallScreen, toggleDrawer }) {
           </Box>
         </Toolbar>
       </AppBar>
+      <Popover
+        id="notifications-popover"
+        open={Boolean(anchorElNotifications)}
+        anchorEl={anchorElNotifications}
+        onClose={handleCloseNotifications}
+        anchorOrigin={{
+          vertical: "bottom",
+          horizontal: "right",
+        }}
+        transformOrigin={{
+          vertical: "top",
+          horizontal: "right",
+        }}
+      >
+        <Box>
+          <Notifications />
+        </Box>
+      </Popover>
       <Modal
         open={openLogoutModal}
         onClose={handleLogoutClose}
