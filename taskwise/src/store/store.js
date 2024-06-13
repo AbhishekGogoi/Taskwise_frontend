@@ -6,6 +6,7 @@ import userreducer, {
 } from "../features/user/userSlice";
 import workspacereducer from "../features/workspace/workspaceSlice";
 import aireducer from "../features/AI/projectAISlice";
+import notificationReducer from "../features/notification/notificationSlice";
 
 // Create a root reducer
 const appReducer = combineReducers({
@@ -13,6 +14,7 @@ const appReducer = combineReducers({
   user: userreducer,
   workspace: workspacereducer,
   ai: aireducer,
+  notification: notificationReducer,
 });
 
 const rootReducer = (state, action) => {

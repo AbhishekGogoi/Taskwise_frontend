@@ -28,7 +28,11 @@ function WorkspaceSettingsMembers({ membersData, workspaceId }) {
   const dispatch = useDispatch();
   const [anchorEl, setAnchorEl] = useState(null);
   const [selectedMember, setSelectedMember] = useState(null);
-  const adminUserId = useSelector((state) => state?.user?.loggedInUser?.user?._id);
+  const loggedInUser = useSelector((state) => state?.user?.loggedInUser);
+  const loggedInUserEmail = loggedInUser?.user?.email;
+
+  const loggedInMember = membersData.find(member => member.user.email === loggedInUserEmail);
+  const isAdmin = loggedInMember?.role === 'Admin';
 
   const handleMenuOpen = (event, member) => {
     setAnchorEl(event.currentTarget);
@@ -42,7 +46,7 @@ function WorkspaceSettingsMembers({ membersData, workspaceId }) {
 
   const handleRoleChange = async (role) => {
     try {
-      await dispatch(updateMemberRoleAsync({ workspaceId, adminUserId, userId: selectedMember.user.id, role }));
+      await dispatch(updateMemberRoleAsync({ workspaceId, adminUserId: loggedInMember.user.id, userId: selectedMember.user.id, role }));
       // If the update is successful, fetch the updated member list
       await dispatch(fetchWorkspaceMembersAsync(workspaceId)); // Assuming fetchMembers fetches the updated member list
     } catch (error) {
@@ -71,14 +75,10 @@ function WorkspaceSettingsMembers({ membersData, workspaceId }) {
           </ListItemAvatar>
           <ListItemText
             primary={member.user.email}
+            secondary={member.role === 'Admin' ? 'Admin' : null} // Show 'Admin' as secondary text for admin members
             sx={{ fontSize: 12, display: 'flex', justifyContent: 'space-between' }}
           />
-          {member.role !== 'Member' ? (
-            <ListItemText
-              primary={member.role}
-              sx={{ fontSize: 12, display: 'flex', justifyContent: 'end' }}
-            />
-          ) : (
+          {isAdmin && member.role !== 'Admin' && ( // Only render action button for non-admin users if logged-in user is admin
             <IconButton
               aria-label="more"
               aria-controls="long-menu"
@@ -106,7 +106,9 @@ function WorkspaceSettingsMembers({ membersData, workspaceId }) {
         open={Boolean(anchorEl)}
         onClose={handleMenuClose}
       >
-        <MenuItem onClick={() => handleRoleChange('Admin')}>Make Admin</MenuItem>
+        {isAdmin && ( // Only render action for making someone an admin if logged-in user is admin
+          <MenuItem onClick={() => handleRoleChange('Admin')}>Make Admin</MenuItem>
+        )}
       </Menu>
     </StyledPaper>
   );

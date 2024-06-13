@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { fetchWorkspaceMembers, fetchProjects, fetchProjectById, addProject, addTask, moveTask, addColumn, editColumn, editTask, columnOrderChange, deactivateTask } from "./projectApi";
+import { fetchWorkspaceMembers, fetchProjects, fetchProjectById, addProject, addTask, moveTask, addColumn, editColumn, editTask, columnOrderChange, deactivateTask , createProjectAI} from "./projectApi";
 
 
 const initialState = {
@@ -77,6 +77,11 @@ export const deactivateTaskAsync = createAsyncThunk(`projects/deactivateTaskAsyn
     return project
 })
 
+export const createProjectAIAsync = createAsyncThunk(`projects/createProjectAIAsync` , async (data) => {
+    const project= await createProjectAI(data);
+    return project
+})
+
 const projectSlice = createSlice({
     name: "projectSlice",
     initialState: initialState,
@@ -145,6 +150,28 @@ const projectSlice = createSlice({
                 state.sucessMessage = null;
             })
             .addCase(fetchProjectByIdAsync.rejected, (state, action) => {
+                state.projectFetchStatus = "rejected"
+                state.errors = action.error
+            })
+            .addCase(createProjectAIAsync.pending, (state) =>{
+                state.projectFetchStatus = "loading"
+            })
+            .addCase(createProjectAIAsync.fulfilled, (state,action) =>{
+                state.projectFetchStatus = "fulfilled"
+                state.selectedProject = action.payload
+                // Clear or reset other state data here
+                state.workspaceMembers=null;
+                state.taskAddStatus = "idle";
+                state.taskMoveStatus = "idle";
+                state.columnAddStatus = "idle";
+                state.columnEditStatus = "idle";
+                state.taskEditStatus = "idle";
+                state.columnorderChangeStatus = "idle";
+                state.taskDeleteStatus = "idle";
+                state.errors = null;
+                state.sucessMessage = null;
+            })
+            .addCase(createProjectAIAsync.rejected, (state,action) =>{
                 state.projectFetchStatus = "rejected"
                 state.errors = action.error
             })

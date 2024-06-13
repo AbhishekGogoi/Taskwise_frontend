@@ -27,11 +27,13 @@ const style = {
 
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-const AddMemberToWorkspaceModal = ({ handleClose, workspaceId }) => {
+const AddMemberToWorkspaceModal = ({ handleClose, workspaceId, existingMemberEmails }) => {
   const [members, setMembers] = useState([]);
   const [inputValue, setInputValue] = useState('');
   const [membersError, setMembersError] = useState('');
+  const [validEmails, setValidEmails] = useState([]);
   const [openAddedMembersModal, setOpenAddedMembersModal] = useState(false);
+  const [responseData, setResponseData] = useState(null);
   const dispatch = useDispatch();
   const adminUserId = useSelector((state) => state?.user?.loggedInUser?.user?._id);
 
@@ -39,14 +41,18 @@ const AddMemberToWorkspaceModal = ({ handleClose, workspaceId }) => {
     if (event.key === 'Enter' || event.key === ',' || event.key === ' ') {
       event.preventDefault();
       const email = inputValue.trim();
-      if (email && emailRegex.test(email) && !members.includes(email)) {
-        setMembers((prevMembers) => {
-          const newMembers = [...prevMembers, email];
-          return newMembers;
-        });
-        setInputValue('');
-        setMembersError('');
-      } else if (!emailRegex.test(email)) {
+      if (email && emailRegex.test(email)) {
+        if (existingMemberEmails.includes(email)) {
+          setMembersError('This email address is already a member.');
+        } else if (!members.includes(email)) {
+          setMembers((prevMembers) => [...prevMembers, email]);
+          setValidEmails((prevValidEmails) => [...prevValidEmails, email]);
+          setInputValue('');
+          setMembersError('');
+        } else {
+          setMembersError('Email address already added.');
+        }
+      } else {
         setMembersError('Invalid email address.');
       }
     }
@@ -54,18 +60,21 @@ const AddMemberToWorkspaceModal = ({ handleClose, workspaceId }) => {
 
   const handleDeleteMember = (emailToDelete) => () => {
     setMembers((prevMembers) => prevMembers.filter((email) => email !== emailToDelete));
+    setValidEmails((prevValidEmails) => prevValidEmails.filter((email) => email !== emailToDelete));
   };
 
   const handleAddButtonClick = async () => {
     try {
-      if (members.length === 0) {
-        console.warn('Please click on enter, after entering the email. No members to add.');
+      if (validEmails.length === 0) {
+        console.warn('Please enter valid email addresses. No members to add.');
         return;
       }
-      await dispatch(addMemberAsync({ workspaceId, adminUserId, memberEmails: members }));
+      const response = await dispatch(addMemberAsync({ workspaceId, adminUserId, memberEmails: validEmails }));
       await dispatch(fetchWorkspaceMembersAsync(workspaceId));
       setOpenAddedMembersModal(true);
       handleClose();
+      // Assuming response is an object containing the API response data
+      setResponseData(response.payload);
     } catch (error) {
       console.error('Error adding member:', error);
     }
@@ -104,30 +113,33 @@ const AddMemberToWorkspaceModal = ({ handleClose, workspaceId }) => {
               <Chip key={index} label={email} onDelete={handleDeleteMember(email)} />
             ))}
           </Box>
-          <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 2 }}>
-            <Button
-              variant="outlined"
-              color="secondary"
-              sx={{ textTransform: 'none', backgroundColor: '#f0f0f0' }}
-              onClick={handleClose}
-            >
-              Cancel
-            </Button>
-            <Button
-              variant="contained"
-              color="primary"
-              sx={{ textTransform: 'none' }}
-              onClick={handleAddButtonClick}
-            >
-              Add
-            </Button>
-          </Box>
+          {validEmails.length > 0 && (
+            <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 2 }}>
+              <Button
+                variant="outlined"
+                color="secondary"
+                sx={{ textTransform: 'none', backgroundColor: '#f0f0f0' }}
+                onClick={handleClose}
+              >
+                Cancel
+              </Button>
+              <Button
+                variant="contained"
+                color="primary"
+                sx={{ textTransform: 'none' }}
+                onClick={handleAddButtonClick}
+              >
+                Add
+              </Button>
+            </Box>
+          )}
         </Box>
       </Modal>
       <AddedMembersModal
         open={openAddedMembersModal}
         handleClose={handleAddedMembersModalClose}
         members={members}
+        responseData={responseData}
       />
     </>
   );
@@ -136,6 +148,7 @@ const AddMemberToWorkspaceModal = ({ handleClose, workspaceId }) => {
 AddMemberToWorkspaceModal.propTypes = {
   handleClose: PropTypes.func.isRequired,
   workspaceId: PropTypes.string.isRequired,
+  existingMemberEmails: PropTypes.arrayOf(PropTypes.string).isRequired,
 };
 
 export default AddMemberToWorkspaceModal;

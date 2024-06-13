@@ -426,6 +426,7 @@ const TaskDetailsPage = () => {
                         flexGrow: 1,
                         ml: 4,
                       }}
+                     
                     >
                       <Avatar
                         alt="Profile Image"
@@ -433,14 +434,16 @@ const TaskDetailsPage = () => {
                         sx={{
                           width: 20,
                           height: 20,
+                          cursor: "pointer"
                         }}
+                        onClick={handleClick}
                       />
 
                       <Typography
                         sx={{ ml: 1, cursor: "pointer" }}
                         onClick={handleClick}
                       >
-                        {taskDetails?.assigneeUserID?.email}
+                        {taskDetails?.assigneeUserID?.email }
                       </Typography>
                       <Popover
                         id={id}
