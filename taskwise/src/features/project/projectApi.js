@@ -104,3 +104,12 @@ export const deactivateTask=async(idObject)=>{
         throw error.response.data
     }
 }
+
+export const createProjectAI=async(data)=>{
+    try{
+        const res=await axiosi.post(`projects/createAI`,data);
+        return res.data
+    }catch(error){
+        throw error.response.data
+    }
+}
