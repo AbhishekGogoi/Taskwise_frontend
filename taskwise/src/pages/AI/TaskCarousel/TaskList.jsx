@@ -2,13 +2,13 @@ import React, { useEffect, useState } from 'react';
 import Typography from '@mui/material/Typography';
 import { styled } from '@mui/material/styles';
 import TaskCard from './TaskCard';
-import { BsChevronLeft, BsChevronRight } from 'react-icons/bs'; 
+import { BsChevronLeft, BsChevronRight } from 'react-icons/bs';
 import './TaskList.css';
 import { Button, Paper } from '@mui/material';
 import Box from '@mui/material/Box';
 import { useNavigate } from "react-router-dom";
-import { useSelector } from 'react-redux';
-
+import { useSelector, useDispatch } from 'react-redux';
+import { createProjectAIAsync } from "../../../features/project/projectSlice"
 import { data } from './data';
 
 const CustomBox = styled(Box)(({ theme }) => ({
@@ -36,18 +36,19 @@ function TaskList() {
   const [tasks, setTasks] = useState([]);
   const navigate = useNavigate();
   const aiData = useSelector((state) => state?.ai?.aiData);
+  const user = useSelector((state) => state?.user?.loggedInUser?.user)
   useEffect(() => {
     if (aiData) {
       setTasks(aiData.tasks);
     }
-    console.log(aiData?.tasks,"aiData")
+    console.log(aiData?.tasks, "aiData")
   }, [aiData]);
 
   const tasksPerRow = 3;
   const rowsPerPage = 1;
   const tasksPerPage = tasksPerRow * rowsPerPage;
   const totalPages = Math.ceil(tasks?.length / tasksPerPage);
-
+  const dispatch = useDispatch();
   useEffect(() => {
     const newTotalPages = Math.ceil(tasks?.length / tasksPerPage);
     if (currentPage >= newTotalPages) {
@@ -80,7 +81,19 @@ function TaskList() {
   };
 
   const handleCreateProjectButtonClick = async () => {
-    //
+    const data = {
+      "name": aiData?.project,
+      "description": aiData?.description,
+      "tasks": tasks,
+      "creatorUserID": {
+        "_id":user?._id,
+        "username":user?.username,
+        "email":user?.email
+      },
+      "workspaceID":"6663e33cbddb3175555164a8",
+    }
+    await dispatch(createProjectAIAsync(data))
+    navigate("/projects")
   };
 
   return (
@@ -157,8 +170,8 @@ function TaskList() {
           }}
           onClick={handleBackButtonClick}
         >
-          <BsChevronLeft sx={{ fontSize: '24px', marginRight: '20px' }} /> 
-          <Typography sx={{ pl: '10px', }}>Back</Typography> 
+          <BsChevronLeft sx={{ fontSize: '24px', marginRight: '20px' }} />
+          <Typography sx={{ pl: '10px', }}>Back</Typography>
         </Button>
         <Button
           variant="contained"

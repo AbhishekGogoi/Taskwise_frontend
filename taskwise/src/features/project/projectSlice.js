@@ -77,8 +77,8 @@ export const deactivateTaskAsync = createAsyncThunk(`projects/deactivateTaskAsyn
     return project
 })
 
-export const createProjectAIAsync = createAsyncThunk(`projects/createProjectAIAsync` , async () => {
-    const project= await createProjectAI();
+export const createProjectAIAsync = createAsyncThunk(`projects/createProjectAIAsync` , async (data) => {
+    const project= await createProjectAI(data);
     return project
 })
 
