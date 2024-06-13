@@ -8,8 +8,9 @@ import { Button, Paper } from '@mui/material';
 import Box from '@mui/material/Box';
 import { useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from 'react-redux';
-import { createProjectAIAsync } from "../../../features/project/projectSlice"
-import { data } from './data';
+import { createProjectAIAsync } from "../../../features/project/projectSlice";
+import { getImageUrlAsync } from "../../../features/workspace/workspaceSlice"
+
 
 const CustomBox = styled(Box)(({ theme }) => ({
   width: '100%',
@@ -81,6 +82,9 @@ function TaskList() {
   };
 
   const handleCreateProjectButtonClick = async () => {
+    const response = await dispatch(getImageUrlAsync("1717579493959-projectimages.jpg"));
+    let finalImageUrl = response?.payload?.presignedUrl;
+    let finalImageKey = response?.payload?.imgKey;
     const data = {
       "name": aiData?.project,
       "description": aiData?.description,
@@ -91,6 +95,8 @@ function TaskList() {
         "email":user?.email
       },
       "workspaceID":"6663e33cbddb3175555164a8",
+      "imgUrl": finalImageUrl,
+      "imgKey": finalImageKey,
     }
     await dispatch(createProjectAIAsync(data))
     navigate("/projects")
