@@ -243,14 +243,14 @@ const workspaceSlice = createSlice({
           state.errors=action.error
       })
       .addCase(fetchWorkspaceByUserIDAsync.pending, (state) => {
-        state.fetchWorkspaceByUserIDStatus = 'loading';
+        state.workspaceFetchStatus = 'loading';
       })
       .addCase(fetchWorkspaceByUserIDAsync.fulfilled, (state, action) => {
-        state.fetchWorkspaceByUserIDStatus = "fulfilled";
+        state.workspaceFetchStatus = "fulfilled";
         state.workspaces = action.payload.data;
       })
       .addCase(fetchWorkspaceByUserIDAsync.rejected, (state, action) => {
-        state.fetchWorkspaceByUserIDStatus = "rejected";
+        state.workspaceFetchStatus = "rejected";
         state.errors = action.error;
       })
       .addCase(fetchTasksByUserIDAsync.pending, (state) => {
