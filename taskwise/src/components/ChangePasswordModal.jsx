@@ -7,10 +7,10 @@ import CloseIcon from "@mui/icons-material/Close";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import PropTypes from "prop-types";
-import { toast, ToastContainer } from "react-toastify";
+// import { toast, ToastContainer } from "react-toastify";
 import { useSelector } from "react-redux";
 import Joi from "joi";
-import "react-toastify/dist/ReactToastify.css";
+// import "react-toastify/dist/ReactToastify.css";
 
 const style = {
   position: "absolute",
@@ -25,7 +25,11 @@ const style = {
   p: 4,
 };
 
-const ChangePasswordModal = ({ handleClose }) => {
+const ChangePasswordModal = ({
+  handleClose,
+  onUpdatePasswordSuccess,
+  onUpdatePasswordError,
+}) => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [formData, setFormData] = useState({
@@ -102,19 +106,23 @@ const ChangePasswordModal = ({ handleClose }) => {
       const data = await response.json();
 
       if (!response.ok) {
-        toast.error(data.message || "An error occurred");
+        onUpdatePasswordError(data.message || "An error occurred");
       } else {
         setFormData({
           currentPassword: "",
           newPassword: "",
           confirmPassword: "",
         });
-        toast.success(data.message || "Password changed successfully");
+        onUpdatePasswordSuccess(
+          data.message || "Password changed successfully"
+        );
         handleClose();
       }
     } catch (error) {
       console.error("Error changing password:", error.message);
-      toast.error("An unexpected error occurred. Please try again later.");
+      onUpdatePasswordError(
+        "An unexpected error occurred. Please try again later."
+      );
     }
   };
 
@@ -208,7 +216,7 @@ const ChangePasswordModal = ({ handleClose }) => {
       >
         Update Password
       </Button>
-      <ToastContainer
+      {/* <ToastContainer
         position="top-right"
         autoClose={5000}
         hideProgressBar={false}
@@ -218,14 +226,15 @@ const ChangePasswordModal = ({ handleClose }) => {
         pauseOnFocusLoss
         draggable
         pauseOnHover
-      />
+      /> */}
     </Box>
   );
 };
 
 ChangePasswordModal.propTypes = {
   handleClose: PropTypes.func.isRequired,
-  onUpdatePassword: PropTypes.func.isRequired, // Callback for password update
+  onUpdatePasswordSuccess: PropTypes.func.isRequired,
+  onUpdatePasswordError: PropTypes.func.isRequired, // Callback for password update
 };
 
 export default ChangePasswordModal;
