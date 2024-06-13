@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
@@ -9,6 +9,8 @@ import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import PropTypes from "prop-types";
 import { useSelector } from "react-redux";
 import Joi from "joi";
+import { toast } from "react-toastify";
+import { CircularProgress } from "@mui/material";
 
 const style = {
   position: "absolute",
@@ -37,6 +39,8 @@ const ChangePasswordModal = ({
   });
 
   const [errors, setErrors] = useState({});
+  const [isButtonDisabled, setIsButtonDisabled] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -81,6 +85,8 @@ const ChangePasswordModal = ({
     }
 
     setErrors({});
+    setIsButtonDisabled(true);
+    setLoading(true);
 
     const apiUrl =
       process.env.NODE_ENV === "production"
@@ -121,6 +127,18 @@ const ChangePasswordModal = ({
       );
     }
   };
+
+  useEffect(() => {
+    const toastId = toast.onChange((payload) => {
+      if (payload.status === "removed") {
+        setIsButtonDisabled(false);
+        setLoading(false);
+      }
+    });
+    return () => {
+      toast.dismiss(toastId);
+    };
+  }, []);
 
   return (
     <Box sx={style}>
@@ -208,9 +226,14 @@ const ChangePasswordModal = ({
           backgroundColor: "#0b5fae",
           ":hover": { backgroundColor: "#0a54a0" },
         }}
+        disabled={isButtonDisabled}
         fullWidth
       >
-        Update Password
+        {loading ? (
+          <CircularProgress size={24} color="inherit" />
+        ) : (
+          "Update Password"
+        )}
       </Button>
     </Box>
   );
