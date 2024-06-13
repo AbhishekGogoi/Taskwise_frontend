@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useSelector } from 'react-redux';
 import { List, ListItem, ListItemAvatar, Avatar, ListItemText, IconButton, Typography, Box, Paper, Modal } from '@mui/material';
 import PersonAddAltSharpIcon from '@mui/icons-material/PersonAddAltSharp';
 import { styled } from '@mui/material/styles';
@@ -21,11 +22,19 @@ const StyledPaper = styled(Paper)(({ theme }) => ({
   },
 }));
 
-function WorkspaceMembers({ height, width, membersData, addMember, workspace }) {
+function WorkspaceMembers({ height, width, membersData, workspace }) {
   const [open, setOpen] = useState(false);
+  const loggedInUser = useSelector((state) => state?.user?.loggedInUser);
+  const loggedInUserEmail = loggedInUser?.user?.email;
+
+  const loggedInMember = membersData.find(member => member.user.email === loggedInUserEmail);
+  const isAdmin = loggedInMember?.role === 'Admin';
 
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
+
+  const existingMemberEmails = membersData.map(member => member.user.email);
+  console.log("existingMemberEmails: ", existingMemberEmails)
 
   const memberList = membersData.length === 0 ? (
     <Typography sx={{ textAlign: 'center', paddingTop: 2 }}>
@@ -36,7 +45,7 @@ function WorkspaceMembers({ height, width, membersData, addMember, workspace }) 
       {membersData.map((member) => (
         <ListItem key={member.id}>
           <ListItemAvatar>
-            <Avatar alt={member.name} src={member.user.imgUrl} />
+            <Avatar alt={member.user.name} src={member.user.imgUrl} />
           </ListItemAvatar>
           <ListItemText primary={member.user.email} />
         </ListItem>
@@ -50,9 +59,11 @@ function WorkspaceMembers({ height, width, membersData, addMember, workspace }) 
         <Typography sx={{ paddingTop: 0.5, paddingLeft: 1, fontSize: 20, fontWeight: 'bold' }}>
           Members
         </Typography>
-        <IconButton color="primary" onClick={handleOpen}>
-          <PersonAddAltSharpIcon sx={{ color: "#000000" }} />
-        </IconButton>
+        {isAdmin && (
+          <IconButton color="primary" onClick={handleOpen}>
+            <PersonAddAltSharpIcon sx={{ color: "#000000" }} />
+          </IconButton>
+        )}
       </Box>
       {memberList}
       <Modal
@@ -62,7 +73,7 @@ function WorkspaceMembers({ height, width, membersData, addMember, workspace }) 
         aria-describedby="add-member-modal-description"
       >
         <Box>
-          <AddMemberToWorkspaceModal handleClose={handleClose} addMember={addMember} workspaceId={workspace.id} />
+          <AddMemberToWorkspaceModal handleClose={handleClose} workspaceId={workspace.id} existingMemberEmails={existingMemberEmails} />
         </Box>
       </Modal>
     </StyledPaper>

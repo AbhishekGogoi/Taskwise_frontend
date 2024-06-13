@@ -129,3 +129,12 @@ export const updateMemberRole = async (workspaceId, adminUserId, userId, role) =
       throw error.response.data;
     }
   };
+  
+  export const getWorkspaceMediaAndDocs = async ({workspaceId}) => {
+    try {
+      const res = await axiosi.get(`/workspaces/${workspaceId}/media-docs`);
+      return { data: res.data };
+    } catch (error) {
+      throw error.response.data;
+    }
+  };
