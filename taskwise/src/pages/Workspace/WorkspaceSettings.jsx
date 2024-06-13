@@ -51,11 +51,8 @@ function WorkspaceSettings({ workspace, membersData }) {
   const fileInputRef = useRef(null);
   const dispatch = useDispatch();
 
-  useEffect(() => {
-    dispatch(fetchWorkspaceMediaAndDocsAsync({ workspaceId: workspace.id }));
-    setMediaImages(mediaAndDocs.imgUrls || []);
-    setDocs(mediaAndDocs.docUrls || []);
-  }, [dispatch, workspace.id, mediaAndDocs.imgUrls, mediaAndDocs.docUrls]);
+  // useEffect(() => {
+  // }, [dispatch, workspace.id, mediaAndDocs.imgUrls, mediaAndDocs.docUrls]);
 
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
@@ -104,6 +101,9 @@ function WorkspaceSettings({ workspace, membersData }) {
   };
 
   const handleDialogOpen = (title) => {
+    dispatch(fetchWorkspaceMediaAndDocsAsync({ workspaceId: workspace.id }));
+    setMediaImages(mediaAndDocs.imgUrls || []);
+    setDocs(mediaAndDocs.docUrls || []);
     setDialogTitle(title);
     setOpenDialog(true);
   };
@@ -177,14 +177,14 @@ function WorkspaceSettings({ workspace, membersData }) {
             <IconButton
               color="primary"
               onClick={() => handleDialogOpen()}
-              disabled={mediaImages.length === 0 && docs.length === 0}
+              // disabled={mediaImages.length === 0 && docs.length === 0}
             >
               <ChevronRightSharpIcon sx={{ color: "#000000", fontSize: 25 }} />
             </IconButton>
           </Box>
-          {(mediaImages.length <= 0 && docs.length <= 0) && (
+          {/* {(mediaImages.length <= 0 && docs.length <= 0) && (
             <Typography sx={{ p: 2, textAlign: 'left', color: '#888' }}>No data available</Typography>
-          )}
+          )} */}
         </StyledPaper>
       </Grid>
       <Grid item xs={12} md={6}>
