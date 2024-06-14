@@ -10,6 +10,7 @@ import { format } from 'date-fns';
 import FlagIcon from '@mui/icons-material/Flag';
 import { fetchTasksByUserIDAsync } from '../../features/workspace/workspaceSlice';
 import TaskModal from "../../components/TaskModal";
+import Loading from '../../components/Loading';
 
 // Register the necessary modules with AG Grid
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
@@ -146,7 +147,7 @@ const TaskPage = () => {
     return (
       <StyledAgGridContainer>
         <div className="ag-theme-alpine" style={gridStyle}>
-          <p>Loading tasks...</p>
+          <Loading/>
         </div>
       </StyledAgGridContainer>
     );
