@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useContext, useMemo } from "react";
 import { useLocation } from "react-router-dom";
 import {
   Box,
@@ -14,13 +14,16 @@ import MyTaskIconWhite from "../assets/MyTaskIconWhite.png";
 import CalendarWhite from "../assets/CalendarWhite.png";
 import { Link } from "react-router-dom";
 import "./Sidebar.css";
+import { SidebarContext } from "../context/SidebarContext";
 
 function Sidebar() {
   const location = useLocation();
-  const [selected, setSelected] = useState(() => {
-    const pathSegments = location.pathname.split("/");
-    return pathSegments.length > 1 ? pathSegments[1] : "projects";
-  });
+  const { setSelected } = useContext(SidebarContext);
+
+  const currentPath = useMemo(
+    () => location.pathname.split("/")[1],
+    [location.pathname]
+  );
 
   const handleSelect = (value) => {
     setSelected(value);
@@ -34,7 +37,7 @@ function Sidebar() {
             component={Link}
             to="/projects"
             className={`list-item-button ${
-              selected === "projects" ? "selected" : ""
+              currentPath === "projects" ? "selected" : ""
             }`}
             onClick={() => handleSelect("projects")}
           >
@@ -56,7 +59,7 @@ function Sidebar() {
             component={Link}
             to="/workspaces"
             className={`list-item-button ${
-              selected === "workspaces" ? "selected" : ""
+              currentPath === "workspaces" ? "selected" : ""
             }`}
             onClick={() => handleSelect("workspaces")}
           >
@@ -78,7 +81,7 @@ function Sidebar() {
             component={Link}
             to="/my-tasks"
             className={`list-item-button ${
-              selected === "my-tasks" ? "selected" : ""
+              currentPath === "my-tasks" ? "selected" : ""
             }`}
             onClick={() => handleSelect("my-tasks")}
           >
@@ -100,7 +103,7 @@ function Sidebar() {
             component={Link}
             to="/calendar"
             className={`list-item-button ${
-              selected === "calendar" ? "selected" : ""
+              currentPath === "calendar" ? "selected" : ""
             }`}
             onClick={() => handleSelect("calendar")}
           >

@@ -14,6 +14,7 @@ import useMediaQuery from "@mui/material/useMediaQuery";
 import Loading from "./components/Loading";
 import AIInputPage from "./pages/AI/AIInputPage";
 import TaskList from "./pages/AI/TaskCarousel/TaskList";
+import { SidebarProvider } from "./context/SidebarContext";
 // Lazy load the pages
 const ProjectPage = lazy(() => import("./pages/Project/ProjectPage"));
 const LandingPage = lazy(() => import("./pages/landingPage/LandingPage"));
@@ -135,9 +136,11 @@ function AppLayout() {
 function App() {
   return (
     <ThemeProvider theme={theme}>
-      <Router>
-        <AppLayout />
-      </Router>
+      <SidebarProvider>
+        <Router>
+          <AppLayout />
+        </Router>
+      </SidebarProvider>
     </ThemeProvider>
   );
 }

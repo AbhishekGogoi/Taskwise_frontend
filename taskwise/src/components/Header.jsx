@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
@@ -22,6 +22,7 @@ import { logoutAsync, resetUserState } from "../features/user/userSlice";
 import Notifications from "./Notifications";
 import Badge from "@mui/material/Badge";
 import { fetchUnreadNotificationsAsync } from "../features/notification/notificationSlice";
+import { SidebarContext } from "../context/SidebarContext";
 
 const settings = ["Settings", "Logout"];
 
@@ -31,6 +32,8 @@ function Header({ isSmallScreen, toggleDrawer }) {
   const [openLogoutModal, setOpenLogoutModal] = useState(false);
   const navigate = useNavigate();
   const dispatch = useDispatch();
+
+  const { setSelected } = useContext(SidebarContext);
 
   const { status, loggedInUser } = useSelector((state) => state.user);
   const userId = useSelector((state) => state.user.loggedInUser?.user?._id);
@@ -74,6 +77,11 @@ function Header({ isSmallScreen, toggleDrawer }) {
     setAnchorElNotifications(null);
   };
 
+  //for logo click
+  const handleLogoClick = () => {
+    setSelected("projects");
+  };
+
   useEffect(() => {
     if (userId) {
       dispatch(fetchUnreadNotificationsAsync(userId));
@@ -105,7 +113,7 @@ function Header({ isSmallScreen, toggleDrawer }) {
             </IconButton>
           )}
           <Box sx={{ display: "flex", alignItems: "center" }}>
-            <Link to="/projects">
+            <Link to="/projects" onClick={handleLogoClick}>
               <Box
                 component="img"
                 sx={{
