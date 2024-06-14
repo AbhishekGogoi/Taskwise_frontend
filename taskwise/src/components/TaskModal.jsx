@@ -15,7 +15,6 @@ import WorkspaceIconBlack from "../assets/WorkspaceIconBlack.png";
 import { useDispatch, useSelector } from "react-redux";
 import { editTaskAsync } from "../features/project/projectSlice";
 import { toast } from "react-toastify";
-import { useNavigate } from "react-router-dom";
 
 const Attachments = styled("img")({
   width: "100px",
@@ -23,15 +22,10 @@ const Attachments = styled("img")({
   marginRight: "10px",
 });
 
-const TaskModal = ({ open, handleClose, task, workspaceID }) => {
-  const navigate = useNavigate();
+const TaskModal = ({ open, handleClose, task }) => {
   const [currentComment, setCurrentComment] = useState("");
   const dispatch = useDispatch();
   const user = useSelector((state) => state?.user?.loggedInUser?.user);
-
-  const handleClick = () => {
-    navigate(`/task-view/${task.id}`, { state: { task: task, workspaceID: workspaceID } });
-  };
 
   const handleUpdateTask = () => {
     if (currentComment.trim()) {
@@ -132,14 +126,7 @@ const TaskModal = ({ open, handleClose, task, workspaceID }) => {
           </IconButton>
         </Box>
         <Typography variant="subtitle1" sx={{ mb: 2 }}>
-          <strong
-            onClick={handleClick}
-            style={{
-              cursor: "pointer",
-              textDecoration: "underline",
-              color: "blue"
-            }}
-          >
+          <strong>
             {task?.name}
           </strong>
         </Typography>
