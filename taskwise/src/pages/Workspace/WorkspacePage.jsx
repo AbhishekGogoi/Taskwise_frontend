@@ -15,6 +15,7 @@ import Modal from '@mui/material/Modal';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchWorkspaceByUserIDAsync } from '../../features/workspace/workspaceSlice';
 import { useNavigate } from 'react-router-dom';
+import Loading from '../../components/Loading';
 
 const SearchIconWrapper = styled('div')(({ theme }) => ({
   padding: theme.spacing(0, 2),
@@ -90,6 +91,7 @@ function WorkspacePage() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const WorkspaceData = useSelector((state) => state.workspace.workspaces);
+  const workspaceFetchStatus = useSelector((state) => state.workspace.workspaceFetchStatus);
   const userId = useSelector((state) => state?.user?.loggedInUser?.user?._id);
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -110,6 +112,10 @@ function WorkspacePage() {
       dispatch(fetchWorkspaceByUserIDAsync(userId));
     }
   };
+
+  if (workspaceFetchStatus === 'loading') {
+    return <Loading/>;
+  }
 
   return (
     <Box
@@ -171,7 +177,7 @@ function WorkspacePage() {
           </Grid>
         ) : (
           <NoWorkspacesMessage>
-            {WorkspaceData.length > 0 ? "No matching workspaces found" : "Start by adding a new Workspace"}
+            { WorkspaceData.length > 0 ? "No matching workspaces found" : "Start by adding a new Workspace"}
           </NoWorkspacesMessage>
         )}
       </CustomBox>

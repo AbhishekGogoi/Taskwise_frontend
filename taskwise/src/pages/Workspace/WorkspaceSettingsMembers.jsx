@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { List, ListItem, ListItemAvatar, Avatar, ListItemText, Typography, Box, Paper, IconButton, Menu, MenuItem } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
-import { updateMemberRoleAsync, fetchWorkspaceMembersAsync } from '../../features/workspace/workspaceSlice'; // Assuming you have a fetchMembers action
+import { updateMemberRoleAsync, fetchWorkspaceMembersAsync, removeMemberAsync } from '../../features/workspace/workspaceSlice'; // Assuming you have a fetchMembers action
 
 const StyledPaper = styled(Paper)(({ theme }) => ({
   height: '200px',
@@ -51,6 +51,17 @@ function WorkspaceSettingsMembers({ membersData, workspaceId }) {
       await dispatch(fetchWorkspaceMembersAsync(workspaceId)); // Assuming fetchMembers fetches the updated member list
     } catch (error) {
       console.error('Failed to update member role:', error);
+    }
+    handleMenuClose();
+  };
+
+  const handleRemoveMember = async () => {
+    try {
+      await dispatch(removeMemberAsync({ workspaceId, adminUserId: loggedInMember.user.id, memberEmails: [selectedMember.user.email] }));
+      // If the update is successful, fetch the updated member list
+      await dispatch(fetchWorkspaceMembersAsync(workspaceId)); // Assuming fetchMembers fetches the updated member list
+    } catch (error) {
+      console.error('Failed to remove member:', error);
     }
     handleMenuClose();
   };
@@ -107,7 +118,10 @@ function WorkspaceSettingsMembers({ membersData, workspaceId }) {
         onClose={handleMenuClose}
       >
         {isAdmin && ( // Only render action for making someone an admin if logged-in user is admin
-          <MenuItem onClick={() => handleRoleChange('Admin')}>Make Admin</MenuItem>
+          <>
+            <MenuItem onClick={() => handleRoleChange('Admin')}>Make Admin</MenuItem>
+            <MenuItem onClick={() => handleRemoveMember()}>Remove</MenuItem>
+          </>
         )}
       </Menu>
     </StyledPaper>

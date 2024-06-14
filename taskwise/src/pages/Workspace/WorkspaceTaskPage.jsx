@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { AgGridReact } from "@ag-grid-community/react";
 import "@ag-grid-community/styles/ag-grid.css";
 import "@ag-grid-community/styles/ag-theme-alpine.css";
@@ -6,6 +6,13 @@ import { ModuleRegistry } from "@ag-grid-community/core";
 import { ClientSideRowModelModule } from "@ag-grid-community/client-side-row-model";
 import { styled } from "@mui/material/styles";
 import { format } from 'date-fns';
+import TaskModal from "../../components/TaskModal";
+import {
+  fetchWorkspaceTasksAsync,
+  fetchWorkspaceMembersAsync
+} from '../../features/workspace/workspaceSlice';
+import { useDispatch, useSelector } from 'react-redux';
+import Loading from "../../components/Loading";
 
 // Register the necessary modules with AG Grid
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
@@ -31,13 +38,32 @@ const NoTasksMessage = styled("div")(({ theme }) => ({
 }));
 
 // Main component to display the tasks data
-const WorkspaceTaskPage = ({ tasksData }) => {
+const WorkspaceTaskPage = () => {
   const gridStyle = useMemo(() => ({ height: "100%", width: "100%" }), []);
+  const [selectedTask, setSelectedTask] = useState(null);
+  const [modalOpen, setModalOpen] = useState(false);
+  const tasksData = useSelector((state) => state.workspace.selectedTasks);
+  const workspace = useSelector((state) => state.workspace.selectedWorkspace);
+  const fetchWorkspaceTasksStatus = useSelector((state) => state.workspace.fetchWorkspaceTasksStatus); // Fetching status from state
+  const dispatch = useDispatch();
 
-  // Set the row data using the provided tasksData
-  const [rowData] = useState(tasksData);
+  useEffect(() => {
+    if (workspace.id) {
+      dispatch(fetchWorkspaceTasksAsync(workspace.id));
+      dispatch(fetchWorkspaceMembersAsync(workspace.id));
+    }
+  }, [dispatch, workspace.id]);
 
-  // Define the column definitions to match the structure of the tasks data
+  const handleTaskItemClick = useCallback((params) => {
+    setSelectedTask(params.data);
+    setModalOpen(true);
+  }, []);
+
+  const handleModalClose = () => {
+    setModalOpen(false);
+    setSelectedTask(null);
+  };
+
   const [colDefs] = useState([
     { 
       field: "name", 
@@ -52,7 +78,7 @@ const WorkspaceTaskPage = ({ tasksData }) => {
       flex: 1, 
       sortable: true, 
       filter: "agTextColumnFilter",
-      valueFormatter: params => formatDate(params.value) // Use a custom formatter function
+      valueFormatter: params => formatDate(params.value) 
     },
     { 
       field: "priority", 
@@ -68,16 +94,28 @@ const WorkspaceTaskPage = ({ tasksData }) => {
       sortable: true, 
       filter: "agTextColumnFilter" 
     },
+    { 
+      field: "assigneeUserID.email", 
+      headerName: "AssignedTo", 
+      flex: 1, 
+      sortable: true, 
+      filter: "agTextColumnFilter" 
+    },
+    // { 
+    //   field: "createdBy.username", 
+    //   headerName: "CreatedBy", 
+    //   flex: 1, 
+    //   sortable: true, 
+    //   filter: "agTextColumnFilter" 
+    // },
   ]);
 
-  // Custom function to format date into a readable format
   const formatDate = (dateString) => {
     if (!dateString) return ''; 
     const date = new Date(dateString);
     return format(date, 'dd MMM yy'); 
   };
   
-  // Default column properties
   const defaultColDef = useMemo(() => ({
     filter: true,
     floatingFilter: true,
@@ -85,20 +123,35 @@ const WorkspaceTaskPage = ({ tasksData }) => {
     minWidth: 100,
   }), []);
 
+  const rowData = useMemo(() => tasksData, [tasksData]);
+  const gridKey = useMemo(() => `grid-${tasksData.length}`, [tasksData]);
+
   return (
     <StyledAgGridContainer>
-      {rowData && rowData.length > 0 ? (
+      {fetchWorkspaceTasksStatus === 'loading' ? (
+        <Loading/>
+      ) : rowData && rowData.length > 0 ? (
         <div className="ag-theme-alpine" style={gridStyle}>
           <AgGridReact
+            key={gridKey}
             rowData={rowData}
             columnDefs={colDefs}
             defaultColDef={defaultColDef}
             rowSelection="multiple"
             suppressRowClickSelection={true}
+            onRowClicked={handleTaskItemClick}
           />
         </div>
       ) : (
         <NoTasksMessage>There are no tasks on your list at this moment</NoTasksMessage>
+      )}
+      {selectedTask && (
+        <TaskModal
+          open={modalOpen}
+          handleClose={handleModalClose}
+          task={selectedTask}
+          workspaceID={workspace?.id}
+        />
       )}
     </StyledAgGridContainer>
   );

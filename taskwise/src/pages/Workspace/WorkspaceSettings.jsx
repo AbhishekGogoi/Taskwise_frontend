@@ -1,7 +1,9 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import {
   Box, Grid, IconButton, Typography, Paper, TextField, Dialog, DialogContent, DialogTitle, Tabs, Tab, Card, CardContent, CardActions, Modal,
-  CardMedia
+  CardMedia,
+  Tooltip,
+  ButtonBase,
 } from '@mui/material';
 import PersonAddAltSharpIcon from '@mui/icons-material/PersonAddAltSharp';
 import LinkSharpIcon from '@mui/icons-material/LinkSharp';
@@ -19,8 +21,9 @@ import CloseIcon from '@mui/icons-material/Close';
 import ExitWorkspaceModal from './Models/ExitWorkspaceModal';
 import AddMemberToWorkspaceModal from './Models/AddMemberToWorkspaceModal';
 import ShareJoiningLinkModel from './Models/ShareJoiningLinkModel';
-import { updateWorkspaceAsync, uploadFileAsync, fetchWorkspaceMediaAndDocsAsync } from '../../features/workspace/workspaceSlice';
+import { updateWorkspaceAsync, uploadFileAsync, fetchWorkspaceMediaAndDocsAsync, fetchWorkspaceMembersAsync, fetchWorkspaceByIdAsync } from '../../features/workspace/workspaceSlice';
 import { useDispatch, useSelector } from 'react-redux';
+import Loading from '../../components/Loading'; // Import Loading component
 
 const StyledPaper = styled(Paper)(({ theme }) => ({
   height: '400px',
@@ -34,8 +37,12 @@ const TabLabelWrapper = styled('div')({
   alignItems: 'center',
 });
 
-function WorkspaceSettings({ workspace, membersData }) {
+function WorkspaceSettings({ workspaceId }) {
+  const membersData = useSelector((state) => state.workspace.selectedMembers);
   const mediaAndDocs = useSelector((state) => state.workspace.selectedMediaAndDocs);
+  const workspace = useSelector((state) => state.workspace.selectedWorkspace);
+  const getWorkspaceMediaAndDocsStatus = useSelector((state) => state.workspace.getWorkspaceMediaAndDocsStatus);
+
   const [selectedImage, setSelectedImage] = useState(workspace.imgUrl);
   const [workspaceText, setWorkspaceText] = useState(workspace.name);
   const [isEditing, setIsEditing] = useState(false);
@@ -51,8 +58,19 @@ function WorkspaceSettings({ workspace, membersData }) {
   const fileInputRef = useRef(null);
   const dispatch = useDispatch();
 
-  // useEffect(() => {
-  // }, [dispatch, workspace.id, mediaAndDocs.imgUrls, mediaAndDocs.docUrls]);
+  useEffect(() => {
+    if (workspaceId) {
+      dispatch(fetchWorkspaceByIdAsync(workspaceId));
+      dispatch(fetchWorkspaceMembersAsync(workspaceId));
+    }
+  }, [dispatch, workspaceId]);
+
+  useEffect(() => {
+    if (mediaAndDocs) {
+      setMediaImages(mediaAndDocs.imgUrls || []);
+      setDocs(mediaAndDocs.docUrls || []);
+    }
+  }, [mediaAndDocs]);
 
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
@@ -100,16 +118,15 @@ function WorkspaceSettings({ workspace, membersData }) {
     setWorkspaceText(event.target.value);
   };
 
-  const handleDialogOpen = (title) => {
+  const handleDialogOpen = (event, title) => {
     dispatch(fetchWorkspaceMediaAndDocsAsync({ workspaceId: workspace.id }));
-    setMediaImages(mediaAndDocs.imgUrls || []);
-    setDocs(mediaAndDocs.docUrls || []);
     setDialogTitle(title);
     setOpenDialog(true);
   };
 
   const handleDialogClose = () => {
     setOpenDialog(false);
+    setDialogTab(0);
   };
 
   const handleTabChange = (event, newValue) => {
@@ -120,9 +137,9 @@ function WorkspaceSettings({ workspace, membersData }) {
     const updatedDocs = docs.filter((_, docIndex) => docIndex !== index);
     setDocs(updatedDocs);
   };
+
   const loggedInUser = useSelector((state) => state?.user?.loggedInUser);
   const loggedInUserEmail = loggedInUser?.user?.email;
-
   const loggedInMember = membersData.find(member => member.user.email === loggedInUserEmail);
   const isAdmin = loggedInMember?.role === 'Admin';
 
@@ -133,15 +150,34 @@ function WorkspaceSettings({ workspace, membersData }) {
     <Grid container spacing={2}>
       <Grid item xs={12} md={6}>
         <StyledPaper>
-          <Box sx={{ display: 'flex', alignItems: 'center', marginBottom: '20px' }}>
-            <Thumbnail
-              selectedImage={selectedImage}
-              handleFileUploadClick={handleFileUploadClick}
-              width={150}
-              height={150}
-            />
-            <input type="file" ref={fileInputRef} style={{ display: 'none' }} onChange={handleFileChange} />
+          <Box sx={{ display: 'flex', alignItems: 'center', marginBottom: '30px' }}>
+            {/* Thumbnail component */}
+            <Tooltip title={isAdmin ? "click to update image" : ""}>
+              <div>
+                {/* Thumbnail component */}
+                <Thumbnail
+                  selectedImage={selectedImage}
+                  handleFileUploadClick={isAdmin ? handleFileUploadClick : undefined}
+                  width={150}
+                  height={150}
+                />
+              </div>
+            </Tooltip>
+
+            {/* Conditionally render file input for admins */}
+            {isAdmin && (
+              <input
+                type="file"
+                ref={fileInputRef}
+                style={{ display: 'none' }}
+                onChange={handleFileChange}
+                accept="image/*"
+                multiple
+              />
+            )}
           </Box>
+
+          {/* Workspace name display and edit */}
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
             {isEditing ? (
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
@@ -160,14 +196,21 @@ function WorkspaceSettings({ workspace, membersData }) {
                 </IconButton>
               </Box>
             ) : (
-              <>
+              <React.Fragment>
+                {/* Display workspace name for non-edit mode */}
                 <Typography variant="body1" component="div" sx={{ p: 2, fontWeight: 'bold' }}>
                   {workspaceText}
                 </Typography>
-                <IconButton onClick={handleEditClick}>
-                  <ModeEditSharpIcon sx={{ color: "#000000" }} />
-                </IconButton>
-              </>
+                
+                {/* Render edit button only for admin */}
+                {isAdmin && (
+                  <Tooltip title="update name">
+                    <IconButton onClick={handleEditClick}>
+                      <ModeEditSharpIcon sx={{ color: "#000000" }} />
+                    </IconButton>
+                  </Tooltip>
+                )}
+              </React.Fragment>
             )}
           </Box>
           <Box sx={{ mt: 2, display: 'flex', alignItems: 'center' }}>
@@ -176,36 +219,36 @@ function WorkspaceSettings({ workspace, membersData }) {
             </Typography>
             <IconButton
               color="primary"
-              onClick={() => handleDialogOpen()}
-              // disabled={mediaImages.length === 0 && docs.length === 0}
+              onClick={(event) => handleDialogOpen(event)}
             >
               <ChevronRightSharpIcon sx={{ color: "#000000", fontSize: 25 }} />
             </IconButton>
           </Box>
-          {/* {(mediaImages.length <= 0 && docs.length <= 0) && (
-            <Typography sx={{ p: 2, textAlign: 'left', color: '#888' }}>No data available</Typography>
-          )} */}
         </StyledPaper>
       </Grid>
       <Grid item xs={12} md={6}>
         <StyledPaper>
-        {isAdmin && (
+          {isAdmin && (
             <>
               <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                <IconButton color="primary" onClick={handleOpen}>
-                  <PersonAddAltSharpIcon sx={{ color: "#000000" }} />
-                </IconButton>
-                <Typography sx={{ paddingTop: 0.5, paddingLeft: 1, fontSize: 15, fontWeight: 'bold' }}>
-                  Add Member
-                </Typography>
+                <ButtonBase onClick={handleOpen} sx={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}>
+                  <IconButton color="primary">
+                    <PersonAddAltSharpIcon sx={{ color: "#000000" }} />
+                  </IconButton>
+                  <Typography sx={{ paddingTop: 0.5, paddingLeft: 1, fontSize: 15, fontWeight: 'bold', cursor: 'pointer' }}>
+                    Add Member
+                  </Typography>
+                </ButtonBase>
               </Box>
               <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                <IconButton onClick={handleOpenShareModel}>
-                  <LinkSharpIcon sx={{ color: "#000000", fontSize: 25, transform: 'rotate(135deg)' }} />
-                </IconButton>
-                <Typography sx={{ paddingBottom: 0.2, paddingLeft: 1, fontSize: 15, fontWeight: 'bold' }}>
-                  Invite to workspace via link
-                </Typography>
+                <ButtonBase onClick={handleOpenShareModel} sx={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}>
+                  <IconButton>
+                    <LinkSharpIcon sx={{ color: "#000000", fontSize: 25, transform: 'rotate(135deg)' }} />
+                  </IconButton>
+                  <Typography sx={{ paddingBottom: 0.2, paddingLeft: 1, fontSize: 15, fontWeight: 'bold', cursor: 'pointer' }}>
+                    Invite to workspace via link
+                  </Typography>
+                </ButtonBase>
               </Box>
             </>
           )}
@@ -213,12 +256,14 @@ function WorkspaceSettings({ workspace, membersData }) {
             <WorkspaceSettingsMembers membersData={membersData} workspaceId={workspace.id} />
           </Box>
           <Box sx={{ display: 'flex', alignItems: 'center', marginTop: 6 }}>
-            <IconButton onClick={handleOpenExitModal}>
-              <LogoutIcon sx={{ fontSize: 30, color: "#000000" }} />
-            </IconButton>
-            <Typography sx={{ paddingBottom: 0.2, paddingLeft: 1, fontSize: 15, fontWeight: 'bold' }}>
-              Exit Workspace
-            </Typography>
+            <ButtonBase onClick={handleOpenExitModal} sx={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}>
+              <IconButton>
+                <LogoutIcon sx={{ fontSize: 30, color: "#000000" }} />
+              </IconButton>
+              <Typography sx={{ paddingBottom: 0.2, paddingLeft: 1, fontSize: 15, fontWeight: 'bold', cursor: 'pointer' }}>
+                Exit Workspace
+              </Typography>
+            </ButtonBase>
           </Box>
           <Modal
             open={open}
@@ -267,82 +312,88 @@ function WorkspaceSettings({ workspace, membersData }) {
       <Dialog open={openDialog} onClose={handleDialogClose} maxWidth="md" fullWidth>
         <DialogTitle>{dialogTitle}</DialogTitle>
         <DialogContent>
-          <Grid container spacing={2} alignItems="center">
-            <Grid item xs={12}>
-              <Tabs value={dialogTab} onChange={handleTabChange} variant="fullWidth">
-                {mediaImages.length > 0 && (
-                  <Tab
-                    label={
-                      <TabLabelWrapper>
-                        <ImageOutlinedIcon sx={{ p: 1 }} />
-                        <span>Media</span>
-                      </TabLabelWrapper>
-                    }
-                  />
+          {getWorkspaceMediaAndDocsStatus === 'loading' ? (
+            <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '200px' }}>
+              <Loading />
+            </Box>
+          ) : (
+            <Grid container spacing={2} alignItems="center">
+              <Grid item xs={12}>
+                <Tabs value={dialogTab} onChange={handleTabChange} variant="fullWidth">
+                  {mediaImages.length > 0 && (
+                    <Tab
+                      label={
+                        <TabLabelWrapper>
+                          <ImageOutlinedIcon sx={{ p: 1 }} />
+                          <span>Media</span>
+                        </TabLabelWrapper>
+                      }
+                    />
+                  )}
+                  {docs.length > 0 && (
+                    <Tab
+                      label={
+                        <TabLabelWrapper>
+                          <DescriptionOutlinedIcon sx={{ p: 1 }} />
+                          <span>Docs</span>
+                        </TabLabelWrapper>
+                      }
+                    />
+                  )}
+                </Tabs>
+              </Grid>
+              <Grid item xs={12} style={{ maxHeight: '300px', overflowY: 'auto' }}>
+                {dialogTab === 0 && (
+                  mediaImages.length > 0 ? (
+                    <Grid container spacing={1}>
+                      {mediaImages.map((image, index) => (
+                        <Grid item xs={12} sm={6} md={4} lg={3} key={index}>
+                          <Card sx={{ height: '100%' }}>
+                            <CardMedia
+                              component="img"
+                              src={image.imgUrl}
+                              alt={`Media ${index + 1}`}
+                              height="100"
+                              sx={{ objectFit: 'cover' }}
+                            />
+                          </Card>
+                        </Grid>
+                      ))}
+                    </Grid>
+                  ) : (
+                    <Typography sx={{ p: 2, textAlign: 'left', color: '#888' }}>No media available</Typography>
+                  )
                 )}
-                {docs.length > 0 && (
-                  <Tab
-                    label={
-                      <TabLabelWrapper>
-                        <DescriptionOutlinedIcon sx={{ p: 1 }} />
-                        <span>Docs</span>
-                      </TabLabelWrapper>
-                    }
-                  />
-                )}
-              </Tabs>
-            </Grid>
-            <Grid item xs={12} style={{ maxHeight: '300px', overflowY: 'auto' }}>
-              {dialogTab === 0 && (
-                mediaImages.length > 0 ? (
-                  <Grid container spacing={1}>
-                    {mediaImages.map((image, index) => (
-                      <Grid item xs={12} sm={6} md={4} lg={3} key={index}>
-                        <Card sx={{ height: '100%' }}>
-                          <CardMedia
-                            component="img"
-                            src={image.imgUrl}
-                            alt={`Media ${index + 1}`}
-                            height="100"
-                            sx={{ objectFit: 'cover' }}
-                          />
+                {dialogTab === 1 && (
+                  docs.length > 0 ? (
+                    <Box sx={{ p: 2 }}>
+                      {docs.map((doc, index) => (
+                        <Card key={index} sx={{ mb: 1 }}>
+                          <CardContent>
+                            <Typography>
+                              <a href={doc.docUrl} target="_blank" rel="noopener noreferrer">{doc.docName}</a>
+                            </Typography>
+                          </CardContent>
+                          <CardActions>
+                            <IconButton onClick={() => handleRemoveDoc(index)}>
+                              <CloseIcon />
+                            </IconButton>
+                          </CardActions>
                         </Card>
-                      </Grid>
-                    ))}
-                  </Grid>
-                ) : (
-                  <Typography sx={{ p: 2, textAlign: 'left', color: '#888' }}>No media available</Typography>
-                )
-              )}
-              {dialogTab === 1 && (
-                docs.length > 0 ? (
-                  <Box sx={{ p: 2 }}>
-                    {docs.map((doc, index) => (
-                      <Card key={index} sx={{ mb: 1 }}>
-                        <CardContent>
-                          <Typography>
-                            <a href={doc.docUrl} target="_blank" rel="noopener noreferrer">{doc.docName}</a>
-                          </Typography>
-                        </CardContent>
-                        <CardActions>
-                          <IconButton onClick={() => handleRemoveDoc(index)}>
-                            <CloseIcon />
-                          </IconButton>
-                        </CardActions>
-                      </Card>
-                    ))}
-                  </Box>
-                ) : (
-                  <Typography sx={{ p: 2, textAlign: 'left', color: '#888' }}>No documents available</Typography>
-                )
-              )}
+                      ))}
+                    </Box>
+                  ) : (
+                    <Typography sx={{ p: 2, textAlign: 'left', color: '#888' }}>No documents available</Typography>
+                  )
+                )}
+              </Grid>
             </Grid>
-          </Grid>
+          )}
         </DialogContent>
       </Dialog>
-
     </Grid>
   );
 }
 
 export default WorkspaceSettings;
+
