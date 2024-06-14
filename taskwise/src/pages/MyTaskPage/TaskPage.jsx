@@ -10,6 +10,7 @@ import { format } from 'date-fns';
 import FlagIcon from '@mui/icons-material/Flag';
 import { fetchTasksByUserIDAsync } from '../../features/workspace/workspaceSlice';
 import TaskModal from "../../components/TaskModal";
+import Loading from '../../components/Loading';
 
 // Register the necessary modules with AG Grid
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
@@ -60,6 +61,7 @@ const TaskPage = () => {
   // eslint-disable-next-line
   const tasksData = useSelector((state) => state.workspace.userTasks) || [];
   const userId = useSelector((state) => state?.user?.loggedInUser?.user?._id);
+  const fetchTasksByUserIDStatus = useSelector((state) => state.workspace.fetchTasksByUserIDStatus);
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -139,6 +141,17 @@ const TaskPage = () => {
     resizable: true,
     minWidth: 100,
   }), []);
+
+  // Show loading indicator while fetching tasks
+  if (fetchTasksByUserIDStatus === 'loading') {
+    return (
+      <StyledAgGridContainer>
+        <div className="ag-theme-alpine" style={gridStyle}>
+          <Loading/>
+        </div>
+      </StyledAgGridContainer>
+    );
+  }
 
   return (
     <StyledAgGridContainer>

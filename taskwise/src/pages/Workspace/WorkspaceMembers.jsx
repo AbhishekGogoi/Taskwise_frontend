@@ -22,14 +22,16 @@ const StyledPaper = styled(Paper)(({ theme }) => ({
   },
 }));
 
-function WorkspaceMembers({ height, width, membersData, workspace }) {
-  const [open, setOpen] = useState(false);
+function WorkspaceMembers({ height, width}) {
+  const membersData = useSelector((state) => state.workspace.selectedMembers);
+  const workspace = useSelector((state) => state.workspace.selectedWorkspace);
+
   const loggedInUser = useSelector((state) => state?.user?.loggedInUser);
   const loggedInUserEmail = loggedInUser?.user?.email;
-
   const loggedInMember = membersData.find(member => member.user.email === loggedInUserEmail);
   const isAdmin = loggedInMember?.role === 'Admin';
 
+  const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 

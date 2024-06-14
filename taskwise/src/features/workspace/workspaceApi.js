@@ -120,7 +120,18 @@ export const updateMemberRole = async (workspaceId, adminUserId, userId, role) =
       throw error.response.data;  // Throw the error response data
     }
   };
-  
+
+  export const removeMember = async (workspaceId, adminUserId, memberEmails) => {
+    try {
+      const response = await axiosi.patch(`/workspaces/${workspaceId}/user/${adminUserId}/members`, {
+        memberEmails
+      });
+      return response.data;  // Return the response data
+    } catch (error) {
+      throw error.response.data;  // Throw the error response data
+    }
+  };
+
   export const updateWorkspace = async ({id, updatedWorkspace}) => {
     try {
       const res = await axiosi.put(`/workspaces/${id}`, updatedWorkspace);
