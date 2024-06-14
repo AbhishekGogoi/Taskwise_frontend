@@ -47,7 +47,10 @@ const TaskView = () => {
   };
 
   const handleCancel = () => {
-    navigate(`/workspaces/${workspaceID}`);
+    if(workspaceID) {
+      navigate(`/workspaces/${workspaceID}`);
+    }
+    navigate(`/my-tasks`);
   };
 
   useEffect(() => {
