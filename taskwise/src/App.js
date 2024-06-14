@@ -14,6 +14,7 @@ import useMediaQuery from "@mui/material/useMediaQuery";
 import Loading from "./components/Loading";
 import AIInputPage from "./pages/AI/AIInputPage";
 import TaskList from "./pages/AI/TaskCarousel/TaskList";
+import TaskView from "./components/TaskView";
 // Lazy load the pages
 const ProjectPage = lazy(() => import("./pages/Project/ProjectPage"));
 const LandingPage = lazy(() => import("./pages/landingPage/LandingPage"));
@@ -116,6 +117,7 @@ function AppLayout() {
                   element={<NewTaskPage />}
                 />
                 <Route path="/tasks/:taskID" element={<TaskDetailsPage />} />
+                <Route path="/task-view/:id" element={<TaskView />} />
                 <Route path="/workspaces" element={<WorkspacesPage />} />
                 <Route path="/workspaces/:id" element={<WorkspaceDetails />} />
                 <Route path="/my-tasks" element={<MyTaskPage />} />

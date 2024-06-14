@@ -23,14 +23,14 @@ const Attachments = styled("img")({
   marginRight: "10px",
 });
 
-const TaskModal = ({ open, handleClose, task }) => {
+const TaskModal = ({ open, handleClose, task, workspaceID }) => {
   const navigate = useNavigate();
   const [currentComment, setCurrentComment] = useState("");
   const dispatch = useDispatch();
   const user = useSelector((state) => state?.user?.loggedInUser?.user);
 
   const handleClick = () => {
-    navigate(`/tasks/${task.id}`);
+    navigate(`/task-view/${task.id}`, { state: { task: task, workspaceID: workspaceID } });
   };
 
   const handleUpdateTask = () => {

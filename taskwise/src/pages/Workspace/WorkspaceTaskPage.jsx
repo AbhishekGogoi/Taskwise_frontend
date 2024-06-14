@@ -150,6 +150,7 @@ const WorkspaceTaskPage = () => {
           open={modalOpen}
           handleClose={handleModalClose}
           task={selectedTask}
+          workspaceID={workspace?.id}
         />
       )}
     </StyledAgGridContainer>
