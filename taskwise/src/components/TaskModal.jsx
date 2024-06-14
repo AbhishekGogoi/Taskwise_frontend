@@ -30,7 +30,7 @@ const TaskModal = ({ open, handleClose, task }) => {
   const user = useSelector((state) => state?.user?.loggedInUser?.user);
 
   const handleClick = () => {
-    navigate(`/tasks/${task.id}`); // Ensure you are using task._id
+    navigate(`/tasks/${task._id}`);
   };
 
   const handleUpdateTask = () => {
@@ -56,7 +56,7 @@ const TaskModal = ({ open, handleClose, task }) => {
       };
 
       const idObject = {
-        taskId: task._id, // Ensure you are using task._id
+        taskId: task._id,
         id: task.projectID,
       };
 
