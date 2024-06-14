@@ -15,17 +15,23 @@ import WorkspaceIconBlack from "../assets/WorkspaceIconBlack.png";
 import { useDispatch, useSelector } from "react-redux";
 import { editTaskAsync } from "../features/project/projectSlice";
 import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 
 const Attachments = styled("img")({
   width: "100px",
-  height: "auto",
+  height: "100px",
   marginRight: "10px",
 });
 
 const TaskModal = ({ open, handleClose, task }) => {
+  const navigate = useNavigate();
   const [currentComment, setCurrentComment] = useState("");
   const dispatch = useDispatch();
   const user = useSelector((state) => state?.user?.loggedInUser?.user);
+
+  const handleClick = () => {
+    navigate(`/tasks/${task.id}`); // Ensure you are using task._id
+  };
 
   const handleUpdateTask = () => {
     if (currentComment.trim()) {
@@ -37,23 +43,23 @@ const TaskModal = ({ open, handleClose, task }) => {
         },
         comment: currentComment,
       };
-  
-      const updatedComments = [...(task.comments || []), newComment]; // Merge new comment with existing comments
-  
+
+      const updatedComments = [...(task.comments || []), newComment];
+
       const updatedTaskDetails = {
         ...task,
         comments: updatedComments,
       };
-  
+
       const data = {
         ...updatedTaskDetails,
       };
-  
+
       const idObject = {
-        taskId: task._id,
+        taskId: task._id, // Ensure you are using task._id
         id: task.projectID,
       };
-  
+
       dispatch(editTaskAsync({ data, idObject }));
       setCurrentComment("");
     } else {
@@ -98,7 +104,9 @@ const TaskModal = ({ open, handleClose, task }) => {
           }}
         >
           <div style={{ display: "flex", alignItems: "center" }}>
-            <div style={{ display: "flex", alignItems: "center", marginRight: "10px" }}>
+            <div
+              style={{ display: "flex", alignItems: "center", marginRight: "10px" }}
+            >
               <img
                 src={WorkspaceIconBlack}
                 alt="Workspace"
@@ -123,26 +131,45 @@ const TaskModal = ({ open, handleClose, task }) => {
             <CloseIcon />
           </IconButton>
         </Box>
-        <Typography variant="subtitle1" sx={{ mb: 4 }}>
-          <strong>{task?.name}</strong>
+        <Typography variant="subtitle1" sx={{ mb: 2 }}>
+          <strong
+            onClick={handleClick}
+            style={{
+              cursor: "pointer",
+              textDecoration: "underline",
+              color: "blue"
+            }}
+          >
+            {task?.name}
+          </strong>
         </Typography>
-        <Grid container spacing={1} sx={{ mb: 2 }}>
-          <Grid item xs={6} sx={{ mb: 2 }}>
+        <Grid container spacing={1} sx={{ mb: 0 }}>
+          <Grid item xs={6} sx={{ mb: 0 }}>
             <Typography variant="body1">
-              <strong>Due Date:</strong>
+              <strong>Assignee</strong>
             </Typography>
           </Grid>
-          <Grid item xs={6} sx={{ mb: 2 }}>
+          <Grid item xs={6} sx={{ mb: 0 }}>
             <Typography variant="body1">
-              {new Date(task?.dueDate).toLocaleDateString()}
+              {task?.assigneeUserID ? task?.assigneeUserID.email : ""}
             </Typography>
           </Grid>
-          <Grid item xs={6} sx={{ mb: 2 }}>
+          <Grid item xs={6} sx={{ mb: 0 }}>
             <Typography variant="body1">
-              <strong>Priority:</strong>
+              <strong>Due Date</strong>
             </Typography>
           </Grid>
-          <Grid item xs={6} sx={{ mb: 2 }}>
+          <Grid item xs={6} sx={{ mb: 0 }}>
+            <Typography variant="body1">
+              {task?.dueDate ? new Date(task.dueDate).toLocaleDateString() : ""}
+            </Typography>
+          </Grid>
+          <Grid item xs={6} sx={{ mb: 1 }}>
+            <Typography variant="body1">
+              <strong>Priority</strong>
+            </Typography>
+          </Grid>
+          <Grid item xs={6} sx={{ mb: 1 }}>
             <Typography
               variant="body1"
               sx={{ color: getPriorityColor(task?.priority) }}
@@ -154,9 +181,9 @@ const TaskModal = ({ open, handleClose, task }) => {
         {task?.attachments?.length > 0 ? (
           <>
             <Typography variant="body1" sx={{ mb: 1 }}>
-              <strong>Attachments</strong>
+              <strong>Attachments ({task?.attachments?.length})</strong>
             </Typography>
-            <Box sx={{ display: "flex", mb: 4 }}>
+            <Box sx={{ display: "flex", mb: 1 }}>
               {task.attachments.slice(0, 2).map((attachment) => (
                 <Attachments
                   key={attachment._id}
@@ -167,14 +194,11 @@ const TaskModal = ({ open, handleClose, task }) => {
             </Box>
           </>
         ) : (
-          <Grid container spacing={1} sx={{ mb: 2 }}>
-            <Grid item xs={6} sx={{ mb: 2 }}>
+          <Grid container spacing={1} sx={{ mb: 0 }}>
+            <Grid item xs={6} sx={{ mb: 0 }}>
               <Typography variant="body1">
-                <strong>Attachments:</strong>
+                <strong>Attachments ({task?.attachments?.length})</strong>
               </Typography>
-            </Grid>
-            <Grid item xs={6} sx={{ mb: 2 }}>
-              <Typography variant="body1">0</Typography>
             </Grid>
           </Grid>
         )}
@@ -182,9 +206,9 @@ const TaskModal = ({ open, handleClose, task }) => {
           fullWidth
           placeholder="Ask a question or post an update"
           multiline
-          rows={4}
+          rows={2}
           variant="outlined"
-          sx={{ bgcolor: "white" }}
+          sx={{ bgcolor: "white", mt: 1 }}
           value={currentComment}
           onChange={(e) => setCurrentComment(e.target.value)}
         />

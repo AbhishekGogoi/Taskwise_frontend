@@ -4,6 +4,8 @@ import { Card, CardContent, CardMedia, Typography, Grid, Box, styled } from '@mu
 import { useNavigate } from 'react-router-dom';
 import ProjectIconBlack from '../../assets/Projects.png';
 import WorkspaceMembers from './WorkspaceMembers';
+import Loading from '../../components/Loading';
+import { useSelector } from 'react-redux';
 
 const CustomBox = styled(Box)(({ theme }) => ({
   height: 'calc(100vh - 160px)',
@@ -37,6 +39,11 @@ const NoProjectsMessage = styled("div")(({ theme }) => ({
 
 function WorkspaceProjectCard({ workspace, projectData, membersData, isFilter }) {
   const navigate = useNavigate();
+  const fetchWorkspaceProjectsStatus = useSelector((state) => state.workspace.fetchWorkspaceProjectsStatus);
+
+  if(fetchWorkspaceProjectsStatus === 'loading'){
+    return <Loading/>;
+  }
 
   return (
     <Grid container spacing={3}>

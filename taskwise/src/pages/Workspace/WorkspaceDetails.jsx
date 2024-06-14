@@ -1,3 +1,4 @@
+// WorkspaceDetails.js
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { Box, Paper, Typography, InputBase, Divider, Tabs, Tab, Button } from '@mui/material';
@@ -12,7 +13,6 @@ import { useSelector, useDispatch } from 'react-redux';
 import {
   fetchWorkspaceByIdAsync,
   fetchWorkspaceProjectsAsync,
-  fetchWorkspaceTasksAsync,
   fetchWorkspaceMembersAsync
 } from '../../features/workspace/workspaceSlice';
 import {
@@ -21,6 +21,7 @@ import {
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import NewWorkspaceProjectModel from './Models/NewWorkspaceProjectModel';
+import Loading from '../../components/Loading';
 
 const SearchIconWrapper = styled('div')(({ theme }) => ({
   padding: theme.spacing(0, 2),
@@ -74,9 +75,8 @@ function WorkspaceDetails() {
   const { id } = useParams();
   const dispatch = useDispatch();
 
-  const workspace = useSelector((state) => state.workspace.workspaces.find((workspace) => workspace.id === id));
+  const workspace = useSelector((state) => state.workspace.selectedWorkspace);
   const projectData = useSelector((state) => state.workspace.selectedProjects);
-  const tasksData = useSelector((state) => state.workspace.selectedTasks);
   const membersData = useSelector((state) => state.workspace.selectedMembers);
   const [isModalOpen, setModalOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
@@ -117,7 +117,6 @@ function WorkspaceDetails() {
     if (id) {
       dispatch(fetchWorkspaceByIdAsync(id));
       dispatch(fetchWorkspaceProjectsAsync(id));
-      dispatch(fetchWorkspaceTasksAsync(id));
       dispatch(fetchWorkspaceMembersAsync(id));
     }
   }, [dispatch, id]);
@@ -125,6 +124,7 @@ function WorkspaceDetails() {
   const handleTabChange = (event, newValue) => {
     setSelectedTab(newValue);
     setSearchQuery(""); // Clear search input when tab changes
+    dispatch(fetchWorkspaceByIdAsync(id));
   };
 
   const handleProjectCreated = () => {
@@ -133,7 +133,7 @@ function WorkspaceDetails() {
   };
 
   if (!workspace) {
-    return <Typography>Loading...</Typography>;
+    return <Loading/>;
   }
 
   return (
@@ -229,8 +229,8 @@ function WorkspaceDetails() {
       </Paper>
       <CustomBox>
         {selectedTab === 0 && <WorkspaceProjectCard workspace={workspace} projectData={filteredProjects} membersData={membersData} isFilter={isFilter} />}
-        {selectedTab === 1 && <WorkspaceTasks workspace={workspace} tasksData={tasksData} membersData={membersData} />}
-        {selectedTab === 2 && <WorkspaceSettings workspace={workspace} membersData={membersData}/>}
+        {selectedTab === 1 && <WorkspaceTasks workspace={workspace} />}
+        {selectedTab === 2 && <WorkspaceSettings workspace={workspace}/>}
       </CustomBox>
       <Modal open={isModalOpen} onClose={handleCloseModal}>
         <Box>
