@@ -57,9 +57,9 @@ const priorityRenderer = (params) => {
 };
 
 const TaskPage = () => {
-  // eslint-disable-next-line
   const tasksData = useSelector((state) => state.workspace.userTasks) || [];
   const userId = useSelector((state) => state?.user?.loggedInUser?.user?._id);
+  const fetchTasksByUserIDStatus = useSelector((state) => state.workspace.fetchTasksByUserIDStatus);
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -139,6 +139,17 @@ const TaskPage = () => {
     resizable: true,
     minWidth: 100,
   }), []);
+
+  // Show loading indicator while fetching tasks
+  if (fetchTasksByUserIDStatus === 'loading') {
+    return (
+      <StyledAgGridContainer>
+        <div className="ag-theme-alpine" style={gridStyle}>
+          <p>Loading tasks...</p>
+        </div>
+      </StyledAgGridContainer>
+    );
+  }
 
   return (
     <StyledAgGridContainer>
