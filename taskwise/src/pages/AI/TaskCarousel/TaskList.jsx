@@ -4,7 +4,7 @@ import { styled } from '@mui/material/styles';
 import TaskCard from './TaskCard';
 import { BsChevronLeft, BsChevronRight } from 'react-icons/bs';
 import './TaskList.css';
-import { Button, Paper } from '@mui/material';
+import { Button, Paper, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, TextField } from '@mui/material';
 import Box from '@mui/material/Box';
 import { useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from 'react-redux';
@@ -39,8 +39,10 @@ function TaskList() {
   const aiData = useSelector((state) => state?.ai?.aiData);
   const user = useSelector((state) => state?.user?.loggedInUser?.user);
   const location = useLocation();
-  const [loading,setLoading]=useState(false);
+  const [loading, setLoading] = useState(false);
   const { workspaceID } = location.state || {};
+  const [editTask, setEditTask] = useState(null);
+  const [editedTaskDetails, setEditedTaskDetails] = useState({ title: '', description: '' });
   useEffect(() => {
     if (aiData) {
       setTasks(aiData.tasks);
@@ -73,7 +75,23 @@ function TaskList() {
   };
 
   const handleTaskEdit = (taskToEdit) => {
-    console.log("Edit task:", taskToEdit);
+    setEditTask(taskToEdit);
+    setEditedTaskDetails({ title: taskToEdit.title, description: taskToEdit.description });
+  };
+  const handleEditTaskChange = (e) => {
+    const { name, value } = e.target;
+    setEditedTaskDetails(prevDetails => ({
+      ...prevDetails,
+      [name]: value,
+    }));
+  };
+  const handleEditTaskSave = () => {
+    setTasks(prevTasks => prevTasks.map(task => task === editTask ? { ...task, ...editedTaskDetails } : task));
+    setEditTask(null);
+  };
+
+  const handleEditTaskCancel = () => {
+    setEditTask(null);
   };
 
   const startIndex = currentPage * tasksPerPage;
@@ -93,11 +111,11 @@ function TaskList() {
       "description": aiData?.description,
       "tasks": tasks,
       "creatorUserID": {
-        "_id":user?._id,
-        "username":user?.username,
-        "email":user?.email
+        "_id": user?._id,
+        "username": user?.username,
+        "email": user?.email
       },
-      "workspaceID":workspaceID,
+      "workspaceID": workspaceID,
       "imgUrl": finalImageUrl,
       "imgKey": finalImageKey,
     }
@@ -198,6 +216,41 @@ function TaskList() {
         >
           {loading ? "loading" : "Create Project"}
         </Button>
+        <Dialog open={!!editTask} onClose={handleEditTaskCancel}>
+          <DialogTitle>Edit Task</DialogTitle>
+          <DialogContent>
+            <DialogContentText>
+              Modify the details of your task below.
+            </DialogContentText>
+            <TextField
+              autoFocus
+              margin="dense"
+              label="Title"
+              type="text"
+              fullWidth
+              name="title"
+              value={editedTaskDetails.title}
+              onChange={handleEditTaskChange}
+            />
+            <TextField
+              margin="dense"
+              label="Description"
+              type="text"
+              fullWidth
+              name="description"
+              value={editedTaskDetails.description}
+              onChange={handleEditTaskChange}
+            />
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleEditTaskCancel} color="primary">
+              Cancel
+            </Button>
+            <Button onClick={handleEditTaskSave} color="primary">
+              Save
+            </Button>
+          </DialogActions>
+        </Dialog>
       </Box>
     </Box>
   );
