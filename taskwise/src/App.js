@@ -15,6 +15,7 @@ import Loading from "./components/Loading";
 import AIInputPage from "./pages/AI/AIInputPage";
 import TaskList from "./pages/AI/TaskCarousel/TaskList";
 import { SidebarProvider } from "./context/SidebarContext";
+import ErrorPage from "./pages/ErrorPage/ErrorPage";
 // Lazy load the pages
 const ProjectPage = lazy(() => import("./pages/Project/ProjectPage"));
 const LandingPage = lazy(() => import("./pages/landingPage/LandingPage"));
@@ -61,6 +62,7 @@ function AppLayout() {
     "/verification",
     "/resetpassword",
     "/confirmation",
+    "/*",
   ].includes(location.pathname);
   const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -125,6 +127,7 @@ function AppLayout() {
                 <Route path="/createai" element={<AIInputPage />} />
                 <Route path="/task-carousel" element={<TaskList />} />
               </Route>
+              <Route path="/*" element={<ErrorPage />} />
             </Routes>
           </Suspense>
         </main>
