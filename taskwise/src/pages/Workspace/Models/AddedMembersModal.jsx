@@ -28,7 +28,7 @@ const style = {
   p: 4,
 };
 
-const AddedMembersModal = ({ open, handleClose, members, id }) => {
+const AddedMembersModal = ({ open, handleClose, isWorkspacesPage, members, id }) => {
   const navigate = useNavigate();
   const showScroll = members.length > 4;
 
@@ -68,8 +68,8 @@ const AddedMembersModal = ({ open, handleClose, members, id }) => {
             </ListItem>
           ))}
         </Box>
-        { id && (
-            <Typography
+        { isWorkspacesPage && id != null && (
+          <Typography
             variant="body2"
             color="primary"
             onClick={handleWorkspaceDetailsClick}

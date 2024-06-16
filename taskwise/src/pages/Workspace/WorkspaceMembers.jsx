@@ -98,6 +98,7 @@ function WorkspaceMembers({ height, width}) {
         <AddedMembersModal
           open={addedMembersModalOpen}
           handleClose={handleCloseAddedMembersModal}
+          isWorkspacesPage={false}
           members={addedMembers}
         />
       )}

@@ -204,6 +204,7 @@ function WorkspacePage() {
         <AddedMembersModal
           open={addedMembersModalOpen}
           handleClose={handleCloseAddedMembersModal}
+          isWorkspacesPage={true}
           members={addedMembers}
           id={id}
         />
