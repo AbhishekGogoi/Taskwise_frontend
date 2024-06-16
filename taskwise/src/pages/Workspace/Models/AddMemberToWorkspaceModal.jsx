@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { useDispatch, useSelector } from 'react-redux';
 import Box from '@mui/material/Box';
@@ -10,7 +10,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import Chip from '@mui/material/Chip';
 import Modal from '@mui/material/Modal';
 import AddedMembersModal from './AddedMembersModal';
-import { addMemberAsync, fetchWorkspaceMembersAsync } from '../../../features/workspace/workspaceSlice';
+import { addMemberAsync, fetchWorkspaceMembersAsync, fetchExistingDataAsync } from '../../../features/workspace/workspaceSlice';
 
 const style = {
   position: 'absolute',
@@ -36,6 +36,13 @@ const AddMemberToWorkspaceModal = ({ handleClose, workspaceId, existingMemberEma
   const [responseData, setResponseData] = useState(null);
   const dispatch = useDispatch();
   const adminUserId = useSelector((state) => state?.user?.loggedInUser?.user?._id);
+  const existingUserEmails = useSelector((state) => state.workspace?.existingUserEmails || []);
+
+  useEffect(() => {
+    if (inputValue.trim()) {
+      dispatch(fetchExistingDataAsync({ collection: 'User', key: 'email' }));
+    }
+  }, [dispatch, inputValue]);
 
   const handleAddMember = (event) => {
     if (event.key === 'Enter' || event.key === ',' || event.key === ' ') {
@@ -44,6 +51,8 @@ const AddMemberToWorkspaceModal = ({ handleClose, workspaceId, existingMemberEma
       if (email && emailRegex.test(email)) {
         if (existingMemberEmails.includes(email)) {
           setMembersError('This email address is already a member.');
+        } else if (!existingUserEmails.includes(email)) {
+          setMembersError('User with this email is not part of TaskWise.');
         } else if (!members.includes(email)) {
           setMembers((prevMembers) => [...prevMembers, email]);
           setValidEmails((prevValidEmails) => [...prevValidEmails, email]);
