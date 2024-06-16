@@ -240,6 +240,8 @@ function TaskList() {
               name="description"
               value={editedTaskDetails.description}
               onChange={handleEditTaskChange}
+              multiline
+              rows={4}
             />
           </DialogContent>
           <DialogActions>
