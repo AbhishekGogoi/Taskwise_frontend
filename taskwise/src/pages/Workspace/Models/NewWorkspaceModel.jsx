@@ -31,6 +31,7 @@ const NewWorkspaceModel = ({ handleClose, onWorkspaceCreated }) => {
   const dispatch = useDispatch();
   const loggedInUser = useSelector((state) => state.user?.loggedInUser?.user);
   const existingWorkspaceName = useSelector((state) => state.workspace?.existingWorkspaceName || []);
+  const existingUserEmails = useSelector((state) => state.workspace?.existingUserEmails || []);
 
   const [workspaceName, setWorkspaceName] = useState('');
   const [description, setDescription] = useState('');
@@ -45,6 +46,7 @@ const NewWorkspaceModel = ({ handleClose, onWorkspaceCreated }) => {
   useEffect(() => {
     if (workspaceName.trim()) {
       dispatch(fetchExistingDataAsync({ collection: 'Workspace', key: 'name' }));
+      dispatch(fetchExistingDataAsync({ collection: 'User', key: 'email' }));
     }
   }, [dispatch, workspaceName]);
 
@@ -107,6 +109,7 @@ const NewWorkspaceModel = ({ handleClose, onWorkspaceCreated }) => {
   };
 
   const handleAddMember = (event) => {
+    console.log("handleAddMember: ", existingUserEmails)
     if (event.key === 'Enter' || event.key === ',' || event.key === ' ') {
       event.preventDefault();
       const email = inputValue.trim();
@@ -115,18 +118,21 @@ const NewWorkspaceModel = ({ handleClose, onWorkspaceCreated }) => {
           setMembersError('You cannot add your own email as a member.');
         } else if (members.includes(email)) {
           setMembersError('Email address already added.');
+        } else if (!existingUserEmails.includes(email)) {
+          setMembersError('User with this email is not part of TaskWise.');
         } else {
           setMembers((prevMembers) => [...prevMembers, email]);
           setInputValue('');
-          setMembersError('');
+          setMembersError(''); // Resetting the error message here
         }
       } else {
         setMembersError('Invalid email address.');
       }
     }
-  };
+  };  
 
   const handleWorkspaceNameChange = (e) => {
+    console.log("handleWorkspaceNameChange: ", existingWorkspaceName)
     const value = e.target.value;
     setWorkspaceName(value);
 

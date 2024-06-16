@@ -375,8 +375,12 @@ const workspaceSlice = createSlice({
         state.fetchExistingDataStatus = 'pending';
       })
       .addCase(fetchExistingDataAsync.fulfilled, (state, action) => {
+        if (action.meta.arg.collection === 'Workspace') {
+          state.existingWorkspaceName = action.payload;
+        } else if (action.meta.arg.collection === 'User') {
+          state.existingUserEmails = action.payload;
+        }
         state.fetchExistingDataStatus = 'fulfilled';
-        state.existingWorkspaceName = action.payload;
         state.successMessage = 'Data fetched successfully!';
       })
       .addCase(fetchExistingDataAsync.rejected, (state, action) => {
