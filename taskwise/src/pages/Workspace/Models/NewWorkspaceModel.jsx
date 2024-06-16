@@ -119,7 +119,7 @@ const NewWorkspaceModel = ({ handleClose, onWorkspaceCreated }) => {
         } else if (members.includes(email)) {
           setMembersError('Email address already added.');
         } else if (!existingUserEmails.includes(email)) {
-          setMembersError('User with this email is not part of TaskWise.');
+          setMembersError('Email is not part of TaskWise, Please emove data and Press Enter...');
         } else {
           setMembers((prevMembers) => [...prevMembers, email]);
           setInputValue('');

@@ -49,7 +49,7 @@ const AddMemberToWorkspaceModal = ({ handleClose, workspaceId, existingMemberEma
         if (existingMemberEmails.includes(email)) {
           setMembersError('This email address is already a member.');
         } else if (!existingUserEmails.includes(email)) {
-          setMembersError('User with this email is not part of TaskWise.');
+          setMembersError('Email is not part of TaskWise, Please emove data and Press Enter...');
         } else if (!members.includes(email)) {
           setMembers((prevMembers) => [...prevMembers, email]);
           setValidEmails((prevValidEmails) => [...prevValidEmails, email]);
@@ -61,6 +61,11 @@ const AddMemberToWorkspaceModal = ({ handleClose, workspaceId, existingMemberEma
       } else {
         setMembersError('Invalid email address.');
       }
+    }
+  
+    // Check if inputValue is empty to enable the button
+    if (inputValue.trim() === '') {
+      setMembersError(''); // Reset any previous error message
     }
   };
 
