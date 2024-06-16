@@ -108,6 +108,10 @@ function WorkspaceDetails() {
       toast.success("Project created successfully!");
       dispatch(resetProjectAddStatus());
     }
+    if(projectAddStatus==="rejected"){
+      toast.error("Project not added!");
+      dispatch(resetProjectAddStatus());
+    }
     // eslint-disable-next-line
   }, [projectAddStatus]);
 
