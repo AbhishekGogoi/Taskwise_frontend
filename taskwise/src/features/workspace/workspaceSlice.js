@@ -20,6 +20,7 @@ const initialState = {
   workspaces: [],
   workspaceFetchStatus: 'idle',
   selectedWorkspace: null,
+  newdWorkspace: {},
   existingWorkspaceName: [],
   existingUserEmails: [],
   selectedProjects: [],
@@ -298,6 +299,7 @@ const workspaceSlice = createSlice({
       .addCase(createWorkspaceAsync.fulfilled, (state, action) => {
         state.createWorkspaceStatus = 'fulfilled';
         state.workspaces.push(action.payload); // Update the state with the new workspace
+        state.newdWorkspace = action.payload;
         state.successMessage = 'Workspace created successfully!';
       })
       .addCase(createWorkspaceAsync.rejected, (state, action) => {

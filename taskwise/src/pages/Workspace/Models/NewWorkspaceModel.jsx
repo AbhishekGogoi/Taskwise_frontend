@@ -32,6 +32,7 @@ const NewWorkspaceModel = ({ handleClose, onWorkspaceCreated }) => {
   const loggedInUser = useSelector((state) => state.user?.loggedInUser?.user);
   const existingWorkspaceName = useSelector((state) => state.workspace?.existingWorkspaceName || []);
   const existingUserEmails = useSelector((state) => state.workspace?.existingUserEmails || []);
+  const newdWorkspaceData = useSelector((state) => state.workspace?.newdWorkspace || {});
 
   const [workspaceName, setWorkspaceName] = useState('');
   const [description, setDescription] = useState('');
@@ -101,7 +102,7 @@ const NewWorkspaceModel = ({ handleClose, onWorkspaceCreated }) => {
 
     try {
       await dispatch(createWorkspaceAsync(newWorkspace));
-      onWorkspaceCreated(); // Notify the parent component about the new workspace
+      onWorkspaceCreated(members, newdWorkspaceData?.workspace?.id);
       handleClose();
     } catch (error) {
       console.error('Error creating workspace:', error);
@@ -109,7 +110,6 @@ const NewWorkspaceModel = ({ handleClose, onWorkspaceCreated }) => {
   };
 
   const handleAddMember = (event) => {
-    console.log("handleAddMember: ", existingUserEmails)
     if (event.key === 'Enter' || event.key === ',' || event.key === ' ') {
       event.preventDefault();
       const email = inputValue.trim();
@@ -129,10 +129,14 @@ const NewWorkspaceModel = ({ handleClose, onWorkspaceCreated }) => {
         setMembersError('Invalid email address.');
       }
     }
-  };  
-
+  
+    // Check if inputValue is empty to enable the button
+    if (inputValue.trim() === '') {
+      setMembersError(''); // Reset any previous error message
+    }
+  };
+  
   const handleWorkspaceNameChange = (e) => {
-    console.log("handleWorkspaceNameChange: ", existingWorkspaceName)
     const value = e.target.value;
     setWorkspaceName(value);
 
@@ -218,6 +222,7 @@ const NewWorkspaceModel = ({ handleClose, onWorkspaceCreated }) => {
         fullWidth
         sx={{ textTransform: 'none' }}
         onClick={handleCreateWorkspace}
+        disabled={!!nameError || !!membersError || inputValue.trim() !== ''}
       >
         Create Workspace
       </Button>

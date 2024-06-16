@@ -16,6 +16,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { fetchWorkspaceByUserIDAsync } from '../../features/workspace/workspaceSlice';
 import { useNavigate } from 'react-router-dom';
 import Loading from '../../components/Loading';
+import AddedMembersModal from './Models/AddedMembersModal'; // Import AddedMembersModal
 
 const SearchIconWrapper = styled('div')(({ theme }) => ({
   padding: theme.spacing(0, 2),
@@ -85,8 +86,24 @@ const NoWorkspacesMessage = styled('div')(({ theme }) => ({
 
 function WorkspacePage() {
   const [openModal, setOpenModal] = useState(false);
+  const [addedMembersModalOpen, setAddedMembersModalOpen] = useState(false);
+  const [addedMembers, setAddedMembers] = useState([]);
+  const [id, setId] = useState('');
+
   const handleNewWorkspaceClick = () => setOpenModal(true);
   const handleCloseModal = () => setOpenModal(false);
+
+  const handleWorkspaceCreated = (members, id) => {
+    if (userId) {
+      dispatch(fetchWorkspaceByUserIDAsync(userId));
+      setAddedMembers(members);
+      setId(id);
+      setOpenModal(false);
+      setAddedMembersModalOpen(true);
+    }
+  };
+
+  const handleCloseAddedMembersModal = () => setAddedMembersModalOpen(false);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -107,14 +124,8 @@ function WorkspacePage() {
     }
   }, [dispatch, userId]);
 
-  const handleWorkspaceCreated = () => {
-    if (userId) {
-      dispatch(fetchWorkspaceByUserIDAsync(userId));
-    }
-  };
-
   if (workspaceFetchStatus === 'loading') {
-    return <Loading/>;
+    return <Loading />;
   }
 
   return (
@@ -177,7 +188,7 @@ function WorkspacePage() {
           </Grid>
         ) : (
           <NoWorkspacesMessage>
-            { WorkspaceData.length > 0 ? "No matching workspaces found" : "Start by adding a new Workspace"}
+            {WorkspaceData.length > 0 ? "No matching workspaces found" : "Start by adding a new Workspace"}
           </NoWorkspacesMessage>
         )}
       </CustomBox>
@@ -189,6 +200,14 @@ function WorkspacePage() {
       >
         <NewWorkspaceModel handleClose={handleCloseModal} onWorkspaceCreated={handleWorkspaceCreated} />
       </Modal>
+      { addedMembers && addedMembers.length > 0 && (
+        <AddedMembersModal
+          open={addedMembersModalOpen}
+          handleClose={handleCloseAddedMembersModal}
+          members={addedMembers}
+          id={id}
+        />
+      )}
     </Box>
   );
 }
