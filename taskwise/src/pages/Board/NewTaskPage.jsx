@@ -322,7 +322,7 @@ function NewTaskPage() {
 
                                 <Grid item xs={12} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                                     <Typography variant="h6" gutterBottom sx={{ fontWeight: '700', mb: 1, fontSize: "1rem", mr: "2.5" }}>
-                                        Priority
+                                        Priority <span style={{ color: 'red' }}>*</span>
                                     </Typography>
                                     <Box sx={{ display: 'flex', alignItems: 'center', flexGrow: 1, ml: 6 }}>
                                         <FormControl sx={{ width: '100%', maxWidth: 200 }} error={!!errors.priority}>
@@ -359,7 +359,7 @@ function NewTaskPage() {
                                                 fontSize: "1rem"
                                             }}
                                         >
-                                            Status
+                                            Status <span style={{ color: 'red' }}>*</span>
                                         </Typography>
                                         <Box sx={{ display: 'flex', alignItems: 'center', flexGrow: 1, ml: 5 }}>
                                             <FormControl sx={{ width: '100%', maxWidth: 200 }} error={!!errors.status}>
