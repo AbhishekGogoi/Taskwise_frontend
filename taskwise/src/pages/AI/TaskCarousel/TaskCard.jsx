@@ -44,11 +44,18 @@ const TaskCard = ({ task, onClose, onEdit }) => {
         </div>
       </div>
       <div style={{
-        overflow: "scroll", "&::-webkit-scrollbar": {
-          display: "none",
-        },
+        overflow: "scroll",
+        scrollbarWidth: "none", // For Firefox
+        msOverflowStyle: "none", // For Internet Explorer and Edge
       }}>
-        <CardContent className="task-card-content" sx={{ mt: 6 }}>
+        <style>
+          {`
+      .hide-scrollbar::-webkit-scrollbar {
+        display: none; /* For Chrome, Safari, and Opera */
+      }
+    `}
+        </style>
+        <CardContent className="task-card-content hide-scrollbar" sx={{ mt: 6 }}>
           <Typography variant="h6" component="h3" gutterBottom>
             {task.title}
           </Typography>
@@ -57,6 +64,7 @@ const TaskCard = ({ task, onClose, onEdit }) => {
           </Typography>
         </CardContent>
       </div>
+
       <div className="task-footer">
         <Typography variant="body2" color="textSecondary" className="task-status">
           {task.status}
