@@ -4,7 +4,7 @@
   border-radius: 5; /* Add border radius for rounded corners */
   margin-bottom: 16px; /* Add spacing between cards */
   width: 350px; /* Fix the card width */
-  height: 200px; /* Fix the card height */
+  height: 250px; /* Fix the card height */
   display: flex;
   flex-direction: column;
   position: relative; /* Set position to relative for absolute positioning of icons */
@@ -24,6 +24,7 @@
   display: flex;
   justify-content: space-between;
   padding: 8px;
+  background-color: white;
 }
 
 .task-actions {
