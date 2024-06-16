@@ -30,7 +30,7 @@ const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const NewWorkspaceModel = ({ handleClose, onWorkspaceCreated }) => {
   const dispatch = useDispatch();
   const loggedInUser = useSelector((state) => state.user?.loggedInUser?.user);
-  const selectedData = useSelector((state) => state.workspace?.selectedData || []);
+  const existingWorkspaceName = useSelector((state) => state.workspace?.existingWorkspaceName || []);
 
   const [workspaceName, setWorkspaceName] = useState('');
   const [description, setDescription] = useState('');
@@ -131,7 +131,7 @@ const NewWorkspaceModel = ({ handleClose, onWorkspaceCreated }) => {
     setWorkspaceName(value);
 
     if (value.trim()) {
-      if (selectedData.includes(value.trim())) {
+      if (existingWorkspaceName.includes(value.trim())) {
         setNameError('Workspace name is already taken.');
       } else {
         setNameError('');

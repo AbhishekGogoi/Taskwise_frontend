@@ -20,7 +20,8 @@ const initialState = {
   workspaces: [],
   workspaceFetchStatus: 'idle',
   selectedWorkspace: null,
-  selectedData: [],
+  existingWorkspaceName: [],
+  existingUserEmails: [],
   selectedProjects: [],
   selectedTasks: [],
   selectedMembers: [],
@@ -375,7 +376,7 @@ const workspaceSlice = createSlice({
       })
       .addCase(fetchExistingDataAsync.fulfilled, (state, action) => {
         state.fetchExistingDataStatus = 'fulfilled';
-        state.selectedData = action.payload;
+        state.existingWorkspaceName = action.payload;
         state.successMessage = 'Data fetched successfully!';
       })
       .addCase(fetchExistingDataAsync.rejected, (state, action) => {
