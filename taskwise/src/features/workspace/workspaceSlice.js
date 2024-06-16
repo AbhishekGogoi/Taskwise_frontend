@@ -13,12 +13,14 @@ import { createWorkspace,
          updateWorkspace,
          fetchTasksByUserID,
          getWorkspaceMediaAndDocs, 
-         removeMember} from "./workspaceApi";
+         removeMember,
+         getExistingData} from "./workspaceApi";
 
 const initialState = {
   workspaces: [],
   workspaceFetchStatus: 'idle',
   selectedWorkspace: null,
+  selectedData: [],
   selectedProjects: [],
   selectedTasks: [],
   selectedMembers: [],
@@ -30,6 +32,7 @@ const initialState = {
   fetchWorkspaceProjectsStatus: 'idle',
   fetchWorkspaceTasksStatus: 'idle',
   fetchWorkspaceMembersStatus: 'idle',
+  fetchExistingDataStatus: 'idle',
   createWorkspaceStatus: 'idle',
   uploadFileStatus: 'idle',
   getImageUrlStatus: 'idle',
@@ -149,6 +152,18 @@ export const updateWorkspaceAsync = createAsyncThunk(
 export const fetchWorkspaceMediaAndDocsAsync = createAsyncThunk('workspace/fetchWorkspaceMediaAndDocsAsync', async ({workspaceId}) => {
     const selectedMediaAndDocs = await getWorkspaceMediaAndDocs({workspaceId});
     return selectedMediaAndDocs;
+  }
+);
+
+export const fetchExistingDataAsync = createAsyncThunk(
+  "workspaces/fetchExistingData",
+  async ({ collection, key }) => {
+    try {
+      const response = await getExistingData(collection, key);
+      return response;
+    } catch (error) {
+      throw error;
+    }
   }
 );
 
@@ -354,6 +369,18 @@ const workspaceSlice = createSlice({
       .addCase(fetchWorkspaceMediaAndDocsAsync.rejected, (state, action) => {
         state.getWorkspaceMediaAndDocsStatus = 'failed';
         state.errors = action.error.message;
+      })
+      .addCase(fetchExistingDataAsync.pending, (state) => {
+        state.fetchExistingDataStatus = 'pending';
+      })
+      .addCase(fetchExistingDataAsync.fulfilled, (state, action) => {
+        state.fetchExistingDataStatus = 'fulfilled';
+        state.selectedData = action.payload;
+        state.successMessage = 'Data fetched successfully!';
+      })
+      .addCase(fetchExistingDataAsync.rejected, (state, action) => {
+        state.fetchExistingDataStatus = 'rejected';
+        state.errorMessage = action.error.message;
       });
   }
 });

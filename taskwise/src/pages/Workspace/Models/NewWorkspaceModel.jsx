@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import TextField from '@mui/material/TextField';
@@ -9,7 +9,7 @@ import Chip from '@mui/material/Chip';
 import PropTypes from 'prop-types';
 import Thumbnail from '../../../components/Thumbnail';
 import { useDispatch, useSelector } from "react-redux";
-import { createWorkspaceAsync, uploadFileAsync, getImageUrlAsync } from "../../../features/workspace/workspaceSlice";
+import { createWorkspaceAsync, uploadFileAsync, getImageUrlAsync, fetchExistingDataAsync } from "../../../features/workspace/workspaceSlice";
 import ModeEditSharpIcon from '@mui/icons-material/ModeEditSharp';
 
 const style = {
@@ -29,8 +29,8 @@ const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 const NewWorkspaceModel = ({ handleClose, onWorkspaceCreated }) => {
   const dispatch = useDispatch();
-  const loggedInUser = useSelector((state) => state?.user?.loggedInUser.user);
-  const loggedInUserEmail = loggedInUser?.email;
+  const loggedInUser = useSelector((state) => state.user?.loggedInUser?.user);
+  const selectedData = useSelector((state) => state.workspace?.selectedData || []);
 
   const [workspaceName, setWorkspaceName] = useState('');
   const [description, setDescription] = useState('');
@@ -42,6 +42,12 @@ const NewWorkspaceModel = ({ handleClose, onWorkspaceCreated }) => {
   const [membersError, setMembersError] = useState('');
   const fileInputRef = useRef(null);
 
+  useEffect(() => {
+    if (workspaceName.trim()) {
+      dispatch(fetchExistingDataAsync({ collection: 'Workspace', key: 'name' }));
+    }
+  }, [dispatch, workspaceName]);
+
   const handleFileUploadClick = () => {
     fileInputRef.current.click();
   };
@@ -51,7 +57,7 @@ const NewWorkspaceModel = ({ handleClose, onWorkspaceCreated }) => {
     if (file) {
       const formData = new FormData();
       formData.append('file', file);
-      
+
       try {
         const response = await dispatch(uploadFileAsync(formData));
         setImageUrl(response.payload.presignedUrl);
@@ -105,7 +111,7 @@ const NewWorkspaceModel = ({ handleClose, onWorkspaceCreated }) => {
       event.preventDefault();
       const email = inputValue.trim();
       if (email && emailRegex.test(email)) {
-        if (email === loggedInUserEmail) {
+        if (email === loggedInUser?.email) {
           setMembersError('You cannot add your own email as a member.');
         } else if (members.includes(email)) {
           setMembersError('Email address already added.');
@@ -117,6 +123,21 @@ const NewWorkspaceModel = ({ handleClose, onWorkspaceCreated }) => {
       } else {
         setMembersError('Invalid email address.');
       }
+    }
+  };
+
+  const handleWorkspaceNameChange = (e) => {
+    const value = e.target.value;
+    setWorkspaceName(value);
+
+    if (value.trim()) {
+      if (selectedData.includes(value.trim())) {
+        setNameError('Workspace name is already taken.');
+      } else {
+        setNameError('');
+      }
+    } else {
+      setNameError('Workspace name is required.');
     }
   };
 
@@ -151,12 +172,7 @@ const NewWorkspaceModel = ({ handleClose, onWorkspaceCreated }) => {
         margin="normal"
         style={{ marginBottom: '20px', backgroundColor: 'white' }}
         value={workspaceName}
-        onChange={(e) => {
-          setWorkspaceName(e.target.value);
-          if (e.target.value.trim()) {
-            setNameError('');
-          }
-        }}
+        onChange={handleWorkspaceNameChange}
         error={!!nameError}
         helperText={nameError}
       />
