@@ -146,8 +146,8 @@ function ProjectPage() {
   );
 
   const workspaces = useSelector((state) => state?.workspace?.workspaces);
-  const workspaceFetchStatus=useSelector((state)=> state?.workspace?.workspaceFetchStatus)
-  const projectFetchStatus=useSelector((state)=>state?.project?.projectFetchStatus)
+  const workspaceFetchStatus = useSelector((state) => state?.workspace?.workspaceFetchStatus)
+  const projectFetchStatus = useSelector((state) => state?.project?.projectFetchStatus)
   // console.log(projectData);
   const userId = useSelector((state) => state?.user?.loggedInUser?.user?._id);
   const [searchQuery, setSearchQuery] = useState("");
@@ -184,7 +184,7 @@ function ProjectPage() {
     setModalOpen(false);
   };
 
-  if (workspaces.length <= 0 && workspaceFetchStatus==="fulfilled") {
+  if (workspaces.length <= 0 && workspaceFetchStatus === "fulfilled") {
     return <NoWorkspacePage />;
   }
 
@@ -227,7 +227,11 @@ function ProjectPage() {
             <Button
               variant="contained"
               size="small"
-              sx={{ fontSize: "0.70rem", padding: "4px 8px" }}
+              sx={{
+                fontSize: "0.70rem", padding: "4px 8px", backgroundColor: "#00c6ff",
+                backgroundImage: "linear-gradient(120deg, #00c6ff, #8e71df)",
+                color: "#fff",
+              }}
               onClick={handleButtonClick}
             >
               Create with AI
@@ -256,7 +260,7 @@ function ProjectPage() {
           </Search>
         </Box>
       </Paper>
-      {(projectData.length <= 0 && projectFetchStatus==="fulfilled") ? (
+      {(projectData.length <= 0 && projectFetchStatus === "fulfilled") ? (
         <Box
           sx={{
             display: "flex",
