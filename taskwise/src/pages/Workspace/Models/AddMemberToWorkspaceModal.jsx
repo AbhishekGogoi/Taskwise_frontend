@@ -9,7 +9,6 @@ import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
 import Chip from '@mui/material/Chip';
 import Modal from '@mui/material/Modal';
-import AddedMembersModal from './AddedMembersModal';
 import { addMemberAsync, fetchWorkspaceMembersAsync, fetchExistingDataAsync } from '../../../features/workspace/workspaceSlice';
 
 const style = {
@@ -27,13 +26,11 @@ const style = {
 
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-const AddMemberToWorkspaceModal = ({ handleClose, workspaceId, existingMemberEmails }) => {
+const AddMemberToWorkspaceModal = ({ handleClose, workspaceId, existingMemberEmails, onMemberAdded, open }) => {
   const [members, setMembers] = useState([]);
   const [inputValue, setInputValue] = useState('');
   const [membersError, setMembersError] = useState('');
   const [validEmails, setValidEmails] = useState([]);
-  const [openAddedMembersModal, setOpenAddedMembersModal] = useState(false);
-  const [responseData, setResponseData] = useState(null);
   const dispatch = useDispatch();
   const adminUserId = useSelector((state) => state?.user?.loggedInUser?.user?._id);
   const existingUserEmails = useSelector((state) => state.workspace?.existingUserEmails || []);
@@ -78,79 +75,65 @@ const AddMemberToWorkspaceModal = ({ handleClose, workspaceId, existingMemberEma
         console.warn('Please enter valid email addresses. No members to add.');
         return;
       }
-      const response = await dispatch(addMemberAsync({ workspaceId, adminUserId, memberEmails: validEmails }));
+      await dispatch(addMemberAsync({ workspaceId, adminUserId, memberEmails: validEmails }));
       await dispatch(fetchWorkspaceMembersAsync(workspaceId));
-      setOpenAddedMembersModal(true);
-      handleClose();
-      // Assuming response is an object containing the API response data
-      setResponseData(response.payload);
+      onMemberAdded(members);
+      handleClose(); // Close the modal after adding members
     } catch (error) {
       console.error('Error adding member:', error);
     }
   };
 
-  const handleAddedMembersModalClose = () => {
-    setOpenAddedMembersModal(false);
-  };
-
   return (
-    <>
-      <Modal open onClose={handleClose}>
-        <Box sx={style}>
-          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-            <Typography id="workspace-title" variant="h5" component="h2" style={{ fontWeight: 550, fontSize: 20 }}>
-              Add people to my workspace
-            </Typography>
-            <IconButton onClick={handleClose}>
-              <CloseIcon />
-            </IconButton>
-          </Box>
-          <TextField
-            id="workspace-add-members"
-            label="Add Members (press Enter to add)"
-            fullWidth
-            margin="normal"
-            style={{ marginBottom: '20px', backgroundColor: 'white' }}
-            value={inputValue}
-            onChange={(e) => setInputValue(e.target.value)}
-            onKeyDown={handleAddMember}
-            error={!!membersError}
-            helperText={membersError}
-          />
-          <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, marginBottom: '20px' }}>
-            {members.map((email, index) => (
-              <Chip key={index} label={email} onDelete={handleDeleteMember(email)} />
-            ))}
-          </Box>
-          {validEmails.length > 0 && (
-            <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 2 }}>
-              <Button
-                variant="outlined"
-                color="secondary"
-                sx={{ textTransform: 'none', backgroundColor: '#f0f0f0' }}
-                onClick={handleClose}
-              >
-                Cancel
-              </Button>
-              <Button
-                variant="contained"
-                color="primary"
-                sx={{ textTransform: 'none' }}
-                onClick={handleAddButtonClick}
-              >
-                Add
-              </Button>
-            </Box>
-          )}
+    <Modal open={open} onClose={handleClose}>
+      <Box sx={style}>
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+          <Typography id="workspace-title" variant="h5" component="h2" style={{ fontWeight: 550, fontSize: 20 }}>
+            Add people to my workspace
+          </Typography>
+          <IconButton onClick={handleClose}>
+            <CloseIcon />
+          </IconButton>
         </Box>
-      </Modal>
-      <AddedMembersModal
-        open={openAddedMembersModal}
-        handleClose={handleAddedMembersModalClose}
-        members={members}
-        responseData={responseData}
-      />
-    </>
+        <TextField
+          id="workspace-add-members"
+          label="Add Members (press Enter to add)"
+          fullWidth
+          margin="normal"
+          style={{ marginBottom: '20px', backgroundColor: 'white' }}
+          value={inputValue}
+          onChange={(e) => setInputValue(e.target.value)}
+          onKeyDown={handleAddMember}
+          error={!!membersError}
+          helperText={membersError}
+        />
+        <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, marginBottom: '20px' }}>
+          {members.map((email, index) => (
+            <Chip key={index} label={email} onDelete={handleDeleteMember(email)} />
+          ))}
+        </Box>
+        {validEmails.length > 0 && (
+          <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 2 }}>
+            <Button
+              variant="outlined"
+              color="secondary"
+              sx={{ textTransform: 'none', backgroundColor: '#f0f0f0' }}
+              onClick={handleClose}
+            >
+              Cancel
+            </Button>
+            <Button
+              variant="contained"
+              color="primary"
+              sx={{ textTransform: 'none' }}
+              onClick={handleAddButtonClick}
+            >
+              Add
+            </Button>
+          </Box>
+        )}
+      </Box>
+    </Modal>
   );
 };
 
@@ -158,6 +141,8 @@ AddMemberToWorkspaceModal.propTypes = {
   handleClose: PropTypes.func.isRequired,
   workspaceId: PropTypes.string.isRequired,
   existingMemberEmails: PropTypes.arrayOf(PropTypes.string).isRequired,
+  open: PropTypes.bool.isRequired,
+  onMemberAdded: PropTypes.func.isRequired,
 };
 
 export default AddMemberToWorkspaceModal;

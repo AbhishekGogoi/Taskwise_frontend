@@ -68,14 +68,16 @@ const AddedMembersModal = ({ open, handleClose, members, id }) => {
             </ListItem>
           ))}
         </Box>
-        <Typography
-          variant="body2"
-          color="primary"
-          onClick={handleWorkspaceDetailsClick}
-          sx={{ cursor: 'pointer', mt: 2, textAlign: 'right' }}
-        >
-          Go to workspace details
-        </Typography>
+        { id && (
+            <Typography
+            variant="body2"
+            color="primary"
+            onClick={handleWorkspaceDetailsClick}
+            sx={{ cursor: 'pointer', mt: 2, textAlign: 'right' }}
+          >
+            Go to workspace details
+          </Typography>
+        )}
       </Box>
     </Modal>
   );
