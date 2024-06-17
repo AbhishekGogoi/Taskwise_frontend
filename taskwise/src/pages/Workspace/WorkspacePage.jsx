@@ -13,9 +13,10 @@ import AddIcon from '@mui/icons-material/Add';
 import NewWorkspaceModel from './Models/NewWorkspaceModel';
 import Modal from '@mui/material/Modal';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchWorkspaceByUserIDAsync } from '../../features/workspace/workspaceSlice';
+import { fetchWorkspaceByUserIDAsync, resetcreateWorkspaceStatus } from '../../features/workspace/workspaceSlice';
 import { useNavigate } from 'react-router-dom';
-import Loading from '../../components/Loading';
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const SearchIconWrapper = styled('div')(({ theme }) => ({
   padding: theme.spacing(0, 2),
@@ -91,9 +92,11 @@ function WorkspacePage() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const WorkspaceData = useSelector((state) => state.workspace.workspaces);
-  const workspaceFetchStatus = useSelector((state) => state.workspace.workspaceFetchStatus);
   const userId = useSelector((state) => state?.user?.loggedInUser?.user?._id);
   const [searchQuery, setSearchQuery] = useState('');
+
+  const createWorkspaceStatus = useSelector((state) => state.workspace.createWorkspaceStatus);
+  const errorMessage = useSelector((state) => state.workspace.errors);
 
   const handleSearchChange = (event) => setSearchQuery(event.target.value);
 
@@ -107,15 +110,23 @@ function WorkspacePage() {
     }
   }, [dispatch, userId]);
 
+  useEffect(() => {
+    if (createWorkspaceStatus === "fulfilled") {
+      toast.success("Workspace created successfully!");
+      dispatch(resetcreateWorkspaceStatus());
+    }
+    if (createWorkspaceStatus === "rejected") {
+      toast.error("Workspace not added!");
+      dispatch(resetcreateWorkspaceStatus());
+    }
+    // eslint-disable-next-line
+  }, [createWorkspaceStatus, errorMessage]);
+
   const handleWorkspaceCreated = () => {
     if (userId) {
       dispatch(fetchWorkspaceByUserIDAsync(userId));
     }
   };
-
-  if (workspaceFetchStatus === 'loading') {
-    return <Loading/>;
-  }
 
   return (
     <Box
@@ -136,6 +147,7 @@ function WorkspacePage() {
           height: 100,
         }}
       >
+        <ToastContainer />
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <Typography variant="body1" component="div" sx={{ p: 2, fontWeight: 'bold' }}>
             Workspaces
@@ -177,7 +189,7 @@ function WorkspacePage() {
           </Grid>
         ) : (
           <NoWorkspacesMessage>
-            { WorkspaceData.length > 0 ? "No matching workspaces found" : "Start by adding a new Workspace"}
+            {WorkspaceData.length > 0 ? "No matching workspaces found" : "Start by adding a new Workspace"}
           </NoWorkspacesMessage>
         )}
       </CustomBox>
