@@ -3,6 +3,13 @@ import PropTypes from 'prop-types';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
+import IconButton from '@mui/material/IconButton';
+import CloseIcon from '@mui/icons-material/Close';
+import Avatar from '@mui/material/Avatar';
+import ListItem from '@mui/material/ListItem';
+import ListItemAvatar from '@mui/material/ListItemAvatar';
+import ListItemText from '@mui/material/ListItemText';
+import Divider from '@mui/material/Divider';
 
 const style = {
   position: 'absolute',
@@ -17,29 +24,32 @@ const style = {
   p: 4,
 };
 
-const AddedMembersModal = ({ open, handleClose, members, responseData }) => {
+const AddedMembersModal = ({ open, handleClose, members }) => {
   return (
     <Modal open={open} onClose={handleClose}>
       <Box sx={style}>
-        <Typography variant="h6" component="h2" gutterBottom>
-          Members Added
-        </Typography>
-        <Typography variant="body1" gutterBottom>
-          The following members have been added:
-        </Typography>
-        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-          {members.map((member, index) => (
-            <Typography key={index} variant="body2">
-              {member}
-            </Typography>
-          ))}
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <Typography variant="h6" component="h2">
+            Added people to workspace
+          </Typography>
+          <IconButton onClick={handleClose}>
+            <CloseIcon />
+          </IconButton>
         </Box>
         <Typography variant="body1" gutterBottom>
-          API Response:
+          You have added {members.length} people to your workspace
         </Typography>
-        <Typography variant="body2" gutterBottom>
-          {JSON.stringify(responseData, null, 2)}
-        </Typography>
+        <Divider sx={{ my: 2 }} />
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+          {members.map((member, index) => (
+            <ListItem key={index}>
+              <ListItemAvatar>
+                <Avatar>{member[0]}</Avatar> {/* Display the first letter of the member's name */}
+              </ListItemAvatar>
+              <ListItemText primary={member} />
+            </ListItem>
+          ))}
+        </Box>
       </Box>
     </Modal>
   );
@@ -48,8 +58,11 @@ const AddedMembersModal = ({ open, handleClose, members, responseData }) => {
 AddedMembersModal.propTypes = {
   open: PropTypes.bool.isRequired,
   handleClose: PropTypes.func.isRequired,
-  members: PropTypes.arrayOf(PropTypes.string).isRequired,
-  responseData: PropTypes.object.isRequired,
+  members: PropTypes.arrayOf(PropTypes.string),
+};
+
+AddedMembersModal.defaultProps = {
+  members: [],
 };
 
 export default AddedMembersModal;
