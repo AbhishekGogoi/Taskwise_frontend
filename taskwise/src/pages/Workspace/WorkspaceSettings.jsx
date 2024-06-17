@@ -58,7 +58,7 @@ function WorkspaceSettings({ workspaceId }) {
   const [workspaceText, setWorkspaceText] = useState(workspace.name);
   const [isEditing, setIsEditing] = useState(false);
   const [openDialog, setOpenDialog] = useState(false);
-  const [dialogTitle, setDialogTitle] = useState("Media and Docs");
+  const [dialogTitle, setDialogTitle] = useState("");
   const [dialogTab, setDialogTab] = useState(0);
   const [mediaImages, setMediaImages] = useState([]);
   const [docs, setDocs] = useState([]);
