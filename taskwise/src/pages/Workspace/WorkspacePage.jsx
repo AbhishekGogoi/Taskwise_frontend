@@ -16,7 +16,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { fetchWorkspaceByUserIDAsync, resetcreateWorkspaceStatus } from '../../features/workspace/workspaceSlice';
 import { useNavigate } from 'react-router-dom';
 import Loading from '../../components/Loading';
-import AddedMembersModal from './Models/AddedMembersModal'; // Import AddedMembersModal
+// import AddedMembersModal from './Models/AddedMembersModal';
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -88,9 +88,9 @@ const NoWorkspacesMessage = styled('div')(({ theme }) => ({
 
 function WorkspacePage() {
   const [openModal, setOpenModal] = useState(false);
-  const [addedMembersModalOpen, setAddedMembersModalOpen] = useState(false);
-  const [addedMembers, setAddedMembers] = useState([]);
-  const [id, setId] = useState('');
+  // const [addedMembersModalOpen, setAddedMembersModalOpen] = useState(false);
+  // const [addedMembers, setAddedMembers] = useState([]);
+  // const [id, setId] = useState('');
 
   const handleNewWorkspaceClick = () => setOpenModal(true);
   const handleCloseModal = () => setOpenModal(false);
@@ -98,14 +98,14 @@ function WorkspacePage() {
   const handleWorkspaceCreated = (members, id) => {
     if (userId) {
       dispatch(fetchWorkspaceByUserIDAsync(userId));
-      setAddedMembers(members);
-      setId(id);
+      // setAddedMembers(members);
+      // setId(id);
       setOpenModal(false);
-      setAddedMembersModalOpen(true);
+      // setAddedMembersModalOpen(true);
     }
   };
 
-  const handleCloseAddedMembersModal = () => setAddedMembersModalOpen(false);
+  // const handleCloseAddedMembersModal = () => setAddedMembersModalOpen(false);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -231,7 +231,7 @@ function WorkspacePage() {
       >
         <NewWorkspaceModel handleClose={handleCloseModal} onWorkspaceCreated={handleWorkspaceCreated} />
       </Modal>
-      { addedMembers && addedMembers.length > 0 && (
+      {/* { addedMembers && addedMembers.length > 0 && (
         <AddedMembersModal
           open={addedMembersModalOpen}
           handleClose={handleCloseAddedMembersModal}
@@ -239,7 +239,7 @@ function WorkspacePage() {
           members={addedMembers}
           id={id}
         />
-      )}
+      )} */}
     </Box>
   );
 }
