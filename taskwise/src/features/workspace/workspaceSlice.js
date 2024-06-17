@@ -14,13 +14,17 @@ import {
   updateWorkspace,
   fetchTasksByUserID,
   getWorkspaceMediaAndDocs,
-  removeMember
+  removeMember,
+  getExistingData
 } from "./workspaceApi";
 
 const initialState = {
   workspaces: [],
   workspaceFetchStatus: 'idle',
   selectedWorkspace: null,
+  newdWorkspace: {},
+  existingWorkspaceName: [],
+  existingUserEmails: [],
   selectedProjects: [],
   selectedTasks: [],
   selectedMembers: [],
@@ -32,6 +36,7 @@ const initialState = {
   fetchWorkspaceProjectsStatus: 'idle',
   fetchWorkspaceTasksStatus: 'idle',
   fetchWorkspaceMembersStatus: 'idle',
+  fetchExistingDataStatus: 'idle',
   createWorkspaceStatus: 'idle',
   uploadFileStatus: 'idle',
   getImageUrlStatus: 'idle',
@@ -120,6 +125,18 @@ export const fetchWorkspaceMediaAndDocsAsync = createAsyncThunk('workspace/fetch
   const selectedMediaAndDocs = await getWorkspaceMediaAndDocs({workspaceId});
   return selectedMediaAndDocs;
 });
+
+export const fetchExistingDataAsync = createAsyncThunk(
+  "workspaces/fetchExistingData",
+  async ({ collection, key }) => {
+    try {
+      const response = await getExistingData(collection, key);
+      return response;
+    } catch (error) {
+      throw error;
+    }
+  }
+);
 
 const workspaceSlice = createSlice({
   name: "workspaceSlice",
@@ -251,6 +268,7 @@ const workspaceSlice = createSlice({
       .addCase(createWorkspaceAsync.fulfilled, (state, action) => {
         state.createWorkspaceStatus = 'fulfilled';
         state.workspaces.push(action.payload); // Update the state with the new workspace
+        state.newdWorkspace = action.payload;
         state.successMessage = 'Workspace created successfully!';
       })
       .addCase(createWorkspaceAsync.rejected, (state, action) => {
@@ -323,6 +341,22 @@ const workspaceSlice = createSlice({
       .addCase(fetchWorkspaceMediaAndDocsAsync.rejected, (state, action) => {
         state.getWorkspaceMediaAndDocsStatus = 'rejected';
         state.errors = action.error.message;
+      })
+      .addCase(fetchExistingDataAsync.pending, (state) => {
+        state.fetchExistingDataStatus = 'pending';
+      })
+      .addCase(fetchExistingDataAsync.fulfilled, (state, action) => {
+        if (action.meta.arg.collection === 'Workspace') {
+          state.existingWorkspaceName = action.payload;
+        } else if (action.meta.arg.collection === 'User') {
+          state.existingUserEmails = action.payload;
+        }
+        state.fetchExistingDataStatus = 'fulfilled';
+        state.successMessage = 'Data fetched successfully!';
+      })
+      .addCase(fetchExistingDataAsync.rejected, (state, action) => {
+        state.fetchExistingDataStatus = 'rejected';
+        state.errorMessage = action.error.message;
       });
   }
 });

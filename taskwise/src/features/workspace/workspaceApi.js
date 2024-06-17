@@ -149,3 +149,15 @@ export const updateMemberRole = async (workspaceId, adminUserId, userId, role) =
       throw error.response.data;
     }
   };
+
+  export const getExistingData = async (collection, key) => {
+    try {
+      const res = await axiosi.get(`/get-existing-data`, {
+        params: { collection, key }
+      });
+      return res.data;
+    } catch (error) {
+      throw error.response.data;
+    }
+  };
+  

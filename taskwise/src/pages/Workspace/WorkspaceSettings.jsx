@@ -31,6 +31,7 @@ import Loading from '../../components/Loading';
 import ExitWorkspaceModal from './Models/ExitWorkspaceModal';
 import AddMemberToWorkspaceModal from './Models/AddMemberToWorkspaceModal';
 import ShareJoiningLinkModel from './Models/ShareJoiningLinkModel';
+import AddedMembersModal from './Models/AddedMembersModal';
 
 const StyledPaper = styled(Paper)(({ theme }) => ({
   height: '400px',
@@ -171,6 +172,16 @@ function WorkspaceSettings({ workspaceId }) {
   const isAdmin = loggedInMember?.role === 'Admin';
 
   const existingMemberEmails = membersData.map(member => member.user.email);
+  const [addedMembersModalOpen, setAddedMembersModalOpen] = useState(false);
+  const [addedMembers, setAddedMembers] = useState([]);
+
+  const handleCloseAddedMembersModal = () => setAddedMembersModalOpen(false);
+
+  const handleMemberAdded = (members) => {
+    setAddedMembers(members);
+    setOpen(false); // Close the Add Member modal after members are added
+    setAddedMembersModalOpen(true); // Open the Added Members modal
+  };
 
   return (
     <Grid container spacing={2}>
@@ -288,9 +299,23 @@ function WorkspaceSettings({ workspaceId }) {
             aria-describedby="add-member-modal-description"
           >
             <Box>
-              <AddMemberToWorkspaceModal handleClose={handleClose} workspaceId={workspace.id} existingMemberEmails={existingMemberEmails} />
+              <AddMemberToWorkspaceModal
+                handleClose={handleClose}
+                workspaceId={workspace.id}
+                existingMemberEmails={existingMemberEmails}
+                onMemberAdded={handleMemberAdded}
+                open={open} // Pass the open state to AddMemberToWorkspaceModal
+              />
             </Box>
           </Modal>
+          { addedMembers && addedMembers.length > 0 && (
+            <AddedMembersModal
+              open={addedMembersModalOpen}
+              handleClose={handleCloseAddedMembersModal}
+              isWorkspacesPage={false}
+              members={addedMembers}
+            />
+          )}
           <Modal
             open={openShareModel}
             onClose={handleCloseShareModel}
