@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { useDispatch, useSelector } from 'react-redux';
 import Box from '@mui/material/Box';
@@ -43,18 +43,15 @@ const AddMemberToWorkspaceModal = ({ handleClose, workspaceId, existingMemberEma
   const adminUserId = useSelector((state) => state?.user?.loggedInUser?.user?._id);
   const existingUserEmails = useSelector((state) => state.workspace?.existingUserEmails || []);
 
-  const debouncedFetchUserEmails = useCallback(
-    debounce(() => {
-      dispatch(fetchExistingDataAsync({ collection: 'User', key: 'email' }));
-    }, 500),
-    [dispatch]
-  );
-
   useEffect(() => {
+    const debouncedFetchUserEmails = debounce(() => {
+      dispatch(fetchExistingDataAsync({ collection: 'User', key: 'email' }));
+    }, 500);
+
     if (inputValue.trim()) {
       debouncedFetchUserEmails();
     }
-  }, [inputValue, debouncedFetchUserEmails]);
+  }, [inputValue, dispatch]);
 
   const handleAddMember = (event) => {
     if (event.key === 'Enter' || event.key === ',' || event.key === ' ') {
