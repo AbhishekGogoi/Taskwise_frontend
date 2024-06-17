@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Box,
   Typography,
@@ -12,7 +12,10 @@ import {
 import { styled } from "@mui/material/styles";
 import ChangePasswordModal from "../../components/ChangePasswordModal";
 import { useDispatch, useSelector } from "react-redux";
-import { updateProfileAsync } from "../../features/user/userSlice";
+import {
+  updateProfileAsync,
+  clearAuthSuccessMessage,
+} from "../../features/user/userSlice";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -92,6 +95,7 @@ const ProfileSettingsPage = () => {
   const username = useSelector(
     (state) => state.user.loggedInUser?.user?.username
   );
+  const successMessage = useSelector((state) => state.user.successMessage);
 
   const tempTitle = useSelector(
     (state) => state.user.loggedInUser?.user?.title
@@ -114,6 +118,13 @@ const ProfileSettingsPage = () => {
   const handleSubmit = () => {
     dispatch(updateProfileAsync({ title, userId }));
   };
+
+  useEffect(() => {
+    if (successMessage) {
+      toast.success(successMessage);
+      dispatch(clearAuthSuccessMessage());
+    }
+  }, [successMessage, dispatch]);
 
   // Display success message using toast
   const handlePasswordChangeSuccess = (message) => {
