@@ -1,16 +1,11 @@
 import React, { useState, useRef, useEffect } from 'react';
 import {
   Box, Grid, IconButton, Typography, Paper, TextField, Dialog, DialogContent, DialogTitle, Tabs, Tab, Card, CardContent, CardActions, Modal,
-  CardMedia,
-  Tooltip,
-  ButtonBase,
+  CardMedia, Tooltip, ButtonBase
 } from '@mui/material';
 import PersonAddAltSharpIcon from '@mui/icons-material/PersonAddAltSharp';
 import LinkSharpIcon from '@mui/icons-material/LinkSharp';
-import { styled } from '@mui/material/styles';
-import WorkspaceSettingsMembers from './WorkspaceSettingsMembers';
 import LogoutIcon from '@mui/icons-material/Logout';
-import Thumbnail from '../../components/Thumbnail';
 import ModeEditSharpIcon from '@mui/icons-material/ModeEditSharp';
 import SaveIcon from '@mui/icons-material/Save';
 import CancelIcon from '@mui/icons-material/Cancel';
@@ -18,12 +13,24 @@ import ChevronRightSharpIcon from '@mui/icons-material/ChevronRightSharp';
 import ImageOutlinedIcon from '@mui/icons-material/ImageOutlined';
 import DescriptionOutlinedIcon from '@mui/icons-material/DescriptionOutlined';
 import CloseIcon from '@mui/icons-material/Close';
+import { styled } from '@mui/material/styles';
+import { toast, ToastContainer } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
+import { useDispatch, useSelector } from 'react-redux';
+import {
+  updateWorkspaceAsync,
+  uploadFileAsync,
+  fetchWorkspaceMediaAndDocsAsync,
+  fetchWorkspaceMembersAsync,
+  fetchWorkspaceByIdAsync,
+  resetexitMemberStatus
+} from '../../features/workspace/workspaceSlice';
+import WorkspaceSettingsMembers from './WorkspaceSettingsMembers';
+import Thumbnail from '../../components/Thumbnail';
+import Loading from '../../components/Loading';
 import ExitWorkspaceModal from './Models/ExitWorkspaceModal';
 import AddMemberToWorkspaceModal from './Models/AddMemberToWorkspaceModal';
 import ShareJoiningLinkModel from './Models/ShareJoiningLinkModel';
-import { updateWorkspaceAsync, uploadFileAsync, fetchWorkspaceMediaAndDocsAsync, fetchWorkspaceMembersAsync, fetchWorkspaceByIdAsync } from '../../features/workspace/workspaceSlice';
-import { useDispatch, useSelector } from 'react-redux';
-import Loading from '../../components/Loading'; // Import Loading component
 
 const StyledPaper = styled(Paper)(({ theme }) => ({
   height: '400px',
@@ -38,25 +45,28 @@ const TabLabelWrapper = styled('div')({
 });
 
 function WorkspaceSettings({ workspaceId }) {
+  const dispatch = useDispatch();
   const membersData = useSelector((state) => state.workspace.selectedMembers);
   const mediaAndDocs = useSelector((state) => state.workspace.selectedMediaAndDocs);
   const workspace = useSelector((state) => state.workspace.selectedWorkspace);
   const getWorkspaceMediaAndDocsStatus = useSelector((state) => state.workspace.getWorkspaceMediaAndDocsStatus);
+  const exitMemberStatus = useSelector((state) => state.workspace.exitMemberStatus);
+  const errorMessage = useSelector((state) => state.workspace.errors);
 
   const [selectedImage, setSelectedImage] = useState(workspace.imgUrl);
   const [workspaceText, setWorkspaceText] = useState(workspace.name);
   const [isEditing, setIsEditing] = useState(false);
   const [openDialog, setOpenDialog] = useState(false);
-  const [dialogTitle, setDialogTitle] = useState("");
+  const [dialogTitle, setDialogTitle] = useState("Media and Docs");
   const [dialogTab, setDialogTab] = useState(0);
   const [mediaImages, setMediaImages] = useState([]);
   const [docs, setDocs] = useState([]);
   const [open, setOpen] = useState(false);
   const [openShareModel, setOpenShareModel] = useState(false);
   const [openExitModal, setOpenExitModal] = useState(false);
+  const [isExitButtonDisabled, setIsExitButtonDisabled] = useState(false);
 
   const fileInputRef = useRef(null);
-  const dispatch = useDispatch();
 
   useEffect(() => {
     if (workspaceId) {
@@ -65,6 +75,18 @@ function WorkspaceSettings({ workspaceId }) {
     }
   }, [dispatch, workspaceId]);
 
+  useEffect(() => {
+    if (exitMemberStatus === "fulfilled") {
+      toast.success("Workspace exited successfully!");
+      dispatch(resetexitMemberStatus());
+    } else if (exitMemberStatus === "rejected") {
+      toast.error(errorMessage, {
+        onClose: () => setIsExitButtonDisabled(false),
+      });
+      dispatch(resetexitMemberStatus());
+    }
+  }, [exitMemberStatus, dispatch, errorMessage]);
+  
   useEffect(() => {
     if (mediaAndDocs) {
       setMediaImages(mediaAndDocs.imgUrls || []);
@@ -76,7 +98,11 @@ function WorkspaceSettings({ workspaceId }) {
   const handleClose = () => setOpen(false);
   const handleOpenShareModel = () => setOpenShareModel(true);
   const handleCloseShareModel = () => setOpenShareModel(false);
-  const handleOpenExitModal = () => setOpenExitModal(true);
+  const handleOpenExitModal = () => {
+    setOpenExitModal(true);
+    setIsExitButtonDisabled(true)
+  };
+
   const handleCloseExitModal = () => setOpenExitModal(false);
 
   const handleFileUploadClick = () => {
@@ -118,9 +144,8 @@ function WorkspaceSettings({ workspaceId }) {
     setWorkspaceText(event.target.value);
   };
 
-  const handleDialogOpen = (event, title) => {
+  const handleDialogOpen = () => {
     dispatch(fetchWorkspaceMediaAndDocsAsync({ workspaceId: workspace.id }));
-    setDialogTitle(title);
     setOpenDialog(true);
   };
 
@@ -131,6 +156,8 @@ function WorkspaceSettings({ workspaceId }) {
 
   const handleTabChange = (event, newValue) => {
     setDialogTab(newValue);
+    const title = newValue === 0 ? "Media" : "Docs";
+    setDialogTitle(title);
   };
 
   const handleRemoveDoc = (index) => {
@@ -143,18 +170,16 @@ function WorkspaceSettings({ workspaceId }) {
   const loggedInMember = membersData.find(member => member.user.email === loggedInUserEmail);
   const isAdmin = loggedInMember?.role === 'Admin';
 
-  // Extract existing member emails
   const existingMemberEmails = membersData.map(member => member.user.email);
 
   return (
     <Grid container spacing={2}>
+      <ToastContainer />
       <Grid item xs={12} md={6}>
         <StyledPaper>
           <Box sx={{ display: 'flex', alignItems: 'center', marginBottom: '30px' }}>
-            {/* Thumbnail component */}
             <Tooltip title={isAdmin ? "click to update image" : ""}>
               <div>
-                {/* Thumbnail component */}
                 <Thumbnail
                   selectedImage={selectedImage}
                   handleFileUploadClick={isAdmin ? handleFileUploadClick : undefined}
@@ -163,8 +188,6 @@ function WorkspaceSettings({ workspaceId }) {
                 />
               </div>
             </Tooltip>
-
-            {/* Conditionally render file input for admins */}
             {isAdmin && (
               <input
                 type="file"
@@ -177,7 +200,6 @@ function WorkspaceSettings({ workspaceId }) {
             )}
           </Box>
 
-          {/* Workspace name display and edit */}
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
             {isEditing ? (
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
@@ -197,12 +219,9 @@ function WorkspaceSettings({ workspaceId }) {
               </Box>
             ) : (
               <React.Fragment>
-                {/* Display workspace name for non-edit mode */}
                 <Typography variant="body1" component="div" sx={{ p: 2, fontWeight: 'bold' }}>
                   {workspaceText}
                 </Typography>
-                
-                {/* Render edit button only for admin */}
                 {isAdmin && (
                   <Tooltip title="update name">
                     <IconButton onClick={handleEditClick}>
@@ -217,10 +236,7 @@ function WorkspaceSettings({ workspaceId }) {
             <Typography sx={{ fontSize: 15, fontWeight: 'bold' }}>
               Media and Docs
             </Typography>
-            <IconButton
-              color="primary"
-              onClick={(event) => handleDialogOpen(event)}
-            >
+            <IconButton color="primary" onClick={handleDialogOpen}>
               <ChevronRightSharpIcon sx={{ color: "#000000", fontSize: 25 }} />
             </IconButton>
           </Box>
@@ -256,14 +272,14 @@ function WorkspaceSettings({ workspaceId }) {
             <WorkspaceSettingsMembers membersData={membersData} workspaceId={workspace.id} />
           </Box>
           <Box sx={{ display: 'flex', alignItems: 'center', marginTop: 6 }}>
-            <ButtonBase onClick={handleOpenExitModal} sx={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}>
-              <IconButton>
-                <LogoutIcon sx={{ fontSize: 30, color: "#000000" }} />
-              </IconButton>
-              <Typography sx={{ paddingBottom: 0.2, paddingLeft: 1, fontSize: 15, fontWeight: 'bold', cursor: 'pointer' }}>
-                Exit Workspace
-              </Typography>
-            </ButtonBase>
+          <ButtonBase onClick={handleOpenExitModal} sx={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }} disabled={isExitButtonDisabled}>
+            <IconButton>
+              <LogoutIcon sx={{ fontSize: 30, color: "#000000" }} />
+            </IconButton>
+            <Typography sx={{ paddingBottom: 0.2, paddingLeft: 1, fontSize: 15, fontWeight: 'bold', cursor: 'pointer' }}>
+              Exit Workspace
+            </Typography>
+          </ButtonBase>
           </Box>
           <Modal
             open={open}
@@ -396,4 +412,3 @@ function WorkspaceSettings({ workspaceId }) {
 }
 
 export default WorkspaceSettings;
-
