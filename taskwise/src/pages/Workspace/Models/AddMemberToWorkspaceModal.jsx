@@ -36,10 +36,8 @@ const AddMemberToWorkspaceModal = ({ handleClose, workspaceId, existingMemberEma
   const existingUserEmails = useSelector((state) => state.workspace?.existingUserEmails || []);
 
   useEffect(() => {
-    if (inputValue.trim()) {
-      dispatch(fetchExistingDataAsync({ collection: 'User', key: 'email' }));
-    }
-  }, [inputValue, dispatch]);
+    dispatch(fetchExistingDataAsync({ collection: 'User', key: 'email' }));
+  }, [dispatch]);
 
   const handleAddMember = (event) => {
     if (event.key === 'Enter' || event.key === ',' || event.key === ' ') {
@@ -49,7 +47,7 @@ const AddMemberToWorkspaceModal = ({ handleClose, workspaceId, existingMemberEma
         if (existingMemberEmails.includes(email)) {
           setMembersError('This email address is already a member.');
         } else if (!existingUserEmails.includes(email)) {
-          setMembersError("Oops! This email is not part of TaskWise. Please clear the input and try again");
+          setMembersError("Oops! This email is not part of TaskWise. Please clear the input and try again.");
         } else if (!members.includes(email)) {
           setMembers((prevMembers) => [...prevMembers, email]);
           setValidEmails((prevValidEmails) => [...prevValidEmails, email]);
@@ -77,7 +75,7 @@ const AddMemberToWorkspaceModal = ({ handleClose, workspaceId, existingMemberEma
   const handleAddButtonClick = async () => {
     try {
       if (validEmails.length === 0) {
-        console.warn('Please enter valid email addresses. No members to add.');
+        setMembersError('Please enter valid email addresses. No members to add.');
         return;
       }
       await dispatch(addMemberAsync({ workspaceId, adminUserId, memberEmails: validEmails }));
@@ -86,6 +84,7 @@ const AddMemberToWorkspaceModal = ({ handleClose, workspaceId, existingMemberEma
       handleClose(); // Close the modal after adding members
     } catch (error) {
       console.error('Error adding member:', error);
+      setMembersError('An error occurred while adding members. Please try again.');
     }
   };
 
@@ -117,26 +116,26 @@ const AddMemberToWorkspaceModal = ({ handleClose, workspaceId, existingMemberEma
             <Chip key={index} label={email} onDelete={handleDeleteMember(email)} />
           ))}
         </Box>
-        {validEmails.length > 0 && (
-          <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 2 }}>
-            <Button
-              variant="outlined"
-              color="secondary"
-              sx={{ textTransform: 'none', backgroundColor: '#f0f0f0' }}
-              onClick={handleClose}
-            >
-              Cancel
-            </Button>
-            <Button
-              variant="contained"
-              color="primary"
-              sx={{ textTransform: 'none' }}
-              onClick={handleAddButtonClick}
-            >
-              Add
-            </Button>
-          </Box>
-        )}
+        <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 2 }}>
+          <Button
+            variant="outlined"
+            color="secondary"
+            sx={{ textTransform: 'none', backgroundColor: '#f0f0f0' }}
+            onClick={handleClose}
+            disabled={!!membersError}
+          >
+            Cancel
+          </Button>
+          <Button
+            variant="contained"
+            color="primary"
+            sx={{ textTransform: 'none' }}
+            onClick={handleAddButtonClick}
+            disabled={!!membersError || validEmails.length === 0}
+          >
+            Add
+          </Button>
+        </Box>
       </Box>
     </Modal>
   );
