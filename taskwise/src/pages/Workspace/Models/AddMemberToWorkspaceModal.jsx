@@ -26,14 +26,6 @@ const style = {
 
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-const debounce = (func, wait) => {
-  let timeout;
-  return (...args) => {
-    clearTimeout(timeout);
-    timeout = setTimeout(() => func(...args), wait);
-  };
-};
-
 const AddMemberToWorkspaceModal = ({ handleClose, workspaceId, existingMemberEmails, onMemberAdded, open }) => {
   const [members, setMembers] = useState([]);
   const [inputValue, setInputValue] = useState('');
@@ -44,12 +36,8 @@ const AddMemberToWorkspaceModal = ({ handleClose, workspaceId, existingMemberEma
   const existingUserEmails = useSelector((state) => state.workspace?.existingUserEmails || []);
 
   useEffect(() => {
-    const debouncedFetchUserEmails = debounce(() => {
-      dispatch(fetchExistingDataAsync({ collection: 'User', key: 'email' }));
-    }, 500);
-
     if (inputValue.trim()) {
-      debouncedFetchUserEmails();
+      dispatch(fetchExistingDataAsync({ collection: 'User', key: 'email' }));
     }
   }, [inputValue, dispatch]);
 
