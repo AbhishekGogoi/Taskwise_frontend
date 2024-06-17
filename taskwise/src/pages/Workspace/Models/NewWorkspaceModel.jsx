@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import TextField from '@mui/material/TextField';
@@ -53,9 +53,10 @@ const NewWorkspaceModel = ({ handleClose, onWorkspaceCreated }) => {
     };
   };
 
-  const fetchWorkspaceNames = debounce(() => {
+  useEffect(() => {
+    // Fetch existing workspace names when component mounts
     dispatch(fetchExistingDataAsync({ collection: 'Workspace', key: 'name' }));
-  }, 500);
+  }, [dispatch]);
 
   const fetchUserEmails = debounce(() => {
     dispatch(fetchExistingDataAsync({ collection: 'User', key: 'email' }));
@@ -155,7 +156,6 @@ const NewWorkspaceModel = ({ handleClose, onWorkspaceCreated }) => {
     setWorkspaceName(value);
 
     if (value.trim()) {
-      fetchWorkspaceNames();
       if (existingWorkspaceName.includes(value.trim())) {
         setNameError('Workspace name is already taken.');
       } else {

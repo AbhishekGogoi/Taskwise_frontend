@@ -13,7 +13,7 @@ import AddIcon from '@mui/icons-material/Add';
 import NewWorkspaceModel from './Models/NewWorkspaceModel';
 import Modal from '@mui/material/Modal';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchWorkspaceByUserIDAsync, resetcreateWorkspaceStatus, workspaceFetchStatus } from '../../features/workspace/workspaceSlice';
+import { fetchWorkspaceByUserIDAsync, resetcreateWorkspaceStatus } from '../../features/workspace/workspaceSlice';
 import { useNavigate } from 'react-router-dom';
 import Loading from '../../components/Loading';
 import AddedMembersModal from './Models/AddedMembersModal'; // Import AddedMembersModal
@@ -115,18 +115,14 @@ function WorkspacePage() {
 
   const createWorkspaceStatus = useSelector((state) => state.workspace.createWorkspaceStatus);
   const errorMessage = useSelector((state) => state.workspace.errors);
-
+  const workspaceFetchStatus = useSelector((state) => state.workspace.workspacesFetchStatus);
   const handleSearchChange = (event) => setSearchQuery(event.target.value);
 
   const filteredWorkspaces = WorkspaceData.filter((workspace) =>
     workspace.name && workspace.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  if (workspaceFetchStatus === 'loading') {
-    return <Loading />;
-  }
-
-  useEffect(() => {
+  useEffect(() => {  
     if (userId) {
       dispatch(fetchWorkspaceByUserIDAsync(userId));
     }
@@ -141,8 +137,11 @@ function WorkspacePage() {
       toast.error("Workspace not added!");
       dispatch(resetcreateWorkspaceStatus());
     }
-    // eslint-disable-next-line
-  }, [createWorkspaceStatus, errorMessage]);
+  }, [createWorkspaceStatus, errorMessage, dispatch]);
+
+  if (workspaceFetchStatus === 'loading') {
+    return <Loading />;
+  }
 
   return (
     <Box
@@ -195,19 +194,25 @@ function WorkspacePage() {
         </Box>
       </Paper>
       <CustomBox>
-        {filteredWorkspaces.length > 0 ? (
-          <Grid container spacing={3} alignItems="center">
-            {filteredWorkspaces.map((workspace) => (
-              <Grid item key={workspace.id} xs={6} sm={6} md={3} lg={3} xl={2}>
-                <WorkspaceCard workspace={workspace} onClick={() => navigate(`/workspaces/${workspace.id}`)} />
-              </Grid>
-            ))}
-          </Grid>
+      {filteredWorkspaces.length > 0 ? (
+        <Grid container spacing={3} alignItems="center">
+          {filteredWorkspaces.map((workspace) => (
+            <Grid item key={workspace.id} xs={6} sm={6} md={3} lg={3} xl={2}>
+              <WorkspaceCard workspace={workspace} onClick={() => navigate(`/workspaces/${workspace.id}`)} />
+            </Grid>
+          ))}
+        </Grid>
+      ) : (
+        WorkspaceData && WorkspaceData.length === 0 ? (
+          <NoWorkspacesMessage>
+            Start by adding a new workspace
+          </NoWorkspacesMessage>
         ) : (
           <NoWorkspacesMessage>
-            {WorkspaceData.length > 0 ? "No matching workspaces found" : "Start by adding a new Workspace"}
+            No matching workspaces found
           </NoWorkspacesMessage>
-        )}
+        )
+      )}
       </CustomBox>
       <Modal
         open={openModal}
