@@ -15,7 +15,6 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Joi from "joi";
 import { styled } from "@mui/system";
-// import googleiconnew from "../../assets/googleiconnew.png";
 import TaskWiseLogo from "../../assets/TaskWiseLogo.png";
 import { useDispatch } from "react-redux";
 import {
@@ -62,17 +61,6 @@ const StyledForm = styled("form")(({ theme }) => ({
   },
 }));
 
-// const StyledGoogleButton = styled(Button)({
-//   height: 50, // Increase button height
-//   fontSize: "1rem",
-//   backgroundColor: "#ffffff",
-//   color: "#000000",
-//   "&:hover": {
-//     backgroundColor: "",
-//   },
-//   textTransform: "none", // Remove uppercase transformation
-// });
-
 const StyledTypography = styled(Typography)({
   fontFamily: "Manrope, sans-serif", // Example font (adjust as needed)
   fontWeight: 600,
@@ -95,22 +83,6 @@ const StyledTitleContainer = styled(Box)({
   marginBottom: "1rem", // Add some space below the title
   textAlign: "center", // Center align the title
 });
-
-// const StyledDivider = styled(Typography)({
-//   display: "flex",
-//   alignItems: "center",
-//   textAlign: "center",
-//   color: "#808080", // Light gray color
-//   fontSize: "20px", // Adjust font size as needed
-//   fontWeight: 700, // Lighter font weight
-//   "&::before, &::after": {
-//     // Create lines on both sides
-//     content: '""',
-//     flex: 1,
-//     borderBottom: "1px solid #e0e0e0", // Use a light gray border
-//     margin: "3px", // Add spacing between lines and text
-//   },
-// });
 
 const StyledSignUpLink = styled(Link)({
   color: "#0062ff", // Blue link color
@@ -238,13 +210,6 @@ const LoginPage = () => {
     navigate("/forgotpassword"); // Navigate to forgot password page
   };
 
-  // const googleAuth = () => {
-  //   window.open(
-  //     `${process.env.REACT_APP_API_URL}/auth/google/callback`,
-  //     "_self"
-  //   );
-  // };
-
   return (
     <StyledContainer>
       <img
@@ -350,23 +315,6 @@ const LoginPage = () => {
         >
           Forgot password?
         </StyledLink>
-
-        {/* <StyledDivider sx={{ margin: "1rem 0" }}>or</StyledDivider> */}
-
-        {/* <StyledGoogleButton
-          fullWidth
-          variant="contained"
-          startIcon={
-            <img
-              style={{ width: "28px", height: "28px" }}
-              src={googleiconnew}
-              alt="Google"
-            />
-          }
-          onClick={googleAuth}
-        >
-          Sign in with Google
-        </StyledGoogleButton> */}
       </StyledForm>
       <Box
         sx={{

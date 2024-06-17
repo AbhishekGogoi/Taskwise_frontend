@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Box,
   Typography,
@@ -12,7 +12,10 @@ import {
 import { styled } from "@mui/material/styles";
 import ChangePasswordModal from "../../components/ChangePasswordModal";
 import { useDispatch, useSelector } from "react-redux";
-import { updateProfileAsync } from "../../features/user/userSlice";
+import {
+  updateProfileAsync,
+  clearAuthSuccessMessage,
+} from "../../features/user/userSlice";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -88,9 +91,11 @@ const PageWrapper = styled(Box)({
 const ProfileSettingsPage = () => {
   const dispatch = useDispatch();
   const email = useSelector((state) => state.user.loggedInUser?.user?.email);
+  const image = useSelector((state) => state.user.loggedInUser?.user?.imgUrl);
   const username = useSelector(
     (state) => state.user.loggedInUser?.user?.username
   );
+  const successMessage = useSelector((state) => state.user.successMessage);
 
   const tempTitle = useSelector(
     (state) => state.user.loggedInUser?.user?.title
@@ -114,6 +119,13 @@ const ProfileSettingsPage = () => {
     dispatch(updateProfileAsync({ title, userId }));
   };
 
+  useEffect(() => {
+    if (successMessage) {
+      toast.success(successMessage);
+      dispatch(clearAuthSuccessMessage());
+    }
+  }, [successMessage, dispatch]);
+
   // Display success message using toast
   const handlePasswordChangeSuccess = (message) => {
     toast.success(message);
@@ -136,11 +148,7 @@ const ProfileSettingsPage = () => {
             md={6}
             sx={{ display: "flex", alignItems: "center", gap: "20px" }}
           >
-            <Avatar
-              alt="Smith"
-              src="/broken-image.jpg"
-              sx={{ width: 80, height: 80 }}
-            />
+            <Avatar alt="img" src={image} sx={{ width: 80, height: 80 }} />
             <Stack spacing={0.5}>
               <Typography variant="h6">{username}</Typography>
               {/* <Typography variant="body2" color="textSecondary">
