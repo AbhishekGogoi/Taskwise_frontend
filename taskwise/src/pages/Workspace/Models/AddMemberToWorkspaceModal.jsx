@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import PropTypes from 'prop-types';
 import { useDispatch, useSelector } from 'react-redux';
 import Box from '@mui/material/Box';
@@ -26,6 +26,14 @@ const style = {
 
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
+const debounce = (func, wait) => {
+  let timeout;
+  return (...args) => {
+    clearTimeout(timeout);
+    timeout = setTimeout(() => func(...args), wait);
+  };
+};
+
 const AddMemberToWorkspaceModal = ({ handleClose, workspaceId, existingMemberEmails, onMemberAdded, open }) => {
   const [members, setMembers] = useState([]);
   const [inputValue, setInputValue] = useState('');
@@ -35,11 +43,18 @@ const AddMemberToWorkspaceModal = ({ handleClose, workspaceId, existingMemberEma
   const adminUserId = useSelector((state) => state?.user?.loggedInUser?.user?._id);
   const existingUserEmails = useSelector((state) => state.workspace?.existingUserEmails || []);
 
+  const debouncedFetchUserEmails = useCallback(
+    debounce(() => {
+      dispatch(fetchExistingDataAsync({ collection: 'User', key: 'email' }));
+    }, 500),
+    [dispatch]
+  );
+
   useEffect(() => {
     if (inputValue.trim()) {
-      dispatch(fetchExistingDataAsync({ collection: 'User', key: 'email' }));
+      debouncedFetchUserEmails();
     }
-  }, [dispatch, inputValue]);
+  }, [inputValue, debouncedFetchUserEmails]);
 
   const handleAddMember = (event) => {
     if (event.key === 'Enter' || event.key === ',' || event.key === ' ') {
@@ -62,7 +77,7 @@ const AddMemberToWorkspaceModal = ({ handleClose, workspaceId, existingMemberEma
         setMembersError('Invalid email address.');
       }
     }
-  
+
     // Check if inputValue is empty to enable the button
     if (inputValue.trim() === '') {
       setMembersError(''); // Reset any previous error message
