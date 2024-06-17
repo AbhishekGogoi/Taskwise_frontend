@@ -13,10 +13,12 @@ import AddIcon from '@mui/icons-material/Add';
 import NewWorkspaceModel from './Models/NewWorkspaceModel';
 import Modal from '@mui/material/Modal';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchWorkspaceByUserIDAsync } from '../../features/workspace/workspaceSlice';
+import { fetchWorkspaceByUserIDAsync, resetcreateWorkspaceStatus, workspaceFetchStatus } from '../../features/workspace/workspaceSlice';
 import { useNavigate } from 'react-router-dom';
 import Loading from '../../components/Loading';
 import AddedMembersModal from './Models/AddedMembersModal'; // Import AddedMembersModal
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const SearchIconWrapper = styled('div')(({ theme }) => ({
   padding: theme.spacing(0, 2),
@@ -108,9 +110,11 @@ function WorkspacePage() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const WorkspaceData = useSelector((state) => state.workspace.workspaces);
-  const workspaceFetchStatus = useSelector((state) => state.workspace.workspaceFetchStatus);
   const userId = useSelector((state) => state?.user?.loggedInUser?.user?._id);
   const [searchQuery, setSearchQuery] = useState('');
+
+  const createWorkspaceStatus = useSelector((state) => state.workspace.createWorkspaceStatus);
+  const errorMessage = useSelector((state) => state.workspace.errors);
 
   const handleSearchChange = (event) => setSearchQuery(event.target.value);
 
@@ -118,15 +122,27 @@ function WorkspacePage() {
     workspace.name && workspace.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
+  if (workspaceFetchStatus === 'loading') {
+    return <Loading />;
+  }
+
   useEffect(() => {
     if (userId) {
       dispatch(fetchWorkspaceByUserIDAsync(userId));
     }
   }, [dispatch, userId]);
 
-  if (workspaceFetchStatus === 'loading') {
-    return <Loading />;
-  }
+  useEffect(() => {
+    if (createWorkspaceStatus === "fulfilled") {
+      toast.success("Workspace created successfully!");
+      dispatch(resetcreateWorkspaceStatus());
+    }
+    if (createWorkspaceStatus === "rejected") {
+      toast.error("Workspace not added!");
+      dispatch(resetcreateWorkspaceStatus());
+    }
+    // eslint-disable-next-line
+  }, [createWorkspaceStatus, errorMessage]);
 
   return (
     <Box
@@ -147,6 +163,7 @@ function WorkspacePage() {
           height: 100,
         }}
       >
+        <ToastContainer />
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <Typography variant="body1" component="div" sx={{ p: 2, fontWeight: 'bold' }}>
             Workspaces

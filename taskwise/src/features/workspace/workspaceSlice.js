@@ -1,20 +1,22 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { createWorkspace,
-         fetchWorkspaceByUserID,
-         fetchWorkspaceById,
-         fetchWorkspaceProjects,
-         fetchWorkspaceMembers,
-         fetchWorkspaceTasks,
-         uploadFile,
-         getImageUrl,
-         exitMember,
-         updateMemberRole, 
-         addMember,
-         updateWorkspace,
-         fetchTasksByUserID,
-         getWorkspaceMediaAndDocs, 
-         removeMember,
-         getExistingData} from "./workspaceApi";
+import {
+  createWorkspace,
+  fetchWorkspaceByUserID,
+  fetchWorkspaceById,
+  fetchWorkspaceProjects,
+  fetchWorkspaceMembers,
+  fetchWorkspaceTasks,
+  uploadFile,
+  getImageUrl,
+  exitMember,
+  updateMemberRole,
+  addMember,
+  updateWorkspace,
+  fetchTasksByUserID,
+  getWorkspaceMediaAndDocs,
+  removeMember,
+  getExistingData
+} from "./workspaceApi";
 
 const initialState = {
   workspaces: [],
@@ -47,7 +49,7 @@ const initialState = {
   status: "idle",
   errors: null,
   successMessage: null
-}
+};
 
 export const fetchWorkspaceByUserIDAsync = createAsyncThunk("workspaces/fetchWorkspaceByUserID", async (userId) => {
   const workspaces = await fetchWorkspaceByUserID(userId);
@@ -64,98 +66,65 @@ export const fetchWorkspaceByIdAsync = createAsyncThunk("workspaces/fetchWorkspa
   return selectedWorkspace;
 });
 
-export const fetchWorkspaceProjectsAsync = createAsyncThunk(
-  'workspace/fetchWorkspaceProjects',
-  async (workspaceId) => {
-    const selectedProjects = await fetchWorkspaceProjects(workspaceId);
-    return selectedProjects;
-  }
-);
+export const fetchWorkspaceProjectsAsync = createAsyncThunk('workspace/fetchWorkspaceProjects', async (workspaceId) => {
+  const selectedProjects = await fetchWorkspaceProjects(workspaceId);
+  return selectedProjects;
+});
 
-export const fetchWorkspaceTasksAsync = createAsyncThunk(
-  'workspace/fetchWorkspaceTasksAsync',
-  async (workspaceId) => {
-    const selectedTasks = await fetchWorkspaceTasks(workspaceId);
-    return selectedTasks;
-  }
-);
+export const fetchWorkspaceTasksAsync = createAsyncThunk('workspace/fetchWorkspaceTasksAsync', async (workspaceId) => {
+  const selectedTasks = await fetchWorkspaceTasks(workspaceId);
+  return selectedTasks;
+});
 
 export const fetchWorkspaceMembersAsync = createAsyncThunk('workspace/fetchWorkspaceMembers', async (workspaceId) => {
-    const selectedMembers = await fetchWorkspaceMembers(workspaceId);
-    return selectedMembers;
-  }
-);
+  const selectedMembers = await fetchWorkspaceMembers(workspaceId);
+  return selectedMembers;
+});
 
-export const createWorkspaceAsync = createAsyncThunk(
-  "workspaces/createWorkspace",
-  async (newWorkspace) => {
-    const response = await createWorkspace(newWorkspace);
-    return response.data;
-  }
-);
+export const createWorkspaceAsync = createAsyncThunk("workspaces/createWorkspace", async (newWorkspace) => {
+  const response = await createWorkspace(newWorkspace);
+  return response;
+});
 
-export const uploadFileAsync = createAsyncThunk(
-  "workspaces/uploadFile",
-  async (formData) => {
-    const response = await uploadFile(formData);
-    return response.data;
-  }
-);
+export const uploadFileAsync = createAsyncThunk("workspaces/uploadFile", async (formData) => {
+  const response = await uploadFile(formData);
+  return response.data;
+});
 
-// Redux thunk to get the image URL
-export const getImageUrlAsync = createAsyncThunk(
-  "workspaces/getImageUrl",
-  async (key) => {
-    const response = await getImageUrl(key);
-    return response.data;
-  }
-);
+export const getImageUrlAsync = createAsyncThunk("workspaces/getImageUrl", async (key) => {
+  const response = await getImageUrl(key);
+  return response.data;
+});
 
-export const exitMemberAsync = createAsyncThunk(
-  "workspaces/exitMember",
-  async ({ workspaceId, userId }) => {
-    const response = await exitMember(workspaceId, userId);
-    return response.data;
-  }
-);
+export const exitMemberAsync = createAsyncThunk("workspaces/exitMember", async ({ workspaceId, userId }) => {
+  const response = await exitMember(workspaceId, userId);
+  return response.data;
+});
 
-export const updateMemberRoleAsync = createAsyncThunk(
-  'members/updateMemberRole',
-  async ({ workspaceId, adminUserId, userId, role }) => {
-    const response = await updateMemberRole(workspaceId, adminUserId, userId, role);
-    return response.data;
-  }
-);
+export const updateMemberRoleAsync = createAsyncThunk('members/updateMemberRole', async ({ workspaceId, adminUserId, userId, role }) => {
+  const response = await updateMemberRole(workspaceId, adminUserId, userId, role);
+  return response.data;
+});
 
-export const addMemberAsync = createAsyncThunk(
-  'members/addMember',
-  async ({ workspaceId, adminUserId, memberEmails }) => {
-    const response = await addMember(workspaceId, adminUserId, memberEmails);
-    return response.data;
-  }
-);
+export const addMemberAsync = createAsyncThunk('members/addMember', async ({ workspaceId, adminUserId, memberEmails }) => {
+  const response = await addMember(workspaceId, adminUserId, memberEmails);
+  return response.data;
+});
 
-export const removeMemberAsync = createAsyncThunk(
-  'members/removeMember',
-  async ({ workspaceId, adminUserId, memberEmails }) => {
-    const response = await removeMember(workspaceId, adminUserId, memberEmails);
-    return response.data;
-  }
-);
+export const removeMemberAsync = createAsyncThunk('members/removeMember', async ({ workspaceId, adminUserId, memberEmails }) => {
+  const response = await removeMember(workspaceId, adminUserId, memberEmails);
+  return response.data;
+});
 
-export const updateWorkspaceAsync = createAsyncThunk(
-  "workspaces/updateWorkspace",
-  async ({ id, updatedWorkspace }) => {
-    const selectedWorkspace = await updateWorkspace({id, updatedWorkspace});
-    return selectedWorkspace;
-  }
-);
+export const updateWorkspaceAsync = createAsyncThunk("workspaces/updateWorkspace", async ({ id, updatedWorkspace }) => {
+  const selectedWorkspace = await updateWorkspace({id, updatedWorkspace});
+  return selectedWorkspace;
+});
 
 export const fetchWorkspaceMediaAndDocsAsync = createAsyncThunk('workspace/fetchWorkspaceMediaAndDocsAsync', async ({workspaceId}) => {
-    const selectedMediaAndDocs = await getWorkspaceMediaAndDocs({workspaceId});
-    return selectedMediaAndDocs;
-  }
-);
+  const selectedMediaAndDocs = await getWorkspaceMediaAndDocs({workspaceId});
+  return selectedMediaAndDocs;
+});
 
 export const fetchExistingDataAsync = createAsyncThunk(
   "workspaces/fetchExistingData",
@@ -236,40 +205,40 @@ const workspaceSlice = createSlice({
       })
       .addCase(fetchWorkspaceByIdAsync.rejected, (state, action) => {
         state.fetchWorkspaceByIdStatus = "rejected";
-        state.errors = action.error;
+        state.errors = action.error.message;
       })
-      .addCase(fetchWorkspaceProjectsAsync.pending,(state)=>{
-          state.fetchWorkspaceProjectsStatus="loading"
+      .addCase(fetchWorkspaceProjectsAsync.pending, (state) => {
+        state.fetchWorkspaceProjectsStatus = "loading";
       })
-      .addCase(fetchWorkspaceProjectsAsync.fulfilled,(state,action)=>{
-          state.fetchWorkspaceProjectsStatus="fulfilled"
-          state.selectedProjects=action.payload.data
+      .addCase(fetchWorkspaceProjectsAsync.fulfilled, (state, action) => {
+        state.fetchWorkspaceProjectsStatus = "fulfilled";
+        state.selectedProjects = action.payload.data;
       })
-      .addCase(fetchWorkspaceProjectsAsync.rejected,(state,action)=>{
-          state.fetchWorkspaceProjectsStatus="rejected"
-          state.errors=action.error
+      .addCase(fetchWorkspaceProjectsAsync.rejected, (state, action) => {
+        state.fetchWorkspaceProjectsStatus = "rejected";
+        state.errors = action.error.message;
       })
-      .addCase(fetchWorkspaceTasksAsync.pending,(state)=>{
-          state.fetchWorkspaceTasksStatus="loading"
+      .addCase(fetchWorkspaceTasksAsync.pending, (state) => {
+        state.fetchWorkspaceTasksStatus = "loading";
       })
-      .addCase(fetchWorkspaceTasksAsync.fulfilled,(state,action)=>{
-          state.fetchWorkspaceTasksStatus="fulfilled"
-          state.selectedTasks=action.payload.data
+      .addCase(fetchWorkspaceTasksAsync.fulfilled, (state, action) => {
+        state.fetchWorkspaceTasksStatus = "fulfilled";
+        state.selectedTasks = action.payload.data;
       })
-      .addCase(fetchWorkspaceTasksAsync.rejected,(state,action)=>{
-          state.fetchWorkspaceTasksStatus="rejected"
-          state.errors=action.error
+      .addCase(fetchWorkspaceTasksAsync.rejected, (state, action) => {
+        state.fetchWorkspaceTasksStatus = "rejected";
+        state.errors = action.error.message;
       })
-      .addCase(fetchWorkspaceMembersAsync.pending,(state)=>{
-          state.fetchWorkspaceMembersStatus="loading"
+      .addCase(fetchWorkspaceMembersAsync.pending, (state) => {
+        state.fetchWorkspaceMembersStatus = "loading";
       })
-      .addCase(fetchWorkspaceMembersAsync.fulfilled,(state,action)=>{
-          state.fetchWorkspaceMembersStatus="fulfilled"
-          state.selectedMembers=action.payload.data
+      .addCase(fetchWorkspaceMembersAsync.fulfilled, (state, action) => {
+        state.fetchWorkspaceMembersStatus = "fulfilled";
+        state.selectedMembers = action.payload.data;
       })
-      .addCase(fetchWorkspaceMembersAsync.rejected,(state,action)=>{
-          state.fetchWorkspaceMembersStatus="rejected"
-          state.errors=action.error
+      .addCase(fetchWorkspaceMembersAsync.rejected, (state, action) => {
+        state.fetchWorkspaceMembersStatus = "rejected";
+        state.errors = action.error.message;
       })
       .addCase(fetchWorkspaceByUserIDAsync.pending, (state) => {
         state.workspaceFetchStatus = 'loading';
@@ -280,7 +249,7 @@ const workspaceSlice = createSlice({
       })
       .addCase(fetchWorkspaceByUserIDAsync.rejected, (state, action) => {
         state.workspaceFetchStatus = "rejected";
-        state.errors = action.error;
+        state.errors = action.error.message;
       })
       .addCase(fetchTasksByUserIDAsync.pending, (state) => {
         state.fetchTasksByUserIDStatus = 'loading';
@@ -291,7 +260,7 @@ const workspaceSlice = createSlice({
       })
       .addCase(fetchTasksByUserIDAsync.rejected, (state, action) => {
         state.fetchTasksByUserIDStatus = "rejected";
-        state.errors = action.error;
+        state.errors = action.error.message;
       })
       .addCase(createWorkspaceAsync.pending, (state) => {
         state.createWorkspaceStatus = 'loading';
@@ -303,7 +272,7 @@ const workspaceSlice = createSlice({
         state.successMessage = 'Workspace created successfully!';
       })
       .addCase(createWorkspaceAsync.rejected, (state, action) => {
-        state.createWorkspaceStatus = 'failed';
+        state.createWorkspaceStatus = 'rejected';
         state.errors = action.error.message;
       })
       .addCase(exitMemberAsync.pending, (state) => {
@@ -314,18 +283,18 @@ const workspaceSlice = createSlice({
         state.successMessage = 'Member exited successfully!';
       })
       .addCase(exitMemberAsync.rejected, (state, action) => {
-        state.exitMemberStatus = 'failed';
+        state.exitMemberStatus = 'rejected';
         state.errors = action.error.message;
       })
       .addCase(updateMemberRoleAsync.pending, (state) => {
-        state.status = 'loading';
+        state.updateMemberRoleStatus = 'loading';
       })
       .addCase(updateMemberRoleAsync.fulfilled, (state, action) => {
         state.updateMemberRoleStatus = 'fulfilled';
         state.successMessage = 'Updated Member Role successfully!';
       })
       .addCase(updateMemberRoleAsync.rejected, (state, action) => {
-        state.updateMemberRoleStatus = 'failed';
+        state.updateMemberRoleStatus = 'rejected';
         state.errors = action.error.message;
       })
       .addCase(addMemberAsync.pending, (state) => {
@@ -336,7 +305,7 @@ const workspaceSlice = createSlice({
         state.successMessage = 'Added Member successfully!';
       })
       .addCase(addMemberAsync.rejected, (state, action) => {
-        state.addMemberStatus = 'failed';
+        state.addMemberStatus = 'rejected';
         state.errors = action.error.message;
       })
       .addCase(removeMemberAsync.pending, (state) => {
@@ -347,7 +316,7 @@ const workspaceSlice = createSlice({
         state.successMessage = 'Removed Member successfully!';
       })
       .addCase(removeMemberAsync.rejected, (state, action) => {
-        state.removeMemberAsyncStatus = 'failed';
+        state.removeMemberAsyncStatus = 'rejected';
         state.errors = action.error.message;
       })
       .addCase(updateWorkspaceAsync.pending, (state) => {
@@ -355,10 +324,10 @@ const workspaceSlice = createSlice({
       })
       .addCase(updateWorkspaceAsync.fulfilled, (state, action) => {
         state.updateWorkspaceStatus = 'fulfilled';
-        state.selectedWorkspace =  action.payload.data;
+        state.selectedWorkspace = action.payload.data;
       })
       .addCase(updateWorkspaceAsync.rejected, (state, action) => {
-        state.updateWorkspaceStatus = 'failed';
+        state.updateWorkspaceStatus = 'rejected';
         state.errors = action.error.message;
       })
       .addCase(fetchWorkspaceMediaAndDocsAsync.pending, (state) => {
@@ -366,11 +335,11 @@ const workspaceSlice = createSlice({
       })
       .addCase(fetchWorkspaceMediaAndDocsAsync.fulfilled, (state, action) => {
         state.getWorkspaceMediaAndDocsStatus = 'fulfilled';
-        state.selectedMediaAndDocs=action.payload.data
+        state.selectedMediaAndDocs = action.payload.data;
         state.successMessage = 'Workspace data fetched successfully!';
       })
       .addCase(fetchWorkspaceMediaAndDocsAsync.rejected, (state, action) => {
-        state.getWorkspaceMediaAndDocsStatus = 'failed';
+        state.getWorkspaceMediaAndDocsStatus = 'rejected';
         state.errors = action.error.message;
       })
       .addCase(fetchExistingDataAsync.pending, (state) => {
