@@ -88,6 +88,7 @@ const PageWrapper = styled(Box)({
 const ProfileSettingsPage = () => {
   const dispatch = useDispatch();
   const email = useSelector((state) => state.user.loggedInUser?.user?.email);
+  const image = useSelector((state) => state.user.loggedInUser?.user?.imgUrl);
   const username = useSelector(
     (state) => state.user.loggedInUser?.user?.username
   );
@@ -136,11 +137,7 @@ const ProfileSettingsPage = () => {
             md={6}
             sx={{ display: "flex", alignItems: "center", gap: "20px" }}
           >
-            <Avatar
-              alt="Smith"
-              src="/broken-image.jpg"
-              sx={{ width: 80, height: 80 }}
-            />
+            <Avatar alt="img" src={image} sx={{ width: 80, height: 80 }} />
             <Stack spacing={0.5}>
               <Typography variant="h6">{username}</Typography>
               {/* <Typography variant="body2" color="textSecondary">
