@@ -169,7 +169,7 @@ function TaskList() {
             <div className="task-list">
               <div className="tasks-container">
                 {tasksToDisplay?.length === 0 ? (
-                  <Typography variant="body1" className="text-center">No tasks to display</Typography>
+                  <Typography variant="body1" className="text-center">There was a problem with Taskwise AI. Please try again later</Typography>
                 ) : (
                   tasksToDisplay?.map((task, index) => (
                     <div key={index} className="task-card-container">
