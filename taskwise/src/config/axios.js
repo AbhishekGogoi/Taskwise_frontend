@@ -5,6 +5,5 @@ const baseURL =
     ? process.env.REACT_APP_API_BASE_URL_PROD
     : process.env.REACT_APP_API_BASE_URL_DEV;
 
-
-    console.log("Base URL:", baseURL);
-export const axiosi=axios.create({baseURL})
+console.log("Base URL:", baseURL);
+export const axiosi = axios.create({ baseURL, withCredentials: true });
