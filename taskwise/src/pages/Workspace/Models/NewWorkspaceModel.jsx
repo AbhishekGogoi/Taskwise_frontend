@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef } from 'react';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import TextField from '@mui/material/TextField';
@@ -44,12 +44,22 @@ const NewWorkspaceModel = ({ handleClose, onWorkspaceCreated }) => {
   const [membersError, setMembersError] = useState('');
   const fileInputRef = useRef(null);
 
-  useEffect(() => {
-    if (workspaceName.trim()) {
-      dispatch(fetchExistingDataAsync({ collection: 'Workspace', key: 'name' }));
-      dispatch(fetchExistingDataAsync({ collection: 'User', key: 'email' }));
-    }
-  }, [dispatch, workspaceName]);
+  // Function to debounce API calls
+  const debounce = (func, wait) => {
+    let timeout;
+    return (...args) => {
+      clearTimeout(timeout);
+      timeout = setTimeout(() => func(...args), wait);
+    };
+  };
+
+  const fetchWorkspaceNames = debounce(() => {
+    dispatch(fetchExistingDataAsync({ collection: 'Workspace', key: 'name' }));
+  }, 500);
+
+  const fetchUserEmails = debounce(() => {
+    dispatch(fetchExistingDataAsync({ collection: 'User', key: 'email' }));
+  }, 500);
 
   const handleFileUploadClick = () => {
     fileInputRef.current.click();
@@ -119,7 +129,7 @@ const NewWorkspaceModel = ({ handleClose, onWorkspaceCreated }) => {
         } else if (members.includes(email)) {
           setMembersError('Email address already added.');
         } else if (!existingUserEmails.includes(email)) {
-          setMembersError('Email is not part of TaskWise, Please emove data and Press Enter...');
+          setMembersError("Oops! This email is not part of TaskWise. Please clear the input and try again");
         } else {
           setMembers((prevMembers) => [...prevMembers, email]);
           setInputValue('');
@@ -129,18 +139,23 @@ const NewWorkspaceModel = ({ handleClose, onWorkspaceCreated }) => {
         setMembersError('Invalid email address.');
       }
     }
-  
+    
+    if (inputValue.trim()) {
+      fetchUserEmails();
+    }
+
     // Check if inputValue is empty to enable the button
     if (inputValue.trim() === '') {
       setMembersError(''); // Reset any previous error message
     }
   };
-  
+
   const handleWorkspaceNameChange = (e) => {
     const value = e.target.value;
     setWorkspaceName(value);
 
     if (value.trim()) {
+      fetchWorkspaceNames();
       if (existingWorkspaceName.includes(value.trim())) {
         setNameError('Workspace name is already taken.');
       } else {
