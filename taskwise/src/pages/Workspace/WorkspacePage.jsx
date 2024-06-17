@@ -198,22 +198,29 @@ function WorkspacePage() {
         <Grid container spacing={3} alignItems="center">
           {filteredWorkspaces.map((workspace) => (
             <Grid item key={workspace.id} xs={6} sm={6} md={3} lg={3} xl={2}>
-              <WorkspaceCard workspace={workspace} onClick={() => navigate(`/workspaces/${workspace.id}`)} />
+              <WorkspaceCard
+                workspace={workspace}
+                onClick={() => navigate(`/workspaces/${workspace.id}`)}
+              />
             </Grid>
           ))}
         </Grid>
       ) : (
-        WorkspaceData && WorkspaceData.length === 0 ? (
-          <NoWorkspacesMessage>
-            Start by adding a new workspace
-          </NoWorkspacesMessage>
+        workspaceFetchStatus === 'fulfilled' ? (
+          WorkspaceData && WorkspaceData.length === 0 ? (
+            <NoWorkspacesMessage>
+              Start by adding a new workspace
+            </NoWorkspacesMessage>
+          ) : (
+            <NoWorkspacesMessage>
+              No matching workspaces found
+            </NoWorkspacesMessage>
+          )
         ) : (
-          <NoWorkspacesMessage>
-            No matching workspaces found
-          </NoWorkspacesMessage>
+          <NoWorkspacesMessage/>
         )
       )}
-      </CustomBox>
+    </CustomBox>
       <Modal
         open={openModal}
         onClose={handleCloseModal}
