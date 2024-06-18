@@ -4,6 +4,7 @@ import { List, ListItem, ListItemAvatar, Avatar, ListItemText, IconButton, Typog
 import PersonAddAltSharpIcon from '@mui/icons-material/PersonAddAltSharp';
 import { styled } from '@mui/material/styles';
 import AddMemberToWorkspaceModal from './Models/AddMemberToWorkspaceModal';
+import AddedMembersModal from './Models/AddedMembersModal';
 
 const StyledPaper = styled(Paper)(({ theme }) => ({
   padding: theme.spacing(2),
@@ -34,9 +35,18 @@ function WorkspaceMembers({ height, width}) {
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
+  const [addedMembersModalOpen, setAddedMembersModalOpen] = useState(false);
+  const [addedMembers, setAddedMembers] = useState([]);
+
+  const handleCloseAddedMembersModal = () => setAddedMembersModalOpen(false);
+
+  const handleMemberAdded = (members) => {
+    setAddedMembers(members);
+    setOpen(false); // Close the Add Member modal after members are added
+    setAddedMembersModalOpen(true); // Open the Added Members modal
+  };
 
   const existingMemberEmails = membersData.map(member => member.user.email);
-  console.log("existingMemberEmails: ", existingMemberEmails)
 
   const memberList = membersData.length === 0 ? (
     <Typography sx={{ textAlign: 'center', paddingTop: 2 }}>
@@ -75,9 +85,23 @@ function WorkspaceMembers({ height, width}) {
         aria-describedby="add-member-modal-description"
       >
         <Box>
-          <AddMemberToWorkspaceModal handleClose={handleClose} workspaceId={workspace.id} existingMemberEmails={existingMemberEmails} />
+          <AddMemberToWorkspaceModal
+            handleClose={handleClose}
+            workspaceId={workspace.id}
+            existingMemberEmails={existingMemberEmails}
+            onMemberAdded={handleMemberAdded}
+            open={open} // Pass the open state to AddMemberToWorkspaceModal
+          />
         </Box>
       </Modal>
+      { addedMembers && addedMembers.length > 0 && (
+        <AddedMembersModal
+          open={addedMembersModalOpen}
+          handleClose={handleCloseAddedMembersModal}
+          isWorkspacesPage={false}
+          members={addedMembers}
+        />
+      )}
     </StyledPaper>
   );
 }

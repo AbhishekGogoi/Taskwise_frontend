@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import TextField from '@mui/material/TextField';
@@ -9,7 +9,7 @@ import Chip from '@mui/material/Chip';
 import PropTypes from 'prop-types';
 import Thumbnail from '../../../components/Thumbnail';
 import { useDispatch, useSelector } from "react-redux";
-import { createWorkspaceAsync, uploadFileAsync, getImageUrlAsync } from "../../../features/workspace/workspaceSlice";
+import { createWorkspaceAsync, uploadFileAsync, getImageUrlAsync, fetchExistingDataAsync } from "../../../features/workspace/workspaceSlice";
 import ModeEditSharpIcon from '@mui/icons-material/ModeEditSharp';
 
 const style = {
@@ -29,8 +29,10 @@ const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 const NewWorkspaceModel = ({ handleClose, onWorkspaceCreated }) => {
   const dispatch = useDispatch();
-  const loggedInUser = useSelector((state) => state?.user?.loggedInUser.user);
-  const loggedInUserEmail = loggedInUser?.email;
+  const loggedInUser = useSelector((state) => state.user?.loggedInUser?.user);
+  const existingWorkspaceName = useSelector((state) => state.workspace?.existingWorkspaceName || []);
+  const existingUserEmails = useSelector((state) => state.workspace?.existingUserEmails || []);
+  const newdWorkspaceData = useSelector((state) => state.workspace?.newdWorkspace || {});
 
   const [workspaceName, setWorkspaceName] = useState('');
   const [description, setDescription] = useState('');
@@ -40,7 +42,21 @@ const NewWorkspaceModel = ({ handleClose, onWorkspaceCreated }) => {
   const [imageKey, setImageKey] = useState('');
   const [nameError, setNameError] = useState('');
   const [membersError, setMembersError] = useState('');
+  const [isNameChecked, setIsNameChecked] = useState(false);
   const fileInputRef = useRef(null);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        await dispatch(fetchExistingDataAsync({ collection: 'Workspace', key: 'name' }));
+        await dispatch(fetchExistingDataAsync({ collection: 'User', key: 'email' }));
+      } catch (error) {
+        console.error('Error fetching existing data:', error);
+      }
+    };
+
+    fetchData();
+  }, [dispatch]);
 
   const handleFileUploadClick = () => {
     fileInputRef.current.click();
@@ -51,7 +67,7 @@ const NewWorkspaceModel = ({ handleClose, onWorkspaceCreated }) => {
     if (file) {
       const formData = new FormData();
       formData.append('file', file);
-      
+
       try {
         const response = await dispatch(uploadFileAsync(formData));
         setImageUrl(response.payload.presignedUrl);
@@ -93,7 +109,7 @@ const NewWorkspaceModel = ({ handleClose, onWorkspaceCreated }) => {
 
     try {
       await dispatch(createWorkspaceAsync(newWorkspace));
-      onWorkspaceCreated(); // Notify the parent component about the new workspace
+      onWorkspaceCreated(members, newdWorkspaceData?.workspace?.id);
       handleClose();
     } catch (error) {
       console.error('Error creating workspace:', error);
@@ -105,10 +121,12 @@ const NewWorkspaceModel = ({ handleClose, onWorkspaceCreated }) => {
       event.preventDefault();
       const email = inputValue.trim();
       if (email && emailRegex.test(email)) {
-        if (email === loggedInUserEmail) {
+        if (email === loggedInUser?.email) {
           setMembersError('You cannot add your own email as a member.');
         } else if (members.includes(email)) {
           setMembersError('Email address already added.');
+        } else if (!existingUserEmails.includes(email)) {
+          setMembersError('Email is not part of TaskWise, Please remove data and Press Enter...');
         } else {
           setMembers((prevMembers) => [...prevMembers, email]);
           setInputValue('');
@@ -117,6 +135,34 @@ const NewWorkspaceModel = ({ handleClose, onWorkspaceCreated }) => {
       } else {
         setMembersError('Invalid email address.');
       }
+    }
+
+    // Check if inputValue is empty to enable the button
+    if (inputValue.trim() === '') {
+      setMembersError(''); // Reset any previous error message
+    }
+  };
+
+  const handleWorkspaceNameChange = (e) => {
+    const value = e.target.value;
+    setWorkspaceName(value);
+    setIsNameChecked(false);
+
+    if (value.trim()) {
+      setNameError('');
+    } else {
+      setNameError('Workspace name is required.');
+    }
+  };
+
+  const handleWorkspaceNameCheck = async (event) => {
+    if (event.key === 'Enter' && workspaceName.trim()) {
+      if (existingWorkspaceName.includes(workspaceName.trim())) {
+        setNameError('Workspace name is already taken.');
+      } else {
+        setNameError('');
+      }
+      setIsNameChecked(true);
     }
   };
 
@@ -146,17 +192,13 @@ const NewWorkspaceModel = ({ handleClose, onWorkspaceCreated }) => {
       <input type="file" ref={fileInputRef} style={{ display: 'none' }} onChange={handleFileChange} />
       <TextField
         id="workspace-name"
-        label="Workspace Name *"
+        label="Workspace Name * (press Enter to check availability)"
         fullWidth
         margin="normal"
         style={{ marginBottom: '20px', backgroundColor: 'white' }}
         value={workspaceName}
-        onChange={(e) => {
-          setWorkspaceName(e.target.value);
-          if (e.target.value.trim()) {
-            setNameError('');
-          }
-        }}
+        onChange={handleWorkspaceNameChange}
+        onKeyDown={handleWorkspaceNameCheck}
         error={!!nameError}
         helperText={nameError}
       />
@@ -168,6 +210,7 @@ const NewWorkspaceModel = ({ handleClose, onWorkspaceCreated }) => {
         style={{ marginBottom: '20px', backgroundColor: 'white' }}
         value={description}
         onChange={(e) => setDescription(e.target.value)}
+        disabled={!isNameChecked || !!nameError}
       />
       <TextField
         id="workspace-add-members"
@@ -180,6 +223,7 @@ const NewWorkspaceModel = ({ handleClose, onWorkspaceCreated }) => {
         onKeyDown={handleAddMember}
         error={!!membersError}
         helperText={membersError}
+        disabled={!isNameChecked || !!nameError}
       />
       <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, marginBottom: '20px' }}>
         {members.map((email) => (
@@ -196,6 +240,7 @@ const NewWorkspaceModel = ({ handleClose, onWorkspaceCreated }) => {
         fullWidth
         sx={{ textTransform: 'none' }}
         onClick={handleCreateWorkspace}
+        disabled={!!nameError || !!membersError || !isNameChecked || inputValue.trim() !== ''}
       >
         Create Workspace
       </Button>
