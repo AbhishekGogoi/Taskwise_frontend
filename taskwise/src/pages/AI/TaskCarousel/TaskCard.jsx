@@ -8,9 +8,9 @@ import './TaskCard.css';
 const TaskCard = ({ task, onClose, onEdit }) => {
   return (
     <Card className="task-card" sx={{
-        width: 280,
-        borderRadius: 2,
-      }}>
+      width: 280,
+      borderRadius: 2,
+    }}>
       <div className="task-header">
         <IconButton className="robot-icon">
           <FaRobot size={15} style={{
@@ -43,14 +43,28 @@ const TaskCard = ({ task, onClose, onEdit }) => {
           </Tooltip>
         </div>
       </div>
-      <CardContent className="task-card-content" sx={{ mt: 6 }}>
-        <Typography variant="h6" component="h3" gutterBottom>
-          {task.title}
-        </Typography>
-        <Typography variant="body2" color="textSecondary">
-          {task.description}
-        </Typography>
-      </CardContent>
+      <div style={{
+        overflow: "scroll",
+        scrollbarWidth: "none", // For Firefox
+        msOverflowStyle: "none", // For Internet Explorer and Edge
+      }}>
+        <style>
+          {`
+      .hide-scrollbar::-webkit-scrollbar {
+        display: none; /* For Chrome, Safari, and Opera */
+      }
+    `}
+        </style>
+        <CardContent className="task-card-content hide-scrollbar" sx={{ mt: 6 }}>
+          <Typography variant="h6" component="h3" gutterBottom>
+            {task.title}
+          </Typography>
+          <Typography variant="body2" color="textSecondary">
+            {task.description}
+          </Typography>
+        </CardContent>
+      </div>
+
       <div className="task-footer">
         <Typography variant="body2" color="textSecondary" className="task-status">
           {task.status}
