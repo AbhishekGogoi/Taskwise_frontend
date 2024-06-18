@@ -293,6 +293,9 @@ const userSlice = createSlice({
         state.status = "fulfilled";
         state.loggedInUser = action.payload;
         state.successMessage = action.payload.message;
+        state.isAuthenticated = true;
+        localStorage.setItem("user", JSON.stringify(action.payload));
+        localStorage.setItem("isAuthenticated", true);
       })
       .addCase(updateProfileAsync.rejected, (state, action) => {
         state.status = "rejected";

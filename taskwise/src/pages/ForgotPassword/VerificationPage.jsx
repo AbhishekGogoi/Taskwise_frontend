@@ -249,12 +249,12 @@ const VerificationPage = () => {
           ))}
         </OtpContainer>
 
-        <Typography
+        {/* <Typography
           variant="body2"
           sx={{ color: "#5b5858", marginTop: "1.5rem" }}
         >
           00:120 Sec
-        </Typography>
+        </Typography> */}
 
         <Box sx={{ display: "flex", alignItems: "center", paddingTop: "5px" }}>
           <Typography variant="body2" sx={{ color: "#5b5858" }}>

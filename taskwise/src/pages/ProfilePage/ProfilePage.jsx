@@ -91,7 +91,10 @@ const PageWrapper = styled(Box)({
 const ProfileSettingsPage = () => {
   const dispatch = useDispatch();
   const email = useSelector((state) => state.user.loggedInUser?.user?.email);
-  const image = useSelector((state) => state.user.loggedInUser?.user?.imgUrl);
+  const imageUrl = useSelector(
+    (state) => state.user.loggedInUser?.user?.imgUrl
+  );
+
   const username = useSelector(
     (state) => state.user.loggedInUser?.user?.username
   );
@@ -105,6 +108,8 @@ const ProfileSettingsPage = () => {
 
   const [changePasswordModalOpen, setChangePasswordModalOpen] = useState(false);
 
+  const [isButtonDisabled, setIsButtonDisabled] = useState(false);
+
   const handleOpenChangePasswordModal = () => {
     setChangePasswordModalOpen(true);
   };
@@ -116,13 +121,24 @@ const ProfileSettingsPage = () => {
   const userId = useSelector((state) => state.user.loggedInUser?.user?._id);
 
   const handleSubmit = () => {
-    dispatch(updateProfileAsync({ title, userId }));
+    setIsButtonDisabled(true);
+    if (title === tempTitle) {
+      toast.error("No changes made to update the profile.", {
+        onClose: () => setIsButtonDisabled(false),
+      });
+    } else {
+      dispatch(updateProfileAsync({ title, userId }));
+    }
   };
 
   useEffect(() => {
     if (successMessage) {
-      toast.success(successMessage);
-      dispatch(clearAuthSuccessMessage());
+      toast.success(successMessage, {
+        onClose: () => {
+          setIsButtonDisabled(false); // Enable the button
+          dispatch(clearAuthSuccessMessage());
+        },
+      });
     }
   }, [successMessage, dispatch]);
 
@@ -148,7 +164,11 @@ const ProfileSettingsPage = () => {
             md={6}
             sx={{ display: "flex", alignItems: "center", gap: "20px" }}
           >
-            <Avatar alt="img" src={image} sx={{ width: 80, height: 80 }} />
+            <Avatar
+              alt="Profile Picture"
+              src={imageUrl}
+              sx={{ width: 80, height: 80 }}
+            />
             <Stack spacing={0.5}>
               <Typography variant="h6">{username}</Typography>
               {/* <Typography variant="body2" color="textSecondary">
@@ -174,6 +194,7 @@ const ProfileSettingsPage = () => {
                 height: "40px",
               }}
               onClick={handleSubmit}
+              disabled={isButtonDisabled}
             >
               Save User Profile
             </Button>
