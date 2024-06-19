@@ -18,7 +18,7 @@ import MenuIcon from "@mui/icons-material/Menu";
 import LogoutModal from "./LogoutModal";
 import Modal from "@mui/material/Modal";
 import { useDispatch, useSelector } from "react-redux";
-import { logoutAsync, resetUserState } from "../features/user/userSlice";
+import { logoutAsync } from "../features/user/userSlice";
 import Notifications from "./Notifications";
 import Badge from "@mui/material/Badge";
 import { fetchUnreadNotificationsAsync } from "../features/notification/notificationSlice";
@@ -65,7 +65,6 @@ function Header({ isSmallScreen, toggleDrawer }) {
 
   const handleLogoutConfirm = () => {
     dispatch(logoutAsync());
-    dispatch(resetUserState());
   };
 
   //for notifications

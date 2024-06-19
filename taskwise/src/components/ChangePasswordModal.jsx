@@ -46,7 +46,7 @@ const ChangePasswordModal = ({
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const user = useSelector((state) => state.user.loggedInUser.user._id);
+  const user = useSelector((state) => state.user.loggedInUser._id);
 
   const schema = Joi.object({
     currentPassword: Joi.string().required().messages({
